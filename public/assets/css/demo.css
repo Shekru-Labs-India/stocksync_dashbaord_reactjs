@@ -118,3 +118,15 @@
 .xyz{
   color: aqua;
 }
+
+.btn-success {
+  background-color: rgb(7, 123, 7);
+  border-color: rgb(3, 109, 3);
+  color: white;
+}
+
+.btn-success:disabled {
+  background-color: rgb(127, 240, 127);
+  border-color: rgb(127, 240, 127);
+  color: white;
+}

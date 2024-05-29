@@ -3,11 +3,19 @@ import SubHeader from "./SubHeader";
 import Profile from "../screen/Profile";
 
 import Footer from "./Footer";
-const Header = () => {
+// const Header = ({ switchScreen }) => {
+//   const goToProfile = () => {
+//     switchScreen('profile');
+//   };
+
+const Header = ({ switchScreen }) => {
+  const goToProfile = () => {
+    switchScreen('profile');
+  };
   return (
-    <div>
-      <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-        <div className="layout-container"> 
+    
+      // <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+      //   <div className="layout-container"> 
         
           <nav
             className="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme"
@@ -765,13 +773,13 @@ const Header = () => {
                         <div className="dropdown-divider"></div>
                       </li>
                       <li>
-                        <a
+                        <button onClick={goToProfile}
                           className="dropdown-item"
-                          href="Profile"
+                         
                         >
                           <i className="ri-user-3-line ri-22px me-2"></i>
                           <span className="align-middle">My Profile</span>
-                        </a>
+                        </button>
                       </li>
                       <li>
                         <a
@@ -815,14 +823,14 @@ const Header = () => {
                       </li>
                       <li>
                         <div className="d-grid px-4 pt-2 pb-1">
-                          <a
+                          <button
                             className="btn btn-danger d-flex"
-                            href="auth-login-cover.html"
+                          onClick={goToProfile}
                             target="_blank"
                           >
                             <small className="align-middle">Logout</small>
                             <i className="ri-logout-box-r-line ms-2 ri-16px"></i>
-                          </a>
+                          </button>
                         </div>
                       </li>
                     </ul>
@@ -841,12 +849,12 @@ const Header = () => {
               </div>
             </div>
           </nav>
-          <SubHeader></SubHeader>
-        <Profile></Profile>
-       <Footer></Footer>
-        </div>
-      </div>
-    </div>
+      //     <SubHeader></SubHeader>
+      //    <Profile></Profile> 
+      //   <Footer></Footer> 
+      //   </div>
+      // </div>
+    
   );
 };
 

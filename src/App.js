@@ -30,25 +30,53 @@ import './App.css';
 import Header from './component/Header';
 import Profile from './screen/Profile';
 import Footer from './component/Footer';
-import Login from './screen/Login';
 import VerifyOtp from './screen/VerifyOtp';
 import Home from './screen/Home';
 import Basket from './screen/Basket';
+import BasicTable from './screen/BasicTable';
+import Login from './screen/Login';
+import TradeBook from './screen/Tradebook';
+import OrderBook from './screen/OrderBook';
+import Holding from './screen/Holding';
+import LandingHomeScreen from './landing/LandingHomeScreen';
+import StudentReport from './screen/StudentReport';
+import MyReport from './screen/MyReport';
+import MyReportView from './screen/MyReportView';
+import StudReportList from './screen/StudReportList';
+import StudReportView from './screen/StudReportView';
+import TimeLine from './screen/TimeLine';
+import Position from './screen/Position';
+ // Import the new UserProfile component
 
 function App() {
   return (
     <Router>
       <div className="App">
+        {/* Uncomment if you want Header and Footer to be always visible */}
         {/* <Header /> */}
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/Basket" element={<Basket />} />
-            <Route path="/verifyOtp" element={<VerifyOtp />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/user_profile" element={<Profile />} />
+            <Route path="/user_login" element={<Login />} />
+            <Route path="/user_basket" element={<Basket />} />
+            <Route path="/trade_book" element={<TradeBook />} />
+            <Route path="/trade_position" element={<Position />} />
+            <Route path="/order_book" element={<OrderBook />} />
+            <Route path="/basic_table" element={<BasicTable />} />
+            <Route path="/verify_otp" element={<VerifyOtp />} />
+            <Route path="/user_holding" element={<Holding />} />
+            <Route path="/my_report" element={<MyReport />} />
+            <Route path="/my_report_view" element={<MyReportView />} />
+            <Route path="/student_report" element={<StudentReport />} />
+            <Route path="/student_report_list" element={<StudReportList />} />
+            <Route path="/student_report_view" element={<StudReportView />} />
+            <Route path="/time_line" element={<TimeLine />} />
+            <Route path="/landing_home_page" element={<LandingHomeScreen />} />
           </Routes>
         </div>
+        {/* Uncomment if you want Header and Footer to be always visible */}
         {/* <Footer /> */}
       </div>
     </Router>
@@ -56,6 +84,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

@@ -1,181 +1,328 @@
-import React from "react";
+import React, { useState } from "react";
+import Header from '../component/Header';
+import SubHeader from '../component/SubHeader';
+import Footer from '../component/Footer';
 
-const VerifyOtp = () => {
+const Basket = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
+  const [baskets, setBaskets] = useState([]);
+  const [currentBasket, setCurrentBasket] = useState({
+    name: "",
+    rows: [
+      {
+        name: "",
+        instrument: "1", // Default value
+        lotQtyBuffer: "1", // Default value
+        cePe: "1", // Default value for CE
+        transactionType: "1", // Default value for BUY Order
+        exchange: "1", // Default value
+        orderType: "1", // Default value
+        productType: "1", // Default value
+      },
+    ],
+  });
+  const [rows, setRows] = useState([
+    {
+      name: "",
+      instrument: "1", // Default value
+      lotQtyBuffer: "1", // Default value
+      cePe: "1", // Default value for CE
+      transactionType: "1", // Default value for BUY Order
+      exchange: "1", // Default value
+      orderType: "1", // Default value
+      productType: "1", // Default value
+    },
+  ]);
+
+  const handleAddRow = () => {
+    if (rows.length < 10) {
+      setRows([
+        ...rows,
+        {
+          name: "",
+          instrument: "1",
+          lotQtyBuffer: "1",
+          cePe: "1",
+          transactionType: "1",
+          exchange: "1",
+          orderType: "1",
+          productType: "1",
+        },
+      ]);
+    } else {
+      alert("You can only add up to 10 rows.");
+    }
+  };
+
+  const handleInputChange = (index, event) => {
+    const newRows = [...rows];
+    newRows[index][event.target.name] = event.target.value;
+    setRows(newRows);
+  };
+
+  const handleDeleteRow = (index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 1);
+    setRows(newRows);
+  };
+
+  const handleCreateBasket = () => {
+    setBaskets([...baskets, { ...currentBasket, rows }]);
+    setRows([
+      {
+        name: "",
+        instrument: "1",
+        lotQtyBuffer: "1",
+        cePe: "1",
+        transactionType: "1",
+        exchange: "1",
+        orderType: "1",
+        productType: "1",
+      },
+    ]);
+    setCurrentBasket({
+      name: "",
+      rows: [
+        {
+          name: "",
+          instrument: "1",
+          lotQtyBuffer: "1",
+          cePe: "1",
+          transactionType: "1",
+          exchange: "1",
+          orderType: "1",
+          productType: "1",
+        },
+      ],
+    });
+  };
+
+  const handleDeleteBasket = (index) => {
+    const newBaskets = [...baskets];
+    newBaskets.splice(index, 1);
+    setBaskets(newBaskets);
+  };
+
+  const handleEditBasket = (index) => {
+    setCurrentBasket(baskets[index]);
+    handleShow();
+  };
+
   return (
     <div>
-      <div class="positive-relative">
-        <div class="authentication-wrapper authentication-basic">
-          <div class="authentication-inner py-6 mx-4">
-            <div class="card p-7">
-              <div class="app-brand justify-content-center mt-5">
-                <a href="index.html" class="app-brand-link gap-3">
-                  <span class="app-brand-logo demo">
-                    <span style={{ color: "#9055FD" }}>
-                      <svg
-                        width="30"
-                        height="24"
-                        viewBox="0 0 250 196"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M12.3002 1.25469L56.655 28.6432C59.0349 30.1128 60.4839 32.711 60.4839 35.5089V160.63C60.4839 163.468 58.9941 166.097 56.5603 167.553L12.2055 194.107C8.3836 196.395 3.43136 195.15 1.14435 191.327C0.395485 190.075 0 188.643 0 187.184V8.12039C0 3.66447 3.61061 0.0522461 8.06452 0.0522461C9.56056 0.0522461 11.0271 0.468577 12.3002 1.25469Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          opacity="0.077704"
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M0 65.2656L60.4839 99.9629V133.979L0 65.2656Z"
-                          fill="black"
-                        />
-                        <path
-                          opacity="0.077704"
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M0 65.2656L60.4839 99.0795V119.859L0 65.2656Z"
-                          fill="black"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M237.71 1.22393L193.355 28.5207C190.97 29.9889 189.516 32.5905 189.516 35.3927V160.631C189.516 163.469 191.006 166.098 193.44 167.555L237.794 194.108C241.616 196.396 246.569 195.151 248.856 191.328C249.605 190.076 250 188.644 250 187.185V8.09597C250 3.64006 246.389 0.027832 241.935 0.027832C240.444 0.027832 238.981 0.441882 237.71 1.22393Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          opacity="0.077704"
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M250 65.2656L189.516 99.8897V135.006L250 65.2656Z"
-                          fill="black"
-                        />
-                        <path
-                          opacity="0.077704"
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M250 65.2656L189.516 99.0497V120.886L250 65.2656Z"
-                          fill="black"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M12.2787 1.18923L125 70.3075V136.87L0 65.2465V8.06814C0 3.61223 3.61061 0 8.06452 0C9.552 0 11.0105 0.411583 12.2787 1.18923Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M12.2787 1.18923L125 70.3075V136.87L0 65.2465V8.06814C0 3.61223 3.61061 0 8.06452 0C9.552 0 11.0105 0.411583 12.2787 1.18923Z"
-                          fill="white"
-                          fill-opacity="0.15"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M237.721 1.18923L125 70.3075V136.87L250 65.2465V8.06814C250 3.61223 246.389 0 241.935 0C240.448 0 238.99 0.411583 237.721 1.18923Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M237.721 1.18923L125 70.3075V136.87L250 65.2465V8.06814C250 3.61223 246.389 0 241.935 0C240.448 0 238.99 0.411583 237.721 1.18923Z"
-                          fill="white"
-                          fill-opacity="0.3"
-                        />
-                      </svg>
-                    </span>
-                  </span>
-                  <span class="app-brand-text demo text-heading fw-semibold">
-                    Materio
-                  </span>
-                </a>
-              </div>
+      <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+        <div className="layout-container">
+          <Header />
+          <SubHeader />
 
-              <div class="card-body mt-1">
-                <h4 class="mb-1">Two Step Verification 💬</h4>
-                <p class="text-start mb-5">
-                  We sent a verification code to your mobile. Enter the code
-                  from the mobile in the field below.
-                  <span class="d-block mt-1 h6">******1234</span>
-                </p>
-                <p class="mb-0">Type your 6 digit security code</p>
-                <form id="twoStepsForm" action="index.html" method="GET">
-                  <div class="mb-5">
-                    <div class="auth-input-wrapper d-flex align-items-center justify-content-between numeral-mask-wrapper">
-                      <input
-                        type="tel"
-                        class="form-control auth-input text-center numeral-mask h-px-50 mx-sm-1 my-2"
-                        maxlength="1"
-                        autofocus
-                      />
-                      <input
-                        type="tel"
-                        class="form-control auth-input text-center numeral-mask h-px-50 mx-sm-1 my-2"
-                        maxlength="1"
-                      />
-                      <input
-                        type="tel"
-                        class="form-control auth-input text-center numeral-mask h-px-50 mx-sm-1 my-2"
-                        maxlength="1"
-                      />
-                      <input
-                        type="tel"
-                        class="form-control auth-input text-center numeral-mask h-px-50 mx-sm-1 my-2"
-                        maxlength="1"
-                      />
-                     
+          <div className="container-xxl flex-grow-1 container-p-y">
+            <div className='row'>
+              <div className='col-3'>
+                {baskets.map((basket, index) => (
+                  <div className="card mb-3" key={index}>
+                    <div className="card-datatable table-responsive pt-0" onClick={() => handleEditBasket(index)}>
+                      <table className="table">
+                        <tbody>
+                          <tr>
+                            <td className='fw-bold'>{basket.name || `Basket ${index + 1}`}</td>
+                            <td></td>
+                            <td className='text-danger'>
+                              <i className="ri-close-circle-line" onClick={(e) => { e.stopPropagation(); handleDeleteBasket(index); }}></i>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Total: {basket.rows.length}/10</td>
+                            <td>
+                              <span className={basket.rows.filter(row => row.transactionType === "1").length > 0 ? 'text-success' : ''}>
+                                Buy: {basket.rows.filter(row => row.transactionType === "1").length}
+                              </span>/10
+                            </td>
+                            <td>
+                              <span className={basket.rows.filter(row => row.transactionType === "2").length > 0 ? 'text-danger' : ''}>
+                                Sell: {basket.rows.filter(row => row.transactionType === "2").length}
+                              </span>/10
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
-                    {/* <!-- Create a hidden field which is combined by 3 fields above --> */}
-                    <input type="hidden" name="otp" />
                   </div>
-                  <button class="active btn btn-primary d-grid w-100 mb-5">
-                    Verify my account
-                  </button>
-                  <div class="text-center">
-                    Didn't get the code?
-                    <a href="javascript:void(0);">Resend</a>
+                ))}
+              </div>
+              <div className='col-9'>
+                <div className="card">
+                  <div className="card-header d-flex justify-content-between">
+                    <h5 className="mb-0">Create New Basket</h5>
+                    <button className="btn btn-primary active" onClick={handleAddRow}>Add</button>
                   </div>
-                </form>
+
+                  <div className="table-responsive text-nowrap">
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Instrument</th>
+                          <th>Lot Qty Buffer</th>
+                          <th>CE/PE</th>
+                          <th>Transaction Type</th>
+                          <th>Exchange</th>
+                          <th>Order Type</th>
+                          <th>Product Type</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="table-border-bottom-0">
+                        {rows.map((row, index) => (
+                          <tr key={index}>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="name"
+                                value={row.name}
+                                onChange={(event) => handleInputChange(index, event)}
+                              />
+                            </td>
+                            <td>
+                              <select
+                                id="defaultSelect"
+                                className="form-select"
+                                name="instrument"
+                                value={row.instrument}
+                                onChange={(event) => handleInputChange(index, event)}
+                              >
+                                <option value="1">Instrument 1</option>
+                                <option value="2">Instrument 2</option>
+                                <option value="3">Instrument 3</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="lotQtyBuffer"
+                                value={row.lotQtyBuffer}
+                                onChange={(event) => handleInputChange(index, event)}
+                              />
+                            </td>
+                            <td>
+                              <div className="form-check form-check-inline mt-4">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name={`cePe${index}`}
+                                  value="1"
+                                  checked={row.cePe === "1"}
+                                  onChange={(event) => handleInputChange(index, event)}
+                                />
+                                <label className="form-check-label" htmlFor={`cePe${index}`} style={{ color: 'green' }}>
+                                  CE
+                                </label>
+                              </div>
+                              <div className="form-check form-check-inline">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name={`cePe${index}`}
+                                  value="2"
+                                  checked={row.cePe === "2"}
+                                  onChange={(event) => handleInputChange(index, event)}
+                                />
+                                <label className="form-check-label" htmlFor={`cePe${index}`} style={{ color: 'orange' }}>
+                                  PE
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="form-check form-check-inline mt-4">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name={`transactionType${index}`}
+                                  value="1"
+                                  checked={row.transactionType === "1"}
+                                  onChange={(event) => handleInputChange(index, event)}
+                                />
+                                <label className="form-check-label">
+                                  <span style={{ color: 'skyblue', fontWeight: 'bold' }}>BUY</span>
+                                </label>
+                              </div>
+                              <div className="form-check form-check-inline">
+                                <input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name={`transactionType${index}`}
+                                  value="2"
+                                  checked={row.transactionType === "2"}
+                                  onChange={(event) => handleInputChange(index, event)}
+                                />
+                                <label className="form-check-label">
+                                  <span style={{ color: 'orange', fontWeight: 'bold' }}>SELL</span>
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                              <select
+                                id="defaultSelect"
+                                className="form-select"
+                                name="exchange"
+                                value={row.exchange}
+                                onChange={(event) => handleInputChange(index, event)}
+                              >
+                                <option value="1">Exchange 1</option>
+                                <option value="2">Exchange 2</option>
+                                <option value="3">Exchange 3</option>
+                              </select>
+                            </td>
+                            <td>
+                              <select
+                                id="defaultSelect"
+                                className="form-select"
+                                name="orderType"
+                                value={row.orderType}
+                                onChange={(event) => handleInputChange(index, event)}
+                              >
+                                <option value="1">Order Type 1</option>
+                                <option value="2">Order Type 2</option>
+                                <option value="3">Order Type 3</option>
+                              </select>
+                            </td>
+                            <td>
+                              <select
+                                id="defaultSelect"
+                                className="form-select"
+                                name="productType"
+                                value={row.productType}
+                                onChange={(event) => handleInputChange(index, event)}
+                              >
+                                <option value="1">Product Type 1</option>
+                                <option value="2">Product Type 2</option>
+                                <option value="3">Product Type 3</option>
+                              </select>
+                            </td>
+                            <td>
+                              <i className="ri-delete-bin-line" onClick={() => handleDeleteRow(index)}></i>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="card-footer">
+                    <button className="btn btn-primary active" onClick={handleCreateBasket}>Create Basket</button>
+                  </div>
+                </div>
               </div>
             </div>
-            {/* <!-- / Two Steps Verification --> */}
-            <img
-              src="../../assets/img/illustrations/tree-3.png"
-              alt="auth-tree"
-              class="authentication-image-object-left d-none d-lg-block"
-            />
-            <img
-              src="../../assets/img/illustrations/auth-basic-mask-light.png"
-              class="authentication-image d-none d-lg-block scaleX-n1-rtl"
-              height="172"
-              alt="triangle-bg"
-              data-app-light-img="illustrations/auth-basic-mask-light.png"
-              data-app-dark-img="illustrations/auth-basic-mask-dark.png"
-            />
-            <img
-              src="../../assets/img/illustrations/tree.png"
-              alt="auth-tree"
-              class="authentication-image-object-right d-none d-lg-block"
-            />
           </div>
+          <Footer />
         </div>
-      </div>
-
-      {/* <!-- / Content --> */}
-
-      <div class="buy-now">
-        <a
-          href="https://themeselection.com/item/materio-bootstrap-html-admin-template/"
-          target="_blank"
-          class="btn btn-danger btn-buy-now"
-        >
-          Buy Now
-        </a>
       </div>
     </div>
   );
 };
 
-export default VerifyOtp;
+export default Basket;

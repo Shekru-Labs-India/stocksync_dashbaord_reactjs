@@ -11,13 +11,16 @@
  
 
  
-
-
+    <link rel="stylesheet" href="./assets/vendor/css/pages/front-page.css" />
+ <link rel="stylesheet" href="./assets/vendor/libs/nouislider/nouislider.css" />
+<link rel="stylesheet" href="./assets/vendor/libs/swiper/swiper.css" />
+<link rel="stylesheet" href="./assets/vendor/css/pages/front-page-landing.css" />
+<link href='//cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css' rel='stylesheet'>
     <!-- Core CSS -->
     <link rel="stylesheet" href="./assets/css/demo.css">
     <link rel="stylesheet" href="./assets/vendor/css/rtl/theme-default.css">
       <link rel="stylesheet" href="./assets/vendor/css/rtl/core.css">
-  
+  <link rel="stylesheet"  href="//cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./assets/vendor/libs/node-waves/node-waves.css">
     <link rel="stylesheet" href="./assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
@@ -34,10 +37,29 @@
     <!-- <link rel="stylesheet" href="./assets/vendor/css/rtl/theme-default-dark.css" /> -->
     <link rel="stylesheet" href="./assets/vendor/css/rtl/core-dark" />
     <link rel="stylesheet" href="./assets/vendor/css/rtl/theme-semi-dark" />
-    
+    <link rel="stylesheet" href="./assets/vendor/libs/animate-css/animate.css">
+
     <script src="./assets/vendor/js/helpers.js"></script>
     <script src="./assets/vendor/js/template-customizer.js"></script>
     <script src="./assets/js/config.js"></script>
+    <script src="./assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="./assets/vendor/libs/i18n/i18n.js"></script>
+    <script src="./assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="./assets/vendor/js/menu.js"></script>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-5DDHKGP");
+    </script>
+
+
     <title>Stock Sync</title>
   </head>
   <body>
@@ -47,11 +69,32 @@
     </noscript>
     <div id="root"></div>
 
+
+
+
     <!-- Scripts -->
     <!-- <script src="https://unpkg.com/@tanstack/react-query@4/build/umd/index.production.js"></script> -->
-
+<!-- jQuery -->
+<script
+type="text/javascript"
+charset="utf8"
+src="https://code.jquery.com/jquery-3.6.0.min.js"
+></script>
+<script
+type="text/javascript"
+charset="utf8"
+src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"
+></script>
+<script>
+  $(document).ready(function () {
+    $("#example").DataTable();
+  });
+</script>
+<script src="//cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
+    <script src="./assets/vendor/js/dropdown-hover.js"></script>
+    <script src="./assets/vendor/js/mega-dropdown.js"></script>
   <!-- <script src="./assets/vendor/libs/jquery/jquery.js"></script> -->
-<!-- <script src="./assets/vendor/libs/popper/popper.js"></script> -->
+<script src="./assets/vendor/libs/popper/popper.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- <script src="./assets/vendor/libs/node-waves/node-waves.js"></script> -->

@@ -2,15 +2,16 @@ import React from "react";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
 import SubHeader from "../component/SubHeader";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   return (
     <div>
-      {/* <Header></Header> */}
-      <div classNameName="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-        <div classNameName="layout-container">
-          <Header></Header>
-          <SubHeader></SubHeader>
+        <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+      <div className="layout-container">
+        <Header />
+        <SubHeader />
+          
           <div className="container-xxl flex-grow-1 container-p-y">
             <div className="row">
               <div className="col-12">
@@ -153,7 +154,7 @@ const Profile = () => {
                     <small className="card-text text-uppercase text-muted small">
                       Teams
                     </small>
-                    <ul className="list-unstyled mb-0 mt-3 pt-1">
+                    <ul className="list-unstyled mb-5 mt-3 pt-1">
                       <li className="d-flex align-items-center mb-4">
                         <i className="ri-github-line ri-24px text-body me-2"></i>
                         <div className="d-flex flex-wrap">
@@ -170,9 +171,32 @@ const Profile = () => {
                             React Developer
                           </span>
                           <span>(98 Members)</span>
+
                         </div>
                       </li>
                     </ul>
+
+                    <div className="ms-auto">
+                <Link to="/time_line">
+                  <button className="btn btn-primary active mb-3 ">
+                  Timeline
+                  </button>
+                </Link>
+              </div>
+                    <div className="ms-auto">
+                <Link to="/my_report">
+                  <button className="btn btn-primary active mb-3">
+                    My Report
+                  </button>
+                </Link>
+              </div>
+                    <div className="ms-auto">
+                <Link to="/student_report">
+                  <button className="btn btn-primary active ">
+                    Student Report
+                  </button>
+                </Link>
+              </div>
                   </div>
                 </div>
 

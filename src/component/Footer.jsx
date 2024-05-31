@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 const Footer = () => {
   return (
     <div>
@@ -14,14 +14,14 @@ const Footer = () => {
       </div>
       <div className="d-none d-lg-inline-block">
         
-        <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">License</a>
+        {/* <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">License</a>
         <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">More Themes</a>
         
         <a href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/" target="_blank" className="footer-link me-4">Documentation</a>
         
         
-        <a href="https://themeselection.com/support/" target="_blank" className="footer-link d-none d-sm-inline-block">Support</a>
-        
+        <a href="https://themeselection.com/support/" target="_blank" className="footer-link d-none d-sm-inline-block">Support</a> */}
+        <Link to="/landing_home_page">Website</Link>
       </div>
     </div>
   </div>

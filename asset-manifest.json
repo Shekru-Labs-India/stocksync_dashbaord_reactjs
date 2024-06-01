@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/stocksync_dashbaord_reactjs/static/css/main.7d4a8654.css",
+    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.fdfc319c.js",
+    "static/js/453.630971ca.chunk.js": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js",
+    "index.html": "/stocksync_dashbaord_reactjs/index.html",
+    "main.7d4a8654.css.map": "/stocksync_dashbaord_reactjs/static/css/main.7d4a8654.css.map",
+    "main.fdfc319c.js.map": "/stocksync_dashbaord_reactjs/static/js/main.fdfc319c.js.map",
+    "453.630971ca.chunk.js.map": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7d4a8654.css",
+    "static/js/main.fdfc319c.js"
+  ]
+}

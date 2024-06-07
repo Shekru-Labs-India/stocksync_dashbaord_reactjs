@@ -22,10 +22,11 @@ const MyReportView = () => {
   };
 
   return (
+    <div>   <Header />
+    <SubHeader />
     <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
       <div className="layout-container">
-        <Header />
-        <SubHeader />
+     
         <div className="Container">
           <div className="container-xxl flex-grow-1 container-p-y">
           <nav aria-label="breadcrumb">
@@ -151,6 +152,7 @@ const MyReportView = () => {
         </div>
         <Footer />
       </div>
+    </div>
     </div>
   );
 };

@@ -117,6 +117,7 @@ const BasicTable = () => {
                               name={`cePe${index}`}
                               value="1"
                               onChange={(event) => handleInputChange(index, event)}
+                              checked
                             />
                             <label className="form-check-label" htmlFor={`cePe${index}`}>
                               CE

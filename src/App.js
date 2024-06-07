@@ -46,14 +46,20 @@ import StudReportList from './screen/StudReportList';
 import StudReportView from './screen/StudReportView';
 import TimeLine from './screen/TimeLine';
 import Position from './screen/Position';
+import ManageStudent from './screen/ManageStudent';
+import CreateStudent from './screen/CreateStudent';
+import UpdateStudent from './screen/UpdateStudent';
+import StudentDetails from './screen/StudentDetails';
  // Import the new UserProfile component
 
 function App() {
   return (
-    <Router>
+    
       <div className="App">
         {/* Uncomment if you want Header and Footer to be always visible */}
         {/* <Header /> */}
+        {/* <BasicTable/> */}
+        {/* <ManageStudent></ManageStudent> */}
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -73,13 +79,17 @@ function App() {
             <Route path="/student_report_list" element={<StudReportList />} />
             <Route path="/student_report_view" element={<StudReportView />} />
             <Route path="/time_line" element={<TimeLine />} />
+            <Route path="/manage_student" element={<ManageStudent />} />
+            <Route path="/create_student" element={<CreateStudent />} />
+            <Route path="/update_student/:id" element={<UpdateStudent />} />
+            <Route path="/student_details" element={<StudentDetails />} />
             <Route path="/landing_home_page" element={<LandingHomeScreen />} />
           </Routes>
         </div>
         {/* Uncomment if you want Header and Footer to be always visible */}
         {/* <Footer /> */}
       </div>
-    </Router>
+   
   );
 }
 

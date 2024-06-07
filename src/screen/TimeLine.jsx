@@ -1,19 +1,42 @@
 import React from 'react'
 import SubHeader from '../component/SubHeader'
 import Header from '../component/Header'
-
+import { Link , useNavigate } from 'react-router-dom'
 const TimeLine = () => {
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
-      <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-      <div className="layout-container">
         <Header />
         <SubHeader />
+      <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+      <div className="layout-container">
+      
       
           <div className="container-xxl flex-grow-1 container-p-y">
+          <nav aria-label="breadcrumb">
+                <ol className="breadcrumb breadcrumb-style1">
+                <li className="breadcrumb-item">
+                    <Link to="/"> Home</Link>
+                  </li>
+                  <li className="breadcrumb-item">
+                    <Link to="/user_profile"> Profile</Link>
+                  </li>
+                  <li className="breadcrumb-item active" aria-current="page">Timeline</li>
+                </ol>
+              </nav>
           <div class="col-xl-6 mb-6 mb-xl-0">
     <div class="card">
-      <h5 class="card-header pb-6 text-start">Basic Timeline</h5>
+    <div className="d-flex justify-content-between align-items-center card-header">
+                <button onClick={handleBack} className="btn btn-transparent">
+                  {/* <i className="ri-arrow-left-line"></i>  */}
+                  Back
+                </button>
+                <h5 className="text-center mb-0 flex-grow-1">Timeline</h5>
+              </div>
+              {/* <h5 className="text-start ms-5 ">Timeline</h5> */}
       <div class="card-body">
         <ul class="timeline mb-0">
           <li class="timeline-item timeline-item-transparent">

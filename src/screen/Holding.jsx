@@ -9,11 +9,12 @@ import SubHeader from "../component/SubHeader";
 
 const Holding = () => {
   return (
+    <div><Header />
+    <SubHeader />
     <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
       <div className="layout-container">
         <div className="Container">
-          <Header />
-          <SubHeader />
+          
           <div className="container-xxl flex-grow-1 container-p-y">
             <div class="card">
               <h5 class="card-header text-start">Holding </h5>
@@ -57,7 +58,7 @@ const Holding = () => {
         </div>
         <Footer></Footer>
       </div>
-    
+      </div>
     </div>
   );
 };

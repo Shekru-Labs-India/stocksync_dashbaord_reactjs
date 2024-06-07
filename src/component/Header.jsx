@@ -1,9 +1,31 @@
-import React from "react";
+// import React from "react";
 import SubHeader from "./SubHeader";
 import Profile from "../screen/Profile";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import React, { useState, useEffect } from 'react';
+  import axios from 'axios';
+
+
+
 const Header = () => {
+
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+
+  const handleLogout = () => {
+    axios.get('http://192.46.212.210/api/common/logout')
+      .then(response => {
+        if (response.status === 200) {
+          setIsLoggedOut(true);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+
   return (
     <div>
       {/* <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
@@ -209,14 +231,15 @@ const Header = () => {
                   </li>
                   <li>
                     <div className="d-grid px-4 pt-2 pb-1">
-                      <a
+                      {/* <a
                         className="btn btn-danger d-flex"
                         href="auth-login-cover.html"
                         target="_blank"
-                      >
-                        <small className="align-middle">Logout</small>
-                        <i className="ri-logout-box-r-line ms-2 ri-16px"></i>
-                      </a>
+                      > */}
+                        {/* <small className="align-middle">Logout</small>
+                        <i className="ri-logout-box-r-line ms-2 ri-16px"></i> */}
+                        <button  className="btn btn-danger d-flex" onClick={handleLogout}>Logout</button>
+                      {/* </a> */}
                     </div>
                   </li>
                 </ul>

@@ -1,17 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { HashRouter,BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ReactQueryClientProvider from './ReactQueryClient';
+import './assets/css/demo.css'
+
+import './assets/vendor/css/rtl/core.css'
+// import '../assets/vendor/css/rtl/core-dark.css'
+//  import '../assets/vendor/css/rtl/theme-bordered.css'
+ import './assets/vendor/css/pages/front-page.css'
+//  import './assets/vendor/libs/nouislider/nouislider.css'
+// import'./assets/vendor/libs/swiper/swiper.css'
+import './assets/vendor/css/pages/page-profile.css'
+import './assets/vendor/css/pages/front-page-landing.css'
+import './assets/img/favicon/favicon.ico'
+import './assets/vendor/css/pages/page-auth.css'
+import './assets/vendor/libs/animate-css/animate.css'
+import './assets/vendor/css/rtl/theme-default.css'
+// import './assets/vendor/css/rtl/core-dark.css'
+
+// import './assets/vendor/libs/apex-charts/apex-charts.css'
+import './assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'
+import './assets/vendor/libs/typeahead-js/typeahead.css'
+// import './assets/img/favicon/favicon.ico'
+import './assets/vendor/libs/@form-validation/form-validation.css'
+import './assets/vendor/libs/apex-charts/apex-charts.css'
+import './assets/vendor/libs/node-waves/node-waves.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-       {/* <ReactQueryClientProvider> */}
-    <App />
-    {/* </ReactQueryClientProvider> */}
-  </React.StrictMode>
+    <HashRouter>
+<App></App>
+    </HashRouter>
+
+ 
 );
 
 // If you want to start measuring performance in your app, pass a function

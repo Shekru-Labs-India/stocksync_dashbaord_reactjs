@@ -1,0 +1,146 @@
+import React, { useState, useEffect } from 'react';
+
+const Position = () => {
+  const [positionData, setPositionData] = useState({
+    openPositions: [],
+    closedPositions: [],
+    totalRealisedPnl: 0.0,
+    totalUnrealisedPnl: 0.0
+  });
+
+  useEffect(() => {
+    getPositionList();
+  }, []);
+
+  const getPositionList = async () => {
+    try {
+      const response = await fetch('http://192.46.212.210/api/teacher/get_position_list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: 42 })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      let openPositionRows = [];
+      let closedPositionRows = [];
+      let totalRealisedPnl = 0.0;
+      let totalUnrealisedPnl = 0.0;
+
+      data.position_list.forEach(res => {
+        const item = JSON.parse(res);
+
+        const dailyDiffPercent = (((item.ltp - item.close) / item.close) * 100).toFixed(2);
+        const netqty = parseInt(item.netqty);
+        const lotsize = parseInt(item.lotsize);
+        const lotquantity = parseInt(netqty / lotsize);
+        const ordertype = lotsize > 0 ? "BUY" : "SELL";
+        const color_ordertype = lotsize > 0 ? 'text-success' : 'text-danger';
+        const avg_price = lotsize > 0 ? item.totalbuyavgprice : item.totalsellavgprice;
+        const color_pnl = item.pnl > 0 ? 'text-success' : 'text-danger';
+        const color_lots = lotsize > 0 ? 'text-success' : 'text-danger';
+        const color_diff_percent = dailyDiffPercent > 0 ? 'text-success' : 'text-danger';
+
+        if (netqty !== 0) {
+          totalUnrealisedPnl += parseFloat(item.unrealised);
+          openPositionRows.push(
+            <tr key={item.tradingsymbol}>
+              <td><span className="instrument_symbol">{item.tradingsymbol}</span> <span className="d-none instrument_token">{item.symboltoken}</span></td>
+              <td><span className="instrument_producttype">{item.producttype}</span></td>
+              <td>{item.optiontype}</td>
+              <td className={color_ordertype}>{ordertype}</td>
+              <td><span className="instrument_exchange">{item.exchange}</span></td>
+              <td className={color_lots}>
+                {lotquantity} Lots
+                <span className="text-body-tertiary lot_size">(1 Lot = {item.lotsize})</span>
+                <span className="d-none buy_quantity">{netqty}</span>
+              </td>
+              <td><span className={color_diff_percent}>{item.ltp} ₹</span> <span className="text-body-tertiary">({dailyDiffPercent}%)</span></td>
+              <td>{avg_price} ₹</td>
+              <td className={color_pnl}>{item.pnl} ₹</td>
+            </tr>
+          );
+        } else {
+          totalRealisedPnl += parseFloat(item.realised);
+          closedPositionRows.push(
+            <tr key={item.tradingsymbol}>
+              <td><span className="instrument_symbol">{item.tradingsymbol}</span> <span className="d-none instrument_token">{item.symboltoken}</span></td>
+              <td>{item.producttype}</td>
+              <td>{item.optiontype}</td>
+              <td>{item.exchange}</td>
+              <td>0 Lots <span className="text-body-tertiary">(1 Lot = {item.lotsize})</span></td>
+              <td><span className={color_diff_percent}>{item.ltp} ₹</span> <span className="text-body-tertiary">({dailyDiffPercent}%)</span></td>
+              <td>{item.totalbuyavgprice} ₹</td>
+              <td>{item.totalsellavgprice} ₹</td>
+              <td className={color_pnl}>{item.pnl} ₹</td>
+            </tr>
+          );
+        }
+      });
+
+      setPositionData({
+        openPositions: openPositionRows,
+        closedPositions: closedPositionRows,
+        totalRealisedPnl,
+        totalUnrealisedPnl
+      });
+
+    } catch (error) {
+      console.error("Error occurred while fetching position list:", error);
+    }
+  };
+
+  return (
+    <div>
+      <table id="open_position_table">
+        <thead>
+          <tr>
+            <th>Instrument</th>
+            <th>Product Type</th>
+            <th>Option Type</th>
+            <th>Order Type</th>
+            <th>Exchange</th>
+            <th>Lots</th>
+            <th>LTP</th>
+            <th>Avg Price</th>
+            <th>P&L</th>
+          </tr>
+        </thead>
+        <tbody>
+          {positionData.openPositions}
+        </tbody>
+      </table>
+
+      <table id="closed_position_table">
+        <thead>
+          <tr>
+            <th>Instrument</th>
+            <th>Product Type</th>
+            <th>Option Type</th>
+            <th>Exchange</th>
+            <th>Lots</th>
+            <th>LTP</th>
+            <th>Buy Avg Price</th>
+            <th>Sell Avg Price</th>
+            <th>P&L</th>
+          </tr>
+        </thead>
+        <tbody>
+          {positionData.closedPositions}
+        </tbody>
+      </table>
+
+      <div>Total Unrealised P&L: {positionData.totalUnrealisedPnl} ₹</div>
+      <div>Total Realised P&L: {positionData.totalRealisedPnl} ₹</div>
+      <div>Total P&L: {(positionData.totalRealisedPnl + positionData.totalUnrealisedPnl)} ₹</div>
+    </div>
+  );
+};
+
+export default Position;

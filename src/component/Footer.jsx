@@ -13,13 +13,13 @@ const Footer = () => {
         </script>, made with <span className="text-danger"><i className="tf-icons ri-heart-fill"></i></span> by <a href="https://themeselection.com" target="_blank" className="footer-link">ThemeSelection</a>
       </div>
       <div className="d-none d-lg-inline-block">
-        
+
         {/* <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">License</a>
         <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">More Themes</a>
-        
+
         <a href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/" target="_blank" className="footer-link me-4">Documentation</a>
-        
-        
+
+
         <a href="https://themeselection.com/support/" target="_blank" className="footer-link d-none d-sm-inline-block">Support</a> */}
         <Link to="/landing_home_page">Website</Link>
       </div>
@@ -29,10 +29,15 @@ const Footer = () => {
 
 
 
-          
-         
+
+
     </div>
   )
 }
 
 export default Footer
+
+
+
+
+

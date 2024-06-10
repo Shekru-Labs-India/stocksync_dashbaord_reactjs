@@ -54,7 +54,7 @@ function App() {
       <Routes>
         <Route path="/app1/*" element={<App1 />} />
         <Route path="/app2/*" element={<App2 />} />
-        <Route path="/" element={<Login />} />
+        {/* <Route path="/" element={<Login />} /> */}
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/" element={<Dashboard />} /> */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

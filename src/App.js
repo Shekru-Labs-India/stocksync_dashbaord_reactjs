@@ -52,9 +52,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/app1/*" element={<App1 />} />
-        <Route path="/app2/*" element={<App2 />} />
-        {/* <Route path="/" element={<Login />} /> */}
+        {/* <Route path="/app1/*" element={<App1 />} />
+        <Route path="/app2/*" element={<App2 />} /> */}
+        <Route path="/" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/" element={<Dashboard />} /> */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -85,7 +85,7 @@ function App() {
         <Route path="/app2/student_trade_book" element={<StudentTradeBook />} />
 
         {/* Teacher dashboard */}
-        <Route path="/" element={<Home />} />
+        {/* <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/user_profile" element={<Profile />} />
         <Route path="/user_login" element={<Login />} />
@@ -106,7 +106,7 @@ function App() {
         <Route path="/create_student" element={<CreateStudent />} />
         <Route path="/update_student/:id" element={<UpdateStudent />} />
         <Route path="/student_details" element={<StudentDetails />} />
-        <Route path="/landing_home_page" element={<LandingHomeScreen />} />
+        <Route path="/landing_home_page" element={<LandingHomeScreen />} /> */}
       </Routes>
     </Router>
   );

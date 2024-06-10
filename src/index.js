@@ -6,6 +6,10 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ReactQueryClientProvider from './ReactQueryClient';
 import './assets/css/demo.css'
+import 'primereact/resources/themes/saga-blue/theme.css';  // Choose the theme you like
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
 
 import './assets/vendor/css/rtl/core.css'
 // import '../assets/vendor/css/rtl/core-dark.css'
@@ -28,11 +32,14 @@ import './assets/vendor/libs/typeahead-js/typeahead.css'
 import './assets/vendor/libs/@form-validation/form-validation.css'
 import './assets/vendor/libs/apex-charts/apex-charts.css'
 import './assets/vendor/libs/node-waves/node-waves.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <HashRouter>
+        
 <App></App>
+
     </HashRouter>
 
  

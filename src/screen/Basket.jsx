@@ -1,1432 +1,21 @@
-// import React, { useState } from "react";
-// import Header from "../component/Header";
-// import SubHeader from "../component/SubHeader";
-// import Footer from "../component/Footer";
-
-// const Basket = () => {
-//   const [showModal, setShowModal] = useState(true);
-//   const [selectedBasketIndex, setSelectedBasketIndex] = useState(null);
-//   const handleClose = () => setShowModal(false);
-//   const handleShow = () => setShowModal(true);
-//   const [baskets, setBaskets] = useState([]);
-//   const [currentBasket, setCurrentBasket] = useState({
-//     name: "",
-//     rows: [
-//       {
-//         name: "",
-//         instrument: "1", // Default value
-//         lotQtyBuffer: "1", // Default value
-//         cePe: "1", // Default value for CE
-//         transactionType: "1", // Default value for BUY Order
-//         exchange: "1", // Default value
-//         orderType: "1", // Default value
-//         productType: "1", // Default value
-//       },
-//     ],
-//   });
-//   const [rows, setRows] = useState([
-//     {
-//       name: "",
-//       instrument: "1", // Default value
-//       lotQtyBuffer: "1", // Default value
-//       cePe: "1", // Default value for CE
-//       transactionType: "1", // Default value for BUY Order
-//       exchange: "1", // Default value
-//       orderType: "1", // Default value
-//       productType: "1", // Default value
-//     },
-//   ]);
-
-  // const handleAddRow = () => {
-  //   if (rows.length < 10) {
-  //     setRows([
-  //       ...rows,
-  //       {
-  //         name: "",
-  //         instrument: "1",
-  //         lotQtyBuffer: "1",
-  //         cePe: "1",
-  //         transactionType: "1",
-  //         exchange: "1",
-  //         orderType: "1",
-  //         productType: "1",
-  //       },
-  //     ]);
-  //   } else {
-  //     alert("You can only add up to 10 rows.");
-  //   }
-  // };
-
-//   const handleInputChange = (index, event) => {
-//     const newRows = [...rows];
-//     newRows[index][event.target.name] = event.target.value;
-//     setRows(newRows);
-//   };
-
-//   const handleDeleteRow = (index) => {
-//     const newRows = [...rows];
-//     newRows.splice(index, 1);
-//     setRows(newRows);
-//   };
-
-//   const handleCreateBasket = () => {
-//     setBaskets([...baskets, { ...currentBasket, rows }]);
-//     setRows([
-//       {
-//         name: "",
-//         instrument: "1",
-//         lotQtyBuffer: "1",
-//         cePe: "1",
-//         transactionType: "1",
-//         exchange: "1",
-//         orderType: "1",
-//         productType: "1",
-//       },
-//     ]);
-//     setCurrentBasket({
-//       name: "",
-//       rows: [
-//         {
-//           name: "",
-//           instrument: "1",
-//           lotQtyBuffer: "1",
-//           cePe: "1",
-//           transactionType: "1",
-//           exchange: "1",
-//           orderType: "1",
-//           productType: "1",
-//         },
-//       ],
-//     });
-//   };
-
-//   const handleDeleteBasket = (index) => {
-//     const newBaskets = [...baskets];
-//     newBaskets.splice(index, 1);
-//     setBaskets(newBaskets);
-//   };
-
-//   const handleEditBasket = (index) => {
-//     setSelectedBasketIndex(index);
-//     setCurrentBasket(baskets[index]);
-//     setRows(baskets[index].rows); // Update rows with the selected basket's rows
-//     handleShow();
-//   };
-
-//   const getFormattedBasketName = (index) => {
-//     const currentDate = new Date();
-//     const options = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-//     const formattedDate = currentDate.toLocaleString('default', options).replace(',', '').replace(/ at /, ' ');
-//     return `Basket ${formattedDate}`;
-//   };
-
-//   return (
-//     <div>
-//        <Header />
-//           <SubHeader />
-//       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-//         <div className="layout-container">
-
-//           <div className="container-xxl flex-grow-1 container-p-y">
-//             <div className="row">
-//               <div className="col-3">
-
-//                   <div className="card mb-3" >
-//                     <div
-//                       className="card-datatable table-responsive pt-0"
-//                       data-bs-toggle="modal"
-//                       data-bs-target="#exLargeModal"
-//                       onClick={() => handleEditBasket}
-//                     >
-//                       <table className="table">
-//                         <tbody>
-//                           <tr>
-
-//                           <td className="fw-bold1 " colSpan="2">
-// basket name              </td>
-
-//                             <td className="text-danger">
-//                               <i
-//                                 className="ri-close-circle-line"
-
-//                               ></i>
-//                             </td>
-
-//                           </tr>
-//                           <tr>
-//                             <td>Total1/10</td>
-//                             <td>
-//                               <span
-//                                 className={
-
-//                                      "text-success"
-
-//                                 }
-//                               >
-//                                 Buy:5
-
-//                               </span>
-//                               /10
-//                             </td>
-//                             <td>
-//                               <span
-//                                 className={
-
-//                                     "text-danger"
-
-//                                 }
-//                               >
-//                                 Sell:10
-
-//                               </span>
-//                               /10
-//                             </td>
-//                           </tr>
-//                         </tbody>
-//                       </table>
-//                     </div>
-//                   </div>
-
-//               </div>
-//               <div className="col-9">
-//                 <div className="card">
-//                   <div className="card-header d-flex justify-content-between ">
-//                     <h5 className="mb-0 ">Create New Basket</h5>
-//                     {/* <button
-//                       className="btn btn-primary active "
-//                       onClick={handleAddRow}
-//                     >
-//                       Add
-//                     </button> */}
-//                   </div>
-//                   <div className="mt-3 mx-3 d-flex align-items-center ">
-//                     <label htmlFor="basketName" className="form-label me-2">
-//                       Basket Name:
-//                     </label>
-//                   </div>
-//                   <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
-//                     <input
-//                       type="text"
-//                       className=" form-control form-control-sm"
-//                       id="basketName"
-//                       placeholder="Enter Basket Name"
-//                       value={currentBasket.name}
-//                       onChange={(event) =>
-//                         setCurrentBasket({
-//                           ...currentBasket,
-//                           name: event.target.value,
-//                         })
-//                       }
-//                     />
-//                     <button
-//                       className="btn btn-primary active "
-//                       onClick={handleAddRow}
-//                     >
-//                       Add
-//                     </button>
-//                   </div>
-
-//                   <div className="table-responsive text-nowrap ">
-//                     <table className="table">
-//                       <thead>
-//                         <tr>
-//                           {/* <th>Name</th> */}
-//                           <th>Instrument</th>
-//                           <th>Lot Qty Buffer</th>
-//                           <th>CE/PE</th>
-//                           <th>Transaction Type</th>
-//                           <th>Exchange</th>
-//                           <th>Order Type</th>
-//                           <th>Product Type</th>
-//                           <th>Action</th>
-//                         </tr>
-//                       </thead>
-//                       <tbody className="table-border-bottom-0">
-//                         {rows.map((row, index) => (
-//                           <tr key={index}>
-//                             {/* <td>
-//                               <input
-//                                 type="text"
-//                                 className="form-control"
-//                                 name="name"
-//                                 value={row.name}
-//                                 onChange={(event) => handleInputChange(index, event)}
-//                               />
-//                             </td> */}
-//                             <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select"
-//                                 name="instrument"
-//                                 value={row.instrument}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">Instrument 1</option>
-//                                 <option value="2">Instrument 2</option>
-//                                 <option value="3">Instrument 3</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <input
-//                                 type="text"
-//                                 className="form-control"
-//                                 name="lotQtyBuffer"
-//                                 placeholder="Enter Lot QYT Buffer"
-//                                 value={row.lotQtyBuffer}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                             </td>
-//                             <td>
-//                             <div className="form-check form-check-inline mt-4">
-//                                 <input
-//                                   className="form-check-input"
-//                                   type="radio"
-//                                   name={`cePe${index}`}
-//                                   value="1"
-//                                   checked={row.cePe === "1"}
-//                                   onChange={(event) =>
-//                                     handleInputChange(index, event)
-//                                   }
-//                                 />
-
-//                                 <label
-//                                   className="form-check-label"
-//                                   htmlFor={`cePe${index}`}
-//                                   style={{ color: "green" }}
-//                                 >
-//                                   CE
-//                                 </label>
-//                               </div>
-//                               <div className="form-check form-check-inline">
-//                                 <input
-//                                   className="form-check-input"
-//                                   type="radio"
-//                                   name={`cePe${index}`}
-//                                   value="1"
-//                                   onChange={(event) =>
-//                                     handleInputChange(index, event)
-//                                   }
-//                                 />
-
-//                                 <label
-//                                   className="form-check-label"
-//                                   htmlFor={`cePe${index}`}
-//                                   style={{ color: "orange" }}
-//                                 >
-//                                   PE
-//                                 </label>
-//                               </div>
-//                             </td>
-//                             <td>
-//                             <div className="form-check form-check-inline mt-4">
-//   <input
-//     className="form-check-input"
-//     type="radio"
-//     name={`transactionType${index}`}
-//     value="1"
-//     checked={row.transactionType === "1"} // Check if transactionType value is "1"
-//     onChange={(event) => handleInputChange(index, event)}
-//   />
-
-//   <label className="form-check-label">
-//     <span
-//       style={{
-//         color: "skyblue",
-//         fontWeight: "bold",
-//       }}
-//     >
-//       BUY
-//     </span>
-//   </label>
-// </div>
-// <div className="form-check form-check-inline">
-//   <input
-//     className="form-check-input"
-//     type="radio"
-//     name={`transactionType${index}`}
-//     value="2"
-//     checked={row.transactionType === "2"} // Check if transactionType value is "2"
-//     onChange={(event) => handleInputChange(index, event)}
-//   />
-//   <label className="form-check-label">
-//     <span
-//       style={{
-//         color: "orange",
-//         fontWeight: "bold",
-//       }}
-//     >
-//       SELL
-//     </span>
-//   </label>
-// </div>
-
-//                             </td>
-//                             <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select"
-//                                 name="exchange"
-//                                 value={row.exchange}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">NFO</option>
-//                                 <option value="2">Exchange 2</option>
-//                                 <option value="3">Exchange 3</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select"
-//                                 name="orderType"
-//                                 value={row.orderType}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">MARKET</option>
-//                                 <option value="2">Order Type 2</option>
-//                                 <option value="3">Order Type 3</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select"
-//                                 name="productType"
-//                                 value={row.productType}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">CARRYFORWARD</option>
-//                                 <option value="2">Product Type 2</option>
-//                                 <option value="3">Product Type 3</option>
-//                               </select>
-//                             </td>
-//                             <td
-//                               className="text-danger"
-//                               onClick={() => handleDeleteRow(index)}
-//                             >
-//                               <i className="ri-close-circle-line ri-2x"></i>
-//                             </td>
-//                           </tr>
-//                         ))}
-//                       </tbody>
-//                     </table>
-//                     <div className="card-footer d-flex justify-content-between ">
-//                       <button
-//                         className="btn btn-success"
-//                         onClick={handleCreateBasket}
-//                       >
-//                         Create Basket
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div
-//           className="modal fade"
-//           id="exLargeModal"
-//           tabIndex="-1"
-//           aria-hidden="true"
-//         >
-//           <div className="modal-dialog modal-xl" role="document">
-//             <div className="modal-content">
-//               <div className="modal-header">
-//                 <h5 className="modal-title x" id="exampleModalLabel4">
-//                   Modal title
-//                 </h5>
-
-//                 <button
-//                   type="button"
-//                   className="btn-close"
-//                   data-bs-dismiss="modal"
-//                   aria-label="Close"
-//                 ></button>
-//               </div>
-//               <div className="mt-3 mx-3 d-flex align-items-center ">
-//                 <label htmlFor="basketName" className="form-label me-2">
-//                   Basket Name:
-//                 </label>
-//               </div>
-//               <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
-//                 <input
-//                   type="text"
-//                   className="form-control form-control-sm"
-//                   id="basketName"
-//                   placeholder="Enter Basket Name"
-//                   value={currentBasket.name}
-//                   onChange={(event) =>
-//                     setCurrentBasket({
-//                       ...currentBasket,
-//                       name: event.target.value,
-//                     })
-//                   }
-//                 />
-//                 <button
-//                   className="btn btn-primary active "
-//                   onClick={handleAddRow}
-//                 >
-//                   Add
-//                 </button>
-//               </div>
-
-//               <div className="modal-body">
-//                 <table className="table">
-//                   <thead>
-//                     <tr>
-//                       {/* <th>Name</th> */}
-//                       <th>Instrument</th>
-//                       <th>Lot Qty Buffer</th>
-//                       <th>CE/PE</th>
-//                       <th>Transaction Type</th>
-//                       <th>Exchange</th>
-//                       <th>Order Type</th>
-//                       <th>Product Type</th>
-//                       <th>Action</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {rows.map((row, index) => (
-//                       <tr key={index}>
-//                         {/* <td>
-//                           <input
-//                             type="text"
-//                             className="form-control"
-//                             name="name"
-//                             value={row.name}
-//                             onChange={(event) => handleInputChange(index, event)}
-//                           />
-//                         </td> */}
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="instrument"
-//                             value={row.instrument}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">Instrument 1</option>
-//                             <option value="2">Instrument 2</option>
-//                             <option value="3">Instrument 3</option>
-//                           </select>
-//                         </td>
-//                         <td>
-//                           <input
-//                             type="text"
-//                             className="form-control"
-//                             name="lotQtyBuffer"
-//                             placeholder="Enter Lot QTY Buffer"
-//                             value={row.lotQtyBuffer}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           />
-//                         </td>
-//                         <td>
-//                           <div className="form-check form-check-inline mt-4">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`cePe${index}`}
-//                               value="1"
-//                               checked={row.cePe === "1"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label
-//                               className="form-check-label"
-//                               htmlFor={`cePe${index}`}
-//                               style={{ color: "green" }}
-//                             >
-//                               CE
-//                             </label>
-//                           </div>
-//                           <div className="form-check form-check-inline">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`cePe${index}`}
-//                               value="2"
-//                               checked={row.cePe === "2"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label
-//                               className="form-check-label"
-//                               htmlFor={`cePe${index}`}
-//                               style={{ color: "orange" }}
-//                             >
-//                               PE
-//                             </label>
-//                           </div>
-//                         </td>
-//                         <td>
-//                           <div className="form-check form-check-inline mt-4">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`transactionType${index}`}
-//                               value="1"
-//                               checked={row.transactionType === "1"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label className="form-check-label">
-//                               <span
-//                                 style={{ color: "skyblue", fontWeight: "bold" }}
-//                               >
-//                                 BUY
-//                               </span>
-//                             </label>
-//                           </div>
-//                           <div className="form-check form-check-inline">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`transactionType${index}`}
-//                               value="2"
-//                               checked={row.transactionType === "2"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label className="form-check-label">
-//                               <span
-//                                 style={{ color: "orange", fontWeight: "bold" }}
-//                               >
-//                                 SELL
-//                               </span>
-//                             </label>
-//                           </div>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="exchange"
-//                             value={row.exchange}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">NFO</option>
-//                             <option value="2">Exchange 2</option>
-//                             <option value="3">Exchange 3</option>
-//                           </select>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="orderType"
-//                             value={row.orderType}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">MARKET</option>
-//                             <option value="2">Order Type 2</option>
-//                             <option value="3">Order Type 3</option>
-//                           </select>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="productType"
-//                             value={row.productType}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">CARRYFORWARD</option>
-//                             <option value="2">Product Type 2</option>
-//                             <option value="3">Product Type 3</option>
-//                           </select>
-//                         </td>
-//                         <td
-//                           className="text-danger"
-//                           onClick={() => handleDeleteRow(index)}
-//                         >
-//                           <i className="ri-close-circle-line ri-2x"></i>
-//                         </td>
-//                       </tr>
-//                     ))}
-//                   </tbody>
-//                 </table>
-//               </div>
-
-//               <div className="modal-footer">
-//                 <button
-//                   type="button"
-//                   className="btn btn-outline-secondary me-auto"
-//                   data-bs-dismiss="modal"
-//                 >
-//                   Close
-//                 </button>
-//                 <button type="button" className="btn btn-info">
-//                   Execute All
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       <Footer />
-//     </div>
-//   );
-// };
-
-// export default Basket;
 
 // import React, { useState, useEffect } from "react";
 // import Header from "../component/Header";
 // import SubHeader from "../component/SubHeader";
 // import Footer from "../component/Footer";
-
-// const Basket = () => {
-//   const [showModal, setShowModal] = useState(true);
-//   const [selectedBasketIndex, setSelectedBasketIndex] = useState(null);
-//   const [baskets, setBaskets] = useState([]);
-//   const userId = localStorage.getItem("user_id");
-//   const [currentBasket, setCurrentBasket] = useState({
-//     name: "",
-//     rows: [
-//       {
-//         name: "",
-//         instrument: "1",
-//         lotQtyBuffer: "1",
-//         cePe: "1",
-//         transactionType: "1",
-//         exchange: "1",
-//         orderType: "1",
-//         productType: "1",
-//       },
-//     ],
-//   });
-//   const [rows, setRows] = useState([
-//     {
-//       name: "",
-//       instrument: "1",
-//       lotQtyBuffer: "1",
-//       cePe: "1",
-//       transactionType: "1",
-//       exchange: "1",
-//       orderType: "1",
-//       productType: "1",
-//     },
-//   ]);
-
-//   useEffect(() => {
-//     fetchBasketList();
-//   }, []);
-
-//   const fetchBasketList = async () => {
-//     try {
-//       const response = await fetch(
-//         "http://192.46.212.210/api/teacher/basket_list_view",
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ teacher_id: userId }),
-//         }
-//       );
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         setBaskets(data.baskets || []);
-//       } else {
-//         console.error("Failed to fetch basket list", response.statusText);
-//       }
-//     } catch (error) {
-//       console.error(
-//         "An error occurred while fetching the basket list",
-//         error
-//       );
-//     }
-//   };
-
-//   const handleAddRow = () => {
-//     if (rows.length < 10) {
-//       setRows([
-//         ...rows,
-//         {
-//           name: "",
-//           instrument: "1",
-//           lotQtyBuffer: "1",
-//           cePe: "1",
-//           transactionType: "1",
-//           exchange: "1",
-//           orderType: "1",
-//           productType: "1",
-//         },
-//       ]);
-//     } else {
-//       alert("You can only add up to 10 rows.");
-//     }
-//   };
-
-//   const handleInputChange = (index, event) => {
-//     const newRows = [...rows];
-//     newRows[index][event.target.name] = event.target.value;
-//     setRows(newRows);
-//   };
-
-//   const handleDeleteRow = (index) => {
-//     const newRows = [...rows];
-//     newRows.splice(index, 1);
-//     setRows(newRows);
-//   };
-
-//   const handleCreateBasket = async () => {
-//     const teacherId = userId;
-
-//     const basketData = rows.map((row) => ({
-//       instrument: row.instrument,
-//       ce_pe: row.cePe === "1" ? "CE" : "PE",
-//       lot_quantity_buffer: row.lotQtyBuffer,
-//       transactionType: row.transactionType === "1" ? "BUY" : "SELL",
-//       exchange: "NFO",
-//       orderType: "MARKET",
-//       productType: "CARRYFORWARD",
-//       ltp: 43,
-//     }));
-
-//     const payload = {
-//       basket_id: null,
-//       basket_name: currentBasket.name,
-//       teacher_id: teacherId,
-//       basket_data: basketData,
-//     };
-
-//     try {
-//       const response = await fetch(
-//         "http://192.46.212.210/api/teacher/create_update_basket",
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(payload),
-//         }
-//       );
-
-//       if (response.ok) {
-//         const result = await response.json();
-//         setBaskets([...baskets, { ...currentBasket, rows }]);
-//         setRows([
-//           {
-//             name: "",
-//             instrument: "1",
-//             lotQtyBuffer: "1",
-//             cePe: "1",
-//             transactionType: "1",
-//             exchange: "1",
-//             orderType: "1",
-//             productType: "1",
-//           },
-//         ]);
-//         setCurrentBasket({
-//           name: "",
-//           rows: [
-//             {
-//               name: "",
-//               instrument: "1",
-//               lotQtyBuffer: "1",
-//               cePe: "1",
-//               transactionType: "1",
-//               exchange: "1",
-//               orderType: "1",
-//               productType: "1",
-//             },
-//           ],
-//         });
-//       } else {
-//         const errorText = await response.text();
-//         console.error("Failed to create basket", response.statusText, errorText);
-//       }
-//     } catch (error) {
-//       console.error("An error occurred while creating the basket", error);
-//     }
-//   };
-
-//   const handleDeleteBasket = (index) => {
-//     const newBaskets = [...baskets];
-//     newBaskets.splice(index, 1);
-//     setBaskets(newBaskets);
-//   };
-
-//   const handleEditBasket = (index) => {
-//     setSelectedBasketIndex(index);
-//     setCurrentBasket(baskets[index]);
-//     setRows(baskets[index].rows);
-//     handleShow();
-//   };
-
-//   const getFormattedBasketName = (index) => {
-//     const currentDate = new Date();
-//     const options = {
-//       month: "long",
-//       day: "numeric",
-//       hour: "2-digit",
-//       minute: "2-digit",
-//       second: "2-digit",
-//     };
-//     const formattedDate = currentDate
-//       .toLocaleString("default", options)
-//       .replace(",", "")
-//       .replace(/ at /, " ");
-//     return `Basket ${formattedDate}`;
-//   };
-
-//   const handleClose = () => setShowModal(false);
-//   const handleShow = () => setShowModal(true);
-
-//   return (
-//     <div>
-//       <Header />
-//       <SubHeader />
-//       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-//         <div className="layout-container">
-//           <div className="container-xxl flex-grow-1 container-p-y">
-//             <div className="row">
-//               <div className="col-3">
-
-//                   <div className="card mb-3" >
-//                     <div
-//                       className="card-datatable table-responsive pt-0"
-//                       data-bs-toggle="modal"
-//                       data-bs-target="#exLargeModal"
-//                       // onClick={() => handleEditBasket(index)}
-//                     >
-//                       <table className="table">
-//                         <tbody>
-//                           <tr>
-//                             <td className="fw-bold1" colSpan="2">
-//                              basket name
-//                             </td>
-//                             <td className="text-danger">
-//                               <i
-//                                 className="ri-close-circle-line"
-
-//                               ></i>
-//                             </td>
-//                           </tr>
-//                           <tr>
-//                             <td>Total: 1/10</td>
-//                             <td>
-//                               <span
-
-//                               >
-//                                 Buy:
-//                               </span>
-//                               /10
-//                             </td>
-//                             <td>
-//                               <span
-
-//                               >
-//                                 Sell:
-//                               </span>
-//                               /10
-//                             </td>
-//                           </tr>
-//                         </tbody>
-//                       </table>
-//                     </div>
-//                   </div>
-
-//               </div>
-//               <div className="col-9">
-//                 <div className="card">
-//                   <div className="card-header d-flex justify-content-between">
-//                     <h5 className="mb-0">Create New Basket</h5>
-//                   </div>
-//                   <div className="mt-3 mx-3 d-flex align-items-center">
-//                     <label htmlFor="basketName" className="form-label me-2">
-//                       Basket Name:
-//                     </label>
-//                   </div>
-//                   <div className="mt-3 mx-3  d-flex align-items-center mb-3 d-flex justify-content-between">
-//                     <input
-//                       type="text"
-//                       className="form-control form-control-sm me-5"
-//                       id="basketName"
-//                       placeholder=" Basket Name"
-//                       value={currentBasket.name}
-//                       onChange={(event) =>
-//                         setCurrentBasket({
-//                           ...currentBasket,
-//                           name: event.target.value,
-//                         })
-//                       }
-//                     />
-//                     <button
-//                       className="btn btn-primary active "
-//                       onClick={handleAddRow}
-//                     >
-//                       Add
-//                     </button>
-//                   </div>
-
-//                   <div className="table-responsive text-nowrap">
-//                     <table className="table">
-//                       <thead>
-//                         <tr>
-//                           <th>Instrument</th>
-//                           <th>Lot Qty Buffer</th>
-//                           <th>CE/PE</th>
-//                           <th>Transaction Type</th>
-//                           <th>Exchange</th>
-//                           <th>Order Type</th>
-//                           <th>Product Type</th>
-//                           <th>Action</th>
-//                         </tr>
-//                       </thead>
-//                       <tbody className="table-border-bottom-0">
-//                         {rows.map((row, index) => (
-//                           <tr key={index}>
-
-//                                                           <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select"
-//                                 name="instrument"
-//                                 value={row.instrument}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">BANKNIFTY05JUN2452500PE</option>
-//                                 <option value="2">BANKNIFTY05JUN2452500PE</option>
-//                                 <option value="3">BANKNIFTY05JUN2452500PE</option>
-//                               </select>
-//                             </td>
-
-//                             <td>
-//                               <input
-//                                 type="text"
-//                                 className="form-control form-control-sm"
-//                                 name="lotQtyBuffer"
-//                                 value={row.lotQtyBuffer}
-//                                 placeholder="Lot Qty Buffer"
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                             </td>
-//                             <td>
-
-//                               {/* <div className="mt-3 mx-3 d-flex align-items-center"> */}
-
-//   <div className="form-check form-check-inline">
-//     <input
-//       type="radio"
-//       className="form-check-input"
-//       name="cePe"
-//       value="1"
-//       checked={row.cePe === "1"}
-//       onChange={(event) => handleInputChange(index, event)}
-//     />
-//     <label className="form-check-label text-success ">CE</label>
-//   </div>
-//   <div className="form-check form-check-inline ml-2">
-//     <input
-//       type="radio"
-//       className="form-check-input"
-//       name="cePe"
-//       value="2"
-//       checked={row.cePe === "2"}
-//       onChange={(event) => handleInputChange(index, event)}
-//     />
-//     <label className="form-check-label text-warning">PE</label>
-//   </div>
-// {/* </div> */}
-
-//                             </td>
-//                             <td>
-//                             {/* <div className="mt-3 mx-3 d-flex align-items-center"> */}
-
-//   <div className="form-check form-check-inline">
-//     <input
-//       type="radio"
-//       className="form-check-input"
-//       name="transactionType"
-//       value="1"
-//       checked={row.transactionType === "1"}
-//       onChange={(event) => handleInputChange(index, event)}
-//     />
-//     <label className="form-check-label text-info ">Buy</label>
-//   </div>
-//   <div className="form-check form-check-inline ml-2">
-//     <input
-//       type="radio"
-//       className="form-check-input"
-//       name="transactionType"
-//       value="2"
-//       checked={row.transactionType === "2"}
-//       onChange={(event) => handleInputChange(index, event)}
-//     />
-//     <label className="form-check-label text-danger">Sell</label>
-//   </div>
-// {/* </div> */}
-//                             </td>
-//                             <td>
-//                               <select
-//                                 className="form-select form-select-sm"
-//                                 name="exchange"
-//                                 value={row.exchange}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">NFO</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <select
-//                                 className="form-select form-select-sm"
-//                                 name="orderType"
-//                                 value={row.orderType}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">MARKET</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <select
-//                                 className="form-select form-select-sm"
-//                                 name="productType"
-//                                 value={row.productType}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">CARRYFORWARD</option>
-//                               </select>
-//                             </td>
-//                             <td>
-//                               <button
-//                                 className="btn btn-outline-danger btn-sm"
-//                                 onClick={() => handleDeleteRow(index)}
-//                               >
-//                                 <i className="ri-delete-bin-line"></i>
-//                               </button>
-//                             </td>
-//                           </tr>
-//                         ))}
-//                       </tbody>
-//                     </table>
-//                   </div>
-//                   <div className="d-flex justify-content-start mt-3 mx-3 mb-3">
-//                     <button
-//                       className="btn btn-success"
-//                       onClick={handleCreateBasket}
-//                     >
-//                       Create Basket
-//                     </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-
-//         <div
-//           className="modal fade"
-//           id="exLargeModal"
-//           tabIndex="-1"
-//           aria-hidden="true"
-//         >
-//           <div className="modal-dialog modal-xl" role="document">
-//             <div className="modal-content">
-//               <div className="modal-header">
-//                 <h5 className="modal-title x" id="exampleModalLabel4">
-//                   Modal title
-//                 </h5>
-
-//                 <button
-//                   type="button"
-//                   className="btn-close"
-//                   data-bs-dismiss="modal"
-//                   aria-label="Close"
-//                 ></button>
-//               </div>
-//               <div className="mt-3 mx-3 d-flex align-items-center ">
-//                 <label htmlFor="basketName" className="form-label me-2">
-//                   Basket Name:
-//                 </label>
-//               </div>
-//               <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
-//                 <input
-//                   type="text"
-//                   className="form-control form-control-sm"
-//                   id="basketName"
-//                   placeholder="Enter Basket Name"
-//                   value={currentBasket.name}
-//                   onChange={(event) =>
-//                     setCurrentBasket({
-//                       ...currentBasket,
-//                       name: event.target.value,
-//                     })
-//                   }
-//                 />
-//                 <button
-//                   className="btn btn-primary active "
-//                   onClick={handleAddRow}
-//                 >
-//                   Add
-//                 </button>
-//               </div>
-
-//               <div className="modal-body">
-//                 <table className="table">
-//                   <thead>
-//                     <tr>
-//                       {/* <th>Name</th> */}
-//                       <th>Instrument</th>
-//                       <th>Lot Qty Buffer</th>
-//                       <th>CE/PE</th>
-//                       <th>Transaction Type</th>
-//                       <th>Exchange</th>
-//                       <th>Order Type</th>
-//                       <th>Product Type</th>
-//                       <th>Action</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {rows.map((row, index) => (
-//                       <tr key={index}>
-//                         {/* <td>
-//                           <input
-//                             type="text"
-//                             className="form-control"
-//                             name="name"
-//                             value={row.name}
-//                             onChange={(event) => handleInputChange(index, event)}
-//                           />
-//                         </td> */}
-                        // <td>
-                        //   <select
-                        //     id="defaultSelect"
-                        //     className="form-select"
-                        //     name="instrument"
-                        //     value={row.instrument}
-                        //     onChange={(event) =>
-                        //       handleInputChange(index, event)
-                        //     }
-                        //   >
-                        //     <option value="1">Instrument 1</option>
-                        //     <option value="2">Instrument 2</option>
-                        //     <option value="3">Instrument 3</option>
-                        //   </select>
-                        // </td>
-//                         <td>
-//                           <input
-//                             type="text"
-//                             className="form-control"
-//                             name="lotQtyBuffer"
-//                             placeholder="Enter Lot QTY Buffer"
-//                             value={row.lotQtyBuffer}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           />
-//                         </td>
-//                         <td>
-//                           <div className="form-check form-check-inline mt-4">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`cePe${index}`}
-//                               value="1"
-//                               checked={row.cePe === "1"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label
-//                               className="form-check-label"
-//                               htmlFor={`cePe${index}`}
-//                               style={{ color: "green" }}
-//                             >
-//                               CE
-//                             </label>
-//                           </div>
-//                           <div className="form-check form-check-inline">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`cePe${index}`}
-//                               value="2"
-//                               checked={row.cePe === "2"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label
-//                               className="form-check-label"
-//                               htmlFor={`cePe${index}`}
-//                               style={{ color: "orange" }}
-//                             >
-//                               PE
-//                             </label>
-//                           </div>
-//                         </td>
-//                         <td>
-//                           <div className="form-check form-check-inline mt-4">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`transactionType${index}`}
-//                               value="1"
-//                               checked={row.transactionType === "1"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label className="form-check-label">
-//                               <span
-//                                 style={{ color: "skyblue", fontWeight: "bold" }}
-//                               >
-//                                 BUY
-//                               </span>
-//                             </label>
-//                           </div>
-//                           <div className="form-check form-check-inline">
-//                             <input
-//                               className="form-check-input"
-//                               type="radio"
-//                               name={`transactionType${index}`}
-//                               value="2"
-//                               checked={row.transactionType === "2"}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                             <label className="form-check-label">
-//                               <span
-//                                 style={{ color: "orange", fontWeight: "bold" }}
-//                               >
-//                                 SELL
-//                               </span>
-//                             </label>
-//                           </div>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="exchange"
-//                             value={row.exchange}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">NFO</option>
-//                             <option value="2">Exchange 2</option>
-//                             <option value="3">Exchange 3</option>
-//                           </select>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="orderType"
-//                             value={row.orderType}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">MARKET</option>
-//                             <option value="2">Order Type 2</option>
-//                             <option value="3">Order Type 3</option>
-//                           </select>
-//                         </td>
-//                         <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="productType"
-//                             value={row.productType}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">CARRYFORWARD</option>
-//                             <option value="2">Product Type 2</option>
-//                             <option value="3">Product Type 3</option>
-//                           </select>
-//                         </td>
-//                         <td
-//                           className="text-danger"
-//                           onClick={() => handleDeleteRow(index)}
-//                         >
-//                           <i className="ri-close-circle-line ri-2x"></i>
-//                         </td>
-//                       </tr>
-//                     ))}
-//                   </tbody>
-//                 </table>
-//               </div>
-
-//               <div className="modal-footer">
-//                 <button
-//                   type="button"
-//                   className="btn btn-outline-secondary me-auto"
-//                   data-bs-dismiss="modal"
-//                 >
-//                   Close
-//                 </button>
-//                 <button type="button" className="btn btn-info">
-//                   Execute All
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//     <Footer />
-
-//     </div>
-//   );
-// };
-
-// export default Basket;
-
-// import React, { useState, useEffect } from "react";
-// import Header from "../component/Header";
-// import SubHeader from "../component/SubHeader";
-// import Footer from "../component/Footer";
-
+// import { AutoComplete } from "primereact/autocomplete";
+// import axios from 'axios';
 // const Basket = () => {
 //   const [showModal, setShowModal] = useState(true);
 //   const [selectedBasketIndex, setSelectedBasketIndex] = useState(null);
 //   const handleClose = () => setShowModal(false);
 //   const handleShow = () => setShowModal(true);
 //   const [baskets, setBaskets] = useState([]); // Ensure baskets is initialized as an empty array
-
+//   const [value, setValue] = useState('');
+//   const [items, setItems] = useState([]);
+//   const [values, setValues] = useState('');
+//   const [item, setItem] = useState([]);
+//   const [filteredItems, setFilteredItems] = useState([]);
 //   const [currentBasket, setCurrentBasket] = useState({
 //     name: "",
 //     rows: [
@@ -1456,42 +45,22 @@
 //     },
 //   ]);
 
-//   const [instruments, setInstruments] = useState([]);
-//   const [loading, setLoading] = useState(true); // Add loading state
-
-//   useEffect(() => {
-//     fetchInstrumentList();
-//   }, []);
-
-//   const fetchInstrumentList = async () => {
+//   const search = async (event) => {
 //     try {
-//       const response = await fetch(
-//         "http://192.46.212.210/api/teacher/get_instrument_list",
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ search: "b" }),
+//         const response = await axios.post('http://192.46.212.210/api/teacher/get_instrument_list', {
+//             search: event.query
+//         });
+//         if (response.data.st === 1) {
+//             setItems(response.data.data.map(item => item.text));
+//         } else {
+//             setItems([]);
 //         }
-//       );
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         console.log("Fetched instruments:", data.data);
-//         setInstruments(data.data || []); // Ensure you're accessing the correct field from the response
-//       } else {
-//         console.error("Failed to fetch instrument list", response.statusText);
-//       }
 //     } catch (error) {
-//       console.error(
-//         "An error occurred while fetching the instrument list",
-//         error
-//       );
-//     } finally {
-//       setLoading(false); // Set loading to false after the fetch completes
+//         console.error("Error fetching data:", error);
+//         setItems([]);
 //     }
-//   };
+// };
+
 
 //   const handleInputChange = (index, event) => {
 //     const newRows = [...rows];
@@ -1662,7 +231,28 @@
 //     }
 //   };
 
+//   useEffect(() => {
+//     const fetchData = async () => {
+//         try {
+//             const response = await axios.get('http://192.46.212.210/api/teacher/get_exchange_options');
+//             if (response.data.st === 1) {
+//                 setItem(response.data.exchanges.map(item => item.label));
+//             } else {
+//                 setItem([]);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching data:", error);
+//             setItem([]);
+//         }
+//     };
 
+//     fetchData();
+// }, []);
+
+// const searches = (event) => {
+//     const filtered = item.filter(item => item.toLowerCase().includes(event.query.toLowerCase()));
+//     setFilteredItems(filtered);
+// };
   
 
 //   return (
@@ -1674,7 +264,7 @@
 //           <div className="container-xxl flex-grow-1 container-p-y">
 //             <div className="row">
 //               <div className="col-3">
-//               {baskets.map((basket, index) => (
+//               {baskets?.map((basket, index) => (
 //           <div className="card mb-3" key={index}>
 //             <div
 //               className="card-datatable table-responsive pt-0"
@@ -1780,42 +370,11 @@
 //                       <tbody className="table-border-bottom-0">
 //                         {rows.map((row, index) => (
 //                           <tr key={index}>
-//                             {/* <td>
-//                               <select
-//                                 id="defaultSelect"
-//                                 className="form-select black-text" // Applying CSS class
-//                                 name="instrument"
-//                                 value={row.instrument}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 {instruments.map((instrument) => (
-//                                   <option
-//                                     key={instrument.id}
-//                                     value={instrument.id}
-//                                     className="black-text"
-//                                   >
-//                                     {instrument.name}
-//                                   </option>
-//                                 ))}
-//                               </select>
-//                             </td> */}
+                            
 
 // <td>
-//                           <select
-//                             id="defaultSelect"
-//                             className="form-select"
-//                             name="instrument"
-//                             value={row.instrument}
-//                             onChange={(event) =>
-//                               handleInputChange(index, event)
-//                             }
-//                           >
-//                             <option value="1">NIFTY13JUN2424600CE</option>
-//                             <option value="2">Instrument 2</option>
-//                             <option value="3">Instrument 3</option>
-//                           </select>
+// <AutoComplete value={value} suggestions={items} completeMethod={search} onChange={(e) => setValue(e.value)}forceSelection  />
+
 //                         </td>
 
 //                             <td>
@@ -1901,16 +460,13 @@
 //                               {/* </div> */}
 //                             </td>
 //                             <td>
-//                               <select
-//                                 className="form-select form-select-sm"
-//                                 name="exchange"
-//                                 value={row.exchange}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               >
-//                                 <option value="1">NFO</option>
-//                               </select>
+//                             <AutoComplete 
+//                 value={values} 
+//                 suggestions={filteredItems} 
+//                 completeMethod={searches} 
+//                 onChange={(e) => setValues(e.value)} 
+//                 forceSelection 
+//             />
 //                             </td>
 //                             <td>
 //                               <select
@@ -1962,265 +518,6 @@
 //             </div>
 //           </div>
 
-//           <div
-//             className="modal fade"
-//             id="exLargeModal"
-//             tabIndex="-1"
-//             aria-hidden="true"
-//           >
-//             <div className="modal-dialog modal-xl" role="document">
-//               <div className="modal-content">
-//                 <div className="modal-header">
-//                   <h5 className="modal-title x" id="exampleModalLabel4">
-//                     Modal title
-//                   </h5>
-
-//                   <button
-//                     type="button"
-//                     className="btn-close"
-//                     data-bs-dismiss="modal"
-//                     aria-label="Close"
-//                   ></button>
-//                 </div>
-//                 <div className="mt-3 mx-3 d-flex align-items-center ">
-//                   <label htmlFor="basketName" className="form-label me-2">
-//                     Basket Name:
-//                   </label>
-//                 </div>
-//                 <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
-//                   <input
-//                     type="text"
-//                     className="form-control form-control-sm"
-//                     id="basketName"
-//                     placeholder="Enter Basket Name"
-//                     value={currentBasket.name}
-//                     onChange={(event) =>
-//                       setCurrentBasket({
-//                         ...currentBasket,
-//                         name: event.target.value,
-//                       })
-//                     }
-//                   />
-//                   <button
-//                     className="btn btn-primary active "
-//                     onClick={handleAddRow}
-//                   >
-//                     Add
-//                   </button>
-//                 </div>
-
-//                 <div className="modal-body">
-//                   <table className="table">
-//                     <thead>
-//                       <tr>
-//                         {/* <th>Name</th> */}
-//                         <th>Instrument</th>
-//                         <th>Lot Qty Buffer</th>
-//                         <th>CE/PE</th>
-//                         <th>Transaction Type</th>
-//                         <th>Exchange</th>
-//                         <th>Order Type</th>
-//                         <th>Product Type</th>
-//                         <th>Action</th>
-//                       </tr>
-//                     </thead>
-//                     <tbody>
-//                       {rows.map((row, index) => (
-//                         <tr key={index}>
-//                           {/* <td>
-//                           <input
-//                             type="text"
-//                             className="form-control"
-//                             name="name"
-//                             value={row.name}
-//                             onChange={(event) => handleInputChange(index, event)}
-//                           />
-//                         </td> */}
-//                           <td>
-//                             <select
-//                               id="defaultSelect"
-//                               className="form-select"
-//                               name="instrument"
-//                               value={row.instrument}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             >
-//                               <option value="1">Instrument 1</option>
-//                               <option value="2">Instrument 2</option>
-//                               <option value="3">Instrument 3</option>
-//                             </select>
-//                           </td>
-//                           <td>
-//                             <input
-//                               type="text"
-//                               className="form-control"
-//                               name="lotQtyBuffer"
-//                               placeholder="Enter Lot QTY Buffer"
-//                               value={row.lotQtyBuffer}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             />
-//                           </td>
-//                           <td>
-//                             <div className="form-check form-check-inline mt-4">
-//                               <input
-//                                 className="form-check-input"
-//                                 type="radio"
-//                                 name={`cePe${index}`}
-//                                 value="1"
-//                                 checked={row.cePe === "1"}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                               <label
-//                                 className="form-check-label"
-//                                 htmlFor={`cePe${index}`}
-//                                 style={{ color: "green" }}
-//                               >
-//                                 CE
-//                               </label>
-//                             </div>
-//                             <div className="form-check form-check-inline">
-//                               <input
-//                                 className="form-check-input"
-//                                 type="radio"
-//                                 name={`cePe${index}`}
-//                                 value="2"
-//                                 checked={row.cePe === "2"}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                               <label
-//                                 className="form-check-label"
-//                                 htmlFor={`cePe${index}`}
-//                                 style={{ color: "orange" }}
-//                               >
-//                                 PE
-//                               </label>
-//                             </div>
-//                           </td>
-//                           <td>
-//                             <div className="form-check form-check-inline mt-4">
-//                               <input
-//                                 className="form-check-input"
-//                                 type="radio"
-//                                 name={`transactionType${index}`}
-//                                 value="1"
-//                                 checked={row.transactionType === "1"}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                               <label className="form-check-label">
-//                                 <span
-//                                   style={{
-//                                     color: "skyblue",
-//                                     fontWeight: "bold",
-//                                   }}
-//                                 >
-//                                   BUY
-//                                 </span>
-//                               </label>
-//                             </div>
-//                             <div className="form-check form-check-inline">
-//                               <input
-//                                 className="form-check-input"
-//                                 type="radio"
-//                                 name={`transactionType${index}`}
-//                                 value="2"
-//                                 checked={row.transactionType === "2"}
-//                                 onChange={(event) =>
-//                                   handleInputChange(index, event)
-//                                 }
-//                               />
-//                               <label className="form-check-label">
-//                                 <span
-//                                   style={{
-//                                     color: "orange",
-//                                     fontWeight: "bold",
-//                                   }}
-//                                 >
-//                                   SELL
-//                                 </span>
-//                               </label>
-//                             </div>
-//                           </td>
-//                           <td>
-//                             <select
-//                               id="defaultSelect"
-//                               className="form-select"
-//                               name="exchange"
-//                               value={row.exchange}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             >
-//                               <option value="1">NFO</option>
-//                               <option value="2">Exchange 2</option>
-//                               <option value="3">Exchange 3</option>
-//                             </select>
-//                           </td>
-//                           <td>
-//                             <select
-//                               id="defaultSelect"
-//                               className="form-select"
-//                               name="orderType"
-//                               value={row.orderType}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             >
-//                               <option value="1">MARKET</option>
-//                               <option value="2">Order Type 2</option>
-//                               <option value="3">Order Type 3</option>
-//                             </select>
-//                           </td>
-//                           <td>
-//                             <select
-//                               id="defaultSelect"
-//                               className="form-select"
-//                               name="productType"
-//                               value={row.productType}
-//                               onChange={(event) =>
-//                                 handleInputChange(index, event)
-//                               }
-//                             >
-//                               <option value="1">CARRYFORWARD</option>
-//                               <option value="2">Product Type 2</option>
-//                               <option value="3">Product Type 3</option>
-//                             </select>
-//                           </td>
-//                           <td
-//                             className="text-danger"
-//                             onClick={() => handleDeleteRow(index)}
-//                           >
-//                             <i className="ri-close-circle-line ri-2x"></i>
-//                           </td>
-//                         </tr>
-//                       ))}
-//                     </tbody>
-//                   </table>
-//                 </div>
-
-//                 <div className="modal-footer">
-//                   <button
-//                     type="button"
-//                     className="btn btn-outline-secondary me-auto"
-//                     data-bs-dismiss="modal"
-//                   >
-//                     Close
-//                   </button>
-//                   <button type="button" className="btn btn-info">
-//                     Execute All
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
 //         </div>
 //       </div>
 //       <Footer />
@@ -2231,85 +528,903 @@
 // export default Basket;
 
 
+
+
+// import React, { useState, useEffect } from "react";
+// import Header from "../component/Header";
+// import SubHeader from "../component/SubHeader";
+// import Footer from "../component/Footer";
+// import { AutoComplete } from "primereact/autocomplete";
+// import { Button } from 'primereact/button';
+// import { Dialog } from 'primereact/dialog';
+// import { Link, useLocation } from "react-router-dom";
+// import axios from 'axios';
+// import { Dropdown } from 'primereact/dropdown';
+// const Basket = () => {
+//   const [showModal, setShowModal] = useState(true);
+//   const [selectedBasketIndex, setSelectedBasketIndex] = useState(null);
+//   const handleClose = () => setShowModal(false);
+//   const handleShow = () => setShowModal(true);
+//   const [baskets, setBaskets] = useState([]); // Ensure baskets is initialized as an empty array
+//   const [value, setValue] = useState('');
+//   const [items, setItems] = useState([]);
+//   const [values, setValues] = useState('');
+//   const [item, setItem] = useState([]);
+//   const [visible, setVisible] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const [filteredItems, setFilteredItems] = useState([]);
+//   const [currentBasket, setCurrentBasket] = useState({
+//     name: "",
+//     rows: [
+//       {
+//         name: "",
+//         instrument: "1", // Default value
+//         lotQtyBuffer: "1", // Default value
+//         cePe: "1", // Default value for CE
+//         transactionType: "1", // Default value for BUY Order
+//         exchange: "1", // Default value
+//         orderType: "1", // Default value
+//         productType: "1", // Default value
+//       },
+//     ],
+//   });
+
+//   const [rows, setRows] = useState([
+//     {
+//       name: "",
+//       instrument: "1", // Default value
+//       lotQtyBuffer: "1", // Default value
+//       cePe: "1", // Default value for CE
+//       transactionType: "1", // Default value for BUY Order
+//       exchange: "1", // Default value
+//       orderType: "1", // Default value
+//       productType: "1", // Default value
+//     },
+//   ]);
+//   const search = async (event) => {
+//     try {
+//         const response = await axios.post('http://192.46.212.210/api/teacher/get_instrument_list', {
+//             search: event.query
+//         });
+//         if (response.data.st === 1) {
+//             setItems(response.data.data.map(item => item.text));
+//         } else {
+//             setItems([]);
+//         }
+//     } catch (error) {
+//         console.error("Error fetching data:", error);
+//         setItems([]);
+//     }
+// };
+
+
+
+//   // const handleInputChange = (index, event) => {
+//   //   const newRows = [...rows];
+//   //   newRows[index][event.target.name] = event.target.value;
+//   //   setRows(newRows);
+//   // };
+
+//   // const handleDeleteRow = (index) => {
+//   //   const newRows = [...rows];
+//   //   newRows.splice(index, 1);
+//   //   setRows(newRows);
+//   // };
+//   const handleDeleteRow = (index) => {
+//     const newRows = rows.filter((_, i) => i !== index);
+//     setRows(newRows);
+//   };
+
+  
+//   const handleAddRow = () => {
+//     const newRow = {
+//       instrument: '',
+//       lotQtyBuffer: '',
+//       cePe: '1',
+//       transactionType: '1',
+//       exchange: '',
+//       orderType: '1',
+//       productType: '1'
+//     };
+//     setRows([...rows, newRow]);
+//   };
+
+// const handleInputChange = (index, event) => {
+//   const { name, value, type } = event.target;
+//   const updatedRows = [...rows];
+//   updatedRows[index][name] = value;
+//   setRows(updatedRows);
+// };
+
+//   const handleCreateBasket = async () => {
+//     try {
+//       const response = await fetch(
+//         "http://192.46.212.210/api/teacher/create_update_basket",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             basket_id: null,
+//             basket_name: currentBasket.name,
+//             teacher_id: localStorage.getItem("user_id"),
+//             basket_data: rows,
+//           }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log("Basket created:", data);
+//         setBaskets([...baskets, data]); // Add the newly created basket to baskets list
+//         setRows([
+//           {
+//             name: "",
+//             instrument: "1",
+//             lotQtyBuffer: "1",
+//             cePe: "1",
+//             transactionType: "1",
+//             exchange: "1",
+//             orderType: "1",
+//             productType: "1",
+//           },
+//         ]);
+//         setCurrentBasket({
+//           name: "",
+//           rows: [
+//             {
+//               name: "",
+//               instrument: "1",
+//               lotQtyBuffer: "1",
+//               cePe: "1",
+//               transactionType: "1",
+//               exchange: "1",
+//               orderType: "1",
+//               productType: "1",
+//             },
+//           ],
+//         });
+//       } else {
+//         console.error("Failed to create basket:", response.statusText);
+//       }
+//     } catch (error) {
+//       console.error("An error occurred while creating basket:", error);
+//     }
+//   };
+
+//   const handleDeleteBasket = async (index) => {
+//     const basketId = baskets[index].basket_id;
+
+//     try {
+//       const response = await fetch(
+//         "http://192.46.212.210/api/teacher/delete_basket",
+//         {
+//           method: "DELETE",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ basket_id: basketId }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         console.log(`Basket ${basketId} deleted successfully`);
+//         const newBaskets = [...baskets];
+//         newBaskets.splice(index, 1);
+//         setBaskets(newBaskets);
+//       } else {
+//         console.error("Failed to delete basket:", response.statusText);
+//       }
+//     } catch (error) {
+//       console.error("An error occurred while deleting basket:", error);
+//     }
+//   };
+
+//   const handleEditBasket = (index) => {
+//     setSelectedBasketIndex(index);
+//     setCurrentBasket(baskets[index]);
+//     setRows(baskets[index].rows); // Update rows with the selected basket's rows
+//     handleShow();
+//   };
+
+//   const getFormattedBasketName = (index) => {
+//     const currentDate = new Date();
+//     const options = {
+//       month: "long",
+//       day: "numeric",
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       second: "2-digit",
+//     };
+//     const formattedDate = currentDate
+//       .toLocaleString("default", options)
+//       .replace(",", "")
+//       .replace(/ at /, " ");
+//     return `Basket ${formattedDate}`;
+//   };
+
+//   const userId = localStorage.getItem("user_id");
+
+//   useEffect(() => {
+//     fetchBasketList();
+//   }, []);
+
+//   const fetchBasketList = async () => {
+//     setIsLoading(true); // Start loading
+//     try {
+//       const response = await fetch(
+//         "http://192.46.212.210/api/teacher/basket_list_view",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ teacher_id: userId }),
+//         }
+//       );
+  
+//       if (response.ok) {
+//         const data = await response.json();
+//         setBaskets(data.data || []);
+  
+//         // Print basket list data to console
+//         console.log("Basket List Data:", data.data || []);
+//       } else {
+//         console.error("Failed to fetch basket list", response.statusText);
+//       }
+//     } catch (error) {
+//       console.error("An error occurred while fetching the basket list", error);
+//     } finally {
+//       setIsLoading(false); // End loading
+//     }
+//   };
+  
+//   useEffect(() => {
+//     const fetchData = async () => {
+//         try {
+//             const response = await axios.get('http://192.46.212.210/api/teacher/get_exchange_options');
+//             if (response.data.st === 1) {
+//                 setItem(response.data.exchanges.map(item => item.label));
+//             } else {
+//                 setItem([]);
+//             }
+//         } catch (error) {
+//             console.error("Error fetching data:", error);
+//             setItem([]);
+//         }
+//     };
+
+//     fetchData();
+// }, []);
+
+// const searches = (event) => {
+//   const filtered = item.filter(item => item.toLowerCase().includes(event.query.toLowerCase()));
+//   setFilteredItems(filtered);
+// };
+
+  
+// const footerContent = (
+//   <div className="d-flex justify-content-between w-100">
+//       <Button label="Close" onClick={() => setVisible(false)} className="p-button-text" />
+//       <Button label="Execute All" onClick={() => setVisible(false)} autoFocus />
+//   </div>
+// );
+
+// const handleAddToBasket = async () => {
+//   try {
+//       const response = await axios.post('http://192.46.212.210/api/teacher/add_to_basket', {
+//           teacher_id: 43,
+//           symbol: value, // Using the value from AutoComplete
+//           ce_pe: rows[rows.length - 1].cePe === "1" ? "CE" : "PE",
+//           lot_quantity_buffer: rows[rows.length - 1].lotQtyBuffer,
+//           transactionType: rows[rows.length - 1].transactionType === "1" ? "BUY" : "SELL",
+//           exchange: values, // Using the value from AutoComplete
+//           orderType: "MARKET",
+//           productType: "CARRYFORWARD"
+//       });
+//       if (response.data.st === 1) {
+//           console.log("Added to basket successfully:", response.data.data_list);
+//           const newRow = {
+//               instrument: response.data.data_list.symbol,
+//               lotQtyBuffer: response.data.data_list.lot_quantity_buffer,
+//               cePe: response.data.data_list.ce_pe === "CE" ? "1" : "2",
+//               transactionType: response.data.data_list.transactionType === "BUY" ? "1" : "2",
+//               exchange: response.data.data_list.exchange,
+//               orderType: response.data.data_list.orderType,
+//               productType: response.data.data_list.productType
+//           };
+//           setRows([...rows, newRow]); // Add the new row to the existing rows
+//       } else {
+//           console.error("Error adding to basket:", response.data.msg);
+//       }
+//   } catch (error) {
+//       console.error("Error adding to basket:", error);
+//   }
+// };
+
+
+
+//   return (
+//     <div>
+//       <Header />
+//       <SubHeader />
+//       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+//         <div className="layout-container">
+//           <div className="container-xxl flex-grow-1 container-p-y">
+//             <div className="row">
+//               <div className="col-3">
+//               {isLoading ? (
+//             <div>Loading...</div>
+//           ) : (
+//             baskets?.map((basket, index) => (
+//               <div className="card mb-3" key={index}>
+//                 <div
+//                   className="card-datatable table-responsive pt-0"
+//                   onClick={() => setVisible(true)}
+//                 >
+//                   <table className="table">
+//                     <tbody>
+//                       <tr>
+//                         <td className="fw-bold1" colSpan="2">
+//                           {basket.name || `Basket ${index + 1}`}
+//                         </td>
+//                         <td className="text-danger">
+//                           <i
+//                             className="ri-close-circle-line"
+//                             onClick={(e) => {
+//                               e.stopPropagation();
+//                               handleDeleteBasket(index);
+//                             }}
+//                           ></i>
+//                         </td>
+//                       </tr>
+//                       <tr>
+//                         <td>Total: {basket.num_basket_details}/10</td>
+//                         <td>
+//                           <span
+//                             className={
+//                               basket.num_buy_instruments > 0
+//                                 ? "text-success"
+//                                 : ""
+//                             }
+//                           >
+//                             Buy: {basket.num_buy_instruments}
+//                           </span>
+//                           /10
+//                         </td>
+//                         <td>
+//                           <span
+//                             className={
+//                               basket.num_sell_instruments > 0
+//                                 ? "text-danger"
+//                                 : ""
+//                             }
+//                           >
+//                             Sell: {basket.num_sell_instruments}
+//                           </span>
+//                           /10
+//                         </td>
+//                       </tr>
+//                     </tbody>
+//                   </table>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//               </div>
+//               <div className="col-9">
+//                 <div className="card">
+//                   <div className="card-header d-flex justify-content-between">
+//                     <h5 className="mb-0">Create New Basket</h5>
+//                   </div>
+//                   <div className="mt-3 mx-3 d-flex align-items-center">
+//                     <label htmlFor="basketName" className="form-label me-2">
+//                       Basket Name:
+//                     </label>
+//                   </div>
+//                   <div className="mt-3 mx-3  d-flex align-items-center mb-3 d-flex justify-content-between">
+//                     <input
+//                       type="text"
+//                       className="form-control form-control-sm me-5"
+//                       id="basketName"
+//                       placeholder=" Basket Name"
+//                       value={currentBasket.name}
+//                       onChange={(event) =>
+//                         setCurrentBasket({
+//                           ...currentBasket,
+//                           name: event.target.value,
+//                         })
+//                       }
+//                     />
+//                   <button
+//                                 className="btn btn-primary active"
+//                                 onClick={handleAddRow}
+//                             >
+//                                 Add
+//                             </button>
+//                   </div>
+
+//                   <div className="table-responsive text-nowrap">
+//                     <table className="table">
+//                       <thead>
+//                         <tr>
+//                           <th>Instrument</th>
+//                           <th>Lot Qty Buffer</th>
+//                           <th>CE/PE</th>
+//                           <th>Transaction Type</th>
+//                           <th>Exchange</th>
+//                           <th>Order Type</th>
+//                           <th>Product Type</th>
+//                           <th>Action</th>
+//                         </tr>
+//                       </thead>
+//                       <tbody className="table-border-bottom-0">
+//                         {rows.map((row, index) => (
+//                           <tr key={index}>
+                            
+
+// <td >
+// <AutoComplete value={value} suggestions={items} placeholder="Instrument" completeMethod={search} onChange={(e) => setValue(e.value)}  forceSelection   panelStyle={{ width: '100px' }}  />
+
+// {/* <AutoComplete value={value} suggestions={items} completeMethod={search} onChange={(e) => setValue(e.value)}
+//                 field="label" optionGroupLabel="label" optionGroupChildren="items"  placeholder="Hint: type 'a'" />
+//          */}
+
+//                         </td>
+
+//                             <td>
+//                               <input
+//                                 type="text"
+//                                 className="form-control form-control-sm"
+//                                 name="lotQtyBuffer"
+//                                 value={row.lotQtyBuffer}
+//                                 placeholder="Lot Qty Buffer"
+//                                 onChange={(event) =>
+//                                   handleInputChange(index, event)
+//                                 }
+//                               />
+//                             </td>
+//                             <td>
+//                                                 <div className="form-check form-check-inline">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name={`cePe-${index}`}
+//                                                         value="1"
+//                                                         checked={row.cePe === "1"}
+//                                                         onChange={(e) => handleInputChange(index, e)}
+//                                                     />
+//                                                     <label className="form-check-label text-success ">
+//                                                         CE
+//                                                     </label>
+//                                                 </div>
+//                                                 <div className="form-check form-check-inline ml-2">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name={`cePe-${index}`}
+//                                                         value="2"
+//                                                         checked={row.cePe === "2"}
+//                                                         onChange={(e) => handleInputChange(index, e)}
+//                                                     />
+//                                                     <label className="form-check-label text-warning">
+//                                                         PE
+//                                                     </label>
+//                                                 </div>
+//                                             </td>
+//                                             <td>
+//                                                 <div className="form-check form-check-inline">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name={`transactionType-${index}`}
+//                                                         value="1"
+//                                                         checked={row.transactionType === "1"}
+//                                                         onChange={(e) => handleInputChange(index, e)}
+//                                                     />
+//                                                     <label className="form-check-label text-info ">
+//                                                         Buy
+//                                                     </label>
+//                                                 </div>
+//                                                 <div className="form-check form-check-inline ml-2">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name={`transactionType-${index}`}
+//                                                         value="2"
+//                                                         checked={row.transactionType === "2"}
+//                                                         onChange={(e) => handleInputChange(index, e)}
+//                                                     />
+//                                                     <label className="form-check-label text-danger">
+//                                                         Sell
+//                                                     </label>
+//                                                 </div>
+//                                             </td>
+//                             <td>
+//                             <AutoComplete 
+//                 value={values} 
+//                 suggestions={filteredItems} 
+//                 completeMethod={searches} 
+//                 onChange={(e) => setValues(e.value)} 
+//                 forceSelection 
+//                 placeholder="Exchange"
+//             />
+//                             </td>
+//                             <td>
+//                               {/* <select
+//                                 className="form-select form-select-sm"
+//                                 name="orderType"
+//                                 value={row.orderType}
+//                                 onChange={(event) =>
+//                                   handleInputChange(index, event)
+//                                 }
+//                               >
+//                                 <option value="1">MARKET</option>
+//                               </select> */}
+//                               <Dropdown
+//                                         value={row.orderType}
+//                                         options={[{ label: 'MARKET' , value: '1' },{ label: 'LIMIT' , value: '2' },{ label: 'STOPLOSS_LIMIT' , value: '3' },{ label: 'STOPLOSS_MARKET' , value: '4' }]}
+//                                         onChange={(e) => handleInputChange(index, { target: { name: 'orderType', value: e.value } })}
+//                                         placeholder="Select Order Type"
+                                       
+//                                     />
+//                             </td>
+                         
+//                             <td>
+//                               {/* <select
+//                                 className="form-select form-select-sm"
+//                                 name="productType"
+//                                 value={row.productType}
+//                                 onChange={(event) =>
+//                                   handleInputChange(index, event)
+//                                 }
+//                               >
+//                                 <option value="1">CARRYFORWARD</option>
+//                               </select> */}
+//                               <Dropdown
+//                                         value={row.productType}
+//                                         options={[{ label: 'CARRYFORWARD' , value: '1' },{ label: 'DELIVERY' , value: '2' },{ label: 'MARGIN' , value: '3' },{ label: 'STOPLOSS_MARKET' , value: '4' },{ label: 'BO' , value: '5' }]}
+//                                         onChange={(e) => handleInputChange(index, { target: { name: 'productType', value: e.value } })}
+//                                         placeholder="Select Product Type"
+//                                         className="w-full md:w-14rem" 
+//                                     />
+//                             </td>
+//                             <td>
+//                               {/* <button
+//                                 className="btn btn-outline-danger btn-sm"
+//                                 onClick={() => handleDeleteRow(index)}
+//                               >
+//                                 <i className="ri-delete-bin-line"></i>
+//                               </button> */}
+//                                    {rows.length > 1 && (
+//                         <button
+//                           className="btn btn-outline-danger btn-sm"
+//                           onClick={() => handleDeleteRow(index)}
+//                         >
+//                           <i className="ri-delete-bin-line"></i>
+//                         </button>
+//                       )}
+//                             </td>
+//                           </tr>
+//                         ))}
+//                       </tbody>
+//                     </table>
+//                   </div>
+//                   <div className="d-flex justify-content-start mt-3 mx-3 mb-3">
+//                     <button
+//                       className="btn btn-success"
+//                       onClick={handleCreateBasket}
+//                     >
+//                       Create Basket
+//                     </button>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//           <Dialog header="Header" visible={visible} onHide={() => setVisible(false)} footer={footerContent}  style={{ width: '80vw' }}>
+      
+//                     <div className="card">
+                       
+//                         <div className="mt-3 mx-3 d-flex align-items-center">
+//                             <label htmlFor="basketName" className="form-label me-2">
+//                                 Basket Name:
+//                             </label>
+//                         </div>
+//                         <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
+//                             <input
+//                                 type="text"
+//                                 className="form-control form-control-sm me-5"
+//                                 id="basketName"
+//                                 placeholder="Basket Name"
+//                                 value={currentBasket.name}
+//                                 onChange={(event) =>
+//                                     setCurrentBasket({
+//                                         ...currentBasket,
+//                                         name: event.target.value,
+//                                     })
+//                                 }
+//                             />
+//                             <button
+//                                 className="btn btn-primary active"
+//                                 onClick={handleAddRow}
+//                             >
+//                                 Add
+//                             </button>
+//                         </div>
+
+//                         <div className="table-responsive text-nowrap">
+//                             <table className="table">
+//                                 <thead>
+//                                     <tr>
+//                                         <th>Instrument</th>
+//                                         <th>Lot Qty Buffer</th>
+//                                         <th>CE/PE</th>
+//                                         <th>Transaction Type</th>
+//                                         <th>Exchange</th>
+//                                         <th>Order Type</th>
+//                                         <th>Product Type</th>
+//                                         <th>Action</th>
+//                                     </tr>
+//                                 </thead>
+//                                 <tbody className="table-border-bottom-0">
+//                                     {rows.map((row, index) => (
+//                                         <tr key={index}>
+//                                             <td>
+//                                                 <AutoComplete 
+//                                                     value={row.instrument} 
+//                                                     suggestions={filteredItems} 
+//                                                     completeMethod={search} 
+//                                                     onChange={(e) => handleInputChange(index, { target: { name: 'instrument', value: e.value } })} 
+//                                                     forceSelection 
+//                                                 />
+//                                             </td>
+//                                             <td>
+//                                                 <input
+//                                                     type="text"
+//                                                     className="form-control form-control-sm"
+//                                                     name="lotQtyBuffer"
+//                                                     value={row.lotQtyBuffer}
+//                                                     placeholder="Lot Qty Buffer"
+//                                                     onChange={(event) =>
+//                                                         handleInputChange(index, event)
+//                                                     }
+//                                                 />
+//                                             </td>
+//                                             <td>
+//                                                 <div className="form-check form-check-inline">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name="cePe"
+//                                                         value="1"
+//                                                         checked={row.cePe === "1"}
+//                                                         onChange={(event) =>
+//                                                             handleInputChange(index, event)
+//                                                         }
+//                                                     />
+//                                                     <label className="form-check-label text-success ">
+//                                                         CE
+//                                                     </label>
+//                                                 </div>
+//                                                 <div className="form-check form-check-inline ml-2">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name="cePe"
+//                                                         value="2"
+//                                                         checked={row.cePe === "2"}
+//                                                         onChange={(event) =>
+//                                                             handleInputChange(index, event)
+//                                                         }
+//                                                     />
+//                                                     <label className="form-check-label text-warning">
+//                                                         PE
+//                                                     </label>
+//                                                 </div>
+//                                             </td>
+//                                             <td>
+//                                                 <div className="form-check form-check-inline">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name="transactionType"
+//                                                         value="1"
+//                                                         checked={row.transactionType === "1"}
+//                                                         onChange={(event) =>
+//                                                             handleInputChange(index, event)
+//                                                         }
+//                                                     />
+//                                                     <label className="form-check-label text-info ">
+//                                                         Buy
+//                                                     </label>
+//                                                 </div>
+//                                                 <div className="form-check form-check-inline ml-2">
+//                                                     <input
+//                                                         type="radio"
+//                                                         className="form-check-input"
+//                                                         name="transactionType"
+//                                                         value="2"
+//                                                         checked={row.transactionType === "2"}
+//                                                         onChange={(event) =>
+//                                                             handleInputChange(index, event)
+//                                                         }
+//                                                     />
+//                                                     <label className="form-check-label text-danger">
+//                                                         Sell
+//                                                     </label>
+//                                                 </div>
+//                                             </td>
+//                                             <td>
+//                                                 <AutoComplete 
+//                                                     value={row.exchange} 
+//                                                     suggestions={filteredItems} 
+//                                                     completeMethod={searches} 
+//                                                     onChange={(e) => handleInputChange(index, { target: { name: 'exchange', value: e.value } })} 
+//                                                     forceSelection 
+//                                                 />
+//                                             </td>
+//                                             <td>
+//                                                 <select
+//                                                     className="form-select form-select-sm"
+//                                                     name="orderType"
+//                                                     value={row.orderType}
+//                                                     onChange={(event) =>
+//                                                         handleInputChange(index, event)
+//                                                     }
+//                                                 >
+//                                                     <option value="1">MARKET</option>
+//                                                 </select>
+//                                             </td>
+//                                             <td>
+//                                                 <select
+//                                                     className="form-select form-select-sm"
+//                                                     name="productType"
+//                                                     value={row.productType}
+//                                                     onChange={(event) =>
+//                                                         handleInputChange(index, event)
+//                                                     }
+//                                                 >
+//                                                     <option value="1">CARRYFORWARD</option>
+//                                                 </select>
+//                                             </td>
+//                                             <td>
+//                                                 <button
+//                                                     className="btn btn-outline-danger btn-sm"
+//                                                     onClick={() => handleDeleteRow(index)}
+//                                                 >
+//                                                     <i className="ri-delete-bin-line"></i>
+//                                                 </button>
+//                                             </td>
+//                                         </tr>
+//                                     ))}
+//                                 </tbody>
+//                             </table>
+//                         </div>
+//                     </div>
+                
+//                </Dialog>
+//         </div>
+//       </div>
+//       <Footer />
+//     </div>
+//   );
+// };
+
+// export default Basket;
+
+
+
+
 import React, { useState, useEffect } from "react";
 import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
 import Footer from "../component/Footer";
-import Select from 'react-select';
+import { Modal, Button } from 'react-bootstrap';
+import { AutoComplete } from "primereact/autocomplete";
 import axios from 'axios';
 const Basket = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBasketIndex, setSelectedBasketIndex] = useState(null);
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
   const [baskets, setBaskets] = useState([]);
-  const [instrumentOptions, setInstrumentOptions] = useState([]);
-  const [selectedInstrument, setSelectedInstrument] = useState(null);
+  const [value, setValue] = useState('');
+  const [items, setItems] = useState([]);
+  const [values, setValues] = useState('');
+  const [item, setItem] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [currentBasket, setCurrentBasket] = useState({
     name: "",
     rows: [
       {
-        name: "",
-        instrument: "1", // Default value
-        lotQtyBuffer: "1", // Default value
-        cePe: "1", // Default value for CE
-        transactionType: "1", // Default value for BUY Order
-        exchange: "1", // Default value
-        orderType: "1", // Default value
-        productType: "1", // Default value
+        instrument:"BANKNIFTY12JUN2447000CE",
+            ce_pe:"CE",
+            lot_quantity_buffer:1,
+            transactionType:"BUY",
+            exchange:"",
+            orderType:"MARKET",
+            productType:"CARRYFORWARD"
       },
     ],
   });
   const [rows, setRows] = useState([
     {
-      name: "",
-      instrument: "1", // Default value
-      lotQtyBuffer: "1", // Default value
-      cePe: "1", // Default value for CE
-      transactionType: "1", // Default value for BUY Order
-      exchange: "1", // Default value
-      orderType: "1", // Default value
-      productType: "1", // Default value
+      instrument:"BANKNIFTY12JUN2447000CE",
+      ce_pe:"CE",
+      lot_quantity_buffer:1,
+      transactionType:"BUY",
+      exchange:"",
+      orderType:"MARKET",
+      productType:"CARRYFORWARD"
     },
   ]);
-  const [instruments, setInstruments] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [editedBasket, setEditedBasket] = useState({ ...currentBasket });
 
+  // Fetch basket list data
   useEffect(() => {
-  
-    fetchBasketList();
+    fetch("http://192.46.212.210/api/teacher/basket_list_view", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        teacher_id: 43,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.st === 1) {
+          setBaskets(data.data);
+        } else {
+          // Handle error or no data case
+          console.error("Failed to fetch basket list:", data.msg);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching basket list:", error);
+      });
   }, []);
 
-  const loadOptions = (inputValue, callback) => {
-    axios({
-        method: 'POST',
-        url: 'http://192.46.212.210/api/teacher/get_instrument_list', // Replace with your backend endpoint
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}', // Replace with your CSRF token
-            'Content-Type': 'application/json',
-        },
-        data: {
-            search: inputValue,
-        },
-    })
-        .then((response) => {
-            const options = response.data.data.map((instrument) => ({
-                value: instrument.id,
-                label: instrument.name,
-            }));
-            setInstrumentOptions(options);
-            callback(options);
-        })
-        .catch((error) => {
-            console.error('Error fetching instrument list:', error);
-            callback([]);
-        });
-};
+  const handleRowChange = (index, field, value) => {
+    const updatedRows = [...editedBasket.rows];
+    updatedRows[index] = { ...updatedRows[index], [field]: value };
+    setEditedBasket({ ...editedBasket, rows: updatedRows });
+  };
 
-// Handle select change
-const handleInstrumentChange = (selectedOption) => {
-    setSelectedInstrument(selectedOption);
-};
+  const handleNameChange = (e) => {
+    setEditedBasket({ ...editedBasket, name: e.target.value });
+  };
+
+  const handleCloseModal = () => {
+    setBaskets((prevBaskets) => {
+      const updatedBaskets = [...prevBaskets];
+      updatedBaskets[selectedBasketIndex] = editedBasket;
+      return updatedBaskets;
+    });
+    setShowModal(false);
+  };
+
+  const handleShow = () => setShowModal(true);
+
+  const handleAddRow = () => {
+    if (rows.length < 10) {
+      setRows([
+        ...rows,
+        {
+          instrument:"BANKNIFTY12JUN2447000CE",
+            ce_pe:"CE",
+            lot_quantity_buffer:1,
+            transactionType:"BUY",
+            exchange:"",
+            orderType:"MARKET",
+            productType:"CARRYFORWARD"
+        },
+      ]);
+    } else {
+      alert("You can only add up to 10 rows.");
+    }
+  };
 
   const handleInputChange = (index, event) => {
     const newRows = [...rows];
@@ -2323,119 +1438,12 @@ const handleInstrumentChange = (selectedOption) => {
     setRows(newRows);
   };
 
-  const handleAddRow = async () => {
-    const requestData = {
-      teacher_id: 42,
-      symbol: "FINNIFTY25JUN2421900CE",
-      ce_pe: "CE",
-      lot_quantity_buffer: 1,
-      transactionType: "BUY",
-      exchange: "NFO",
-      orderType: "MARKET",
-      productType: "CARRYFORWARD",
-    };
+  
 
-    try {
-      const response = await fetch(
-        "http://192.46.212.210/api/teacher/add_to_basket",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("An error occurred while adding to basket:", error);
-    }
-  };
-
-  const handleCreateBasket = async () => {
-    try {
-      const response = await fetch(
-        "http://192.46.212.210/api/teacher/create_update_basket",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            basket_id: null,
-            basket_name: currentBasket.name,
-            teacher_id: localStorage.getItem("user_id"),
-            basket_data: rows,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Basket created:", data);
-        fetchBasketList(); // Fetch the updated basket list
-        setRows([
-          {
-            name: "",
-            instrument: "1",
-            lotQtyBuffer: "1",
-            cePe: "1",
-            transactionType: "1",
-            exchange: "1",
-            orderType: "1",
-            productType: "1",
-          },
-        ]);
-        setCurrentBasket({
-          name: "",
-          rows: [
-            {
-              name: "",
-              instrument: "1",
-              lotQtyBuffer: "1",
-              cePe: "1",
-              transactionType: "1",
-              exchange: "1",
-              orderType: "1",
-              productType: "1",
-            },
-          ],
-        });
-      } else {
-        console.error("Failed to create basket:", response.statusText);
-      }
-    } catch (error) {
-      console.error("An error occurred while creating basket:", error);
-    }
-  };
-
-  const handleDeleteBasket = async (index) => {
-    const basketId = baskets[index].basket_id;
-
-    try {
-      const response = await fetch(
-        "http://192.46.212.210/api/teacher/delete_basket",
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ basket_id: basketId }),
-        }
-      );
-
-      if (response.ok) {
-        console.log(`Basket ${basketId} deleted successfully`);
-        fetchBasketList(); // Fetch the updated basket list
-      } else {
-        console.error("Failed to delete basket:", response.statusText);
-      }
-    } catch (error) {
-      console.error("An error occurred while deleting basket:", error);
-    }
+  const handleDeleteBasket = (index) => {
+    const newBaskets = [...baskets];
+    newBaskets.splice(index, 1);
+    setBaskets(newBaskets);
   };
 
   const handleEditBasket = (index) => {
@@ -2447,66 +1455,92 @@ const handleInstrumentChange = (selectedOption) => {
 
   const getFormattedBasketName = (index) => {
     const currentDate = new Date();
-    const options = {
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    };
-    const formattedDate = currentDate
-      .toLocaleString("default", options)
-      .replace(",", "")
-      .replace(/ at /, " ");
+    const options = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const formattedDate = currentDate.toLocaleString('default', options).replace(',', '').replace(/ at /, ' ');
     return `Basket ${formattedDate}`;
   };
 
-  const userId = localStorage.getItem("user_id");
+  const handleExecuteAll = () => {
+    // Your execute all logic here
+  };
 
-  const fetchBasketList = async () => {
+  const search = async (event) => {
     try {
-      const response = await fetch(
-        "http://192.46.212.210/api/teacher/basket_list_view",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ teacher_id: userId }),
+        const response = await axios.post('http://192.46.212.210/api/teacher/get_instrument_list', {
+            search: event.query
+        });
+        if (response.data.st === 1) {
+            setItems(response.data.data.map(item => item.text));
+        } else {
+            setItems([]);
         }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setBaskets(data.data || []);
-      } else {
-        console.error("Failed to fetch basket list", response.statusText);
-      }
     } catch (error) {
-      console.error(
-        "An error occurred while fetching the basket list",
-        error
-      );
+        console.error("Error fetching data:", error);
+        setItems([]);
     }
+};
+
+useEffect(() => {
+  const fetchData = async () => {
+      try {
+          const response = await axios.get('http://192.46.212.210/api/teacher/get_exchange_options');
+          if (response.data.st === 1) {
+              setItem(response.data.exchanges.map(item => item.label));
+          } else {
+              setItem([]);
+          }
+      } catch (error) {
+          console.error("Error fetching data:", error);
+          setItem([]);
+      }
   };
 
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      backgroundColor: 'white',
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      color: state.isSelected ? 'white' : 'black',
-      backgroundColor: state.isSelected ? 'blue' : 'white',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: 'black',
-    }),
-  };
+  fetchData();
+}, []);
+
+const searches = (event) => {
+  const filtered = item.filter(item => item.toLowerCase().includes(event.query.toLowerCase()));
+  setFilteredItems(filtered);
+};
 
 
+
+const handleCreateBasket = async () => {
+  try {
+    const response = await fetch(
+      "http://192.46.212.210/api/teacher/create_update_basket",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          basket_id: null,
+          basket_name: currentBasket.name,
+          teacher_id: 43,
+          basket_data: currentBasket.rows, // Send current basket rows data
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Basket created:", data);
+      setBaskets([...baskets, data]); // Add the newly created basket to baskets list
+      // Reset currentBasket and rows state
+      setCurrentBasket({
+        name: "",
+        rows: [],
+      });
+      setRows([]);
+      handleCloseModal(); // Close the modal
+    } else {
+      console.error("Failed to create basket:", response.statusText);
+    }
+  } catch (error) {
+    console.error("An error occurred while creating basket:", error);
+  }
+};
   return (
     <div>
       <Header />
@@ -2520,15 +1554,13 @@ const handleInstrumentChange = (selectedOption) => {
                   <div className="card mb-3" key={index}>
                     <div
                       className="card-datatable table-responsive pt-0"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exLargeModal"
                       onClick={() => handleEditBasket(index)}
                     >
                       <table className="table">
                         <tbody>
                           <tr>
-                            <td className="fw-bold1" colSpan="2">
-                              {basket.name || `Basket ${index + 1}`}
+                            <td className="fw-bold1 " colSpan="2">
+                              {basket.name || getFormattedBasketName(index)}
                             </td>
                             <td className="text-danger">
                               <i
@@ -2541,28 +1573,24 @@ const handleInstrumentChange = (selectedOption) => {
                             </td>
                           </tr>
                           <tr>
-                            <td>Total: {basket.num_basket_details}/10</td>
+                            <td>Total: {basket.total_instruments_count}/10</td>
                             <td>
                               <span
                                 className={
-                                  basket.num_buy_instruments > 0
-                                    ? "text-success"
-                                    : ""
+                                  basket.buy_instruments_count > 0 ? 'text-success' : ''
                                 }
                               >
-                                Buy: {basket.num_buy_instruments}
+                                Buy: {basket.buy_instruments_count}
                               </span>
                               /10
                             </td>
                             <td>
                               <span
                                 className={
-                                  basket.num_sell_instruments > 0
-                                    ? "text-danger"
-                                    : ""
+                                  basket.sell_instruments_count > 0 ? 'text-danger' : ''
                                 }
                               >
-                                Sell: {basket.num_sell_instruments}
+                                Sell: {basket.sell_instruments_count}
                               </span>
                               /10
                             </td>
@@ -2575,37 +1603,36 @@ const handleInstrumentChange = (selectedOption) => {
               </div>
               <div className="col-9">
                 <div className="card">
-                  <div className="card-header d-flex justify-content-between">
-                    <h5 className="mb-0">Create New Basket</h5>
+                  <div className="card-header d-flex justify-content-between ">
+                    <h5 className="mb-0 ">Create New Basket</h5>
                   </div>
-                 
-                 
-                    {/* <Select
-                id="buySymbol"
-                placeholder="Search instrument"
-                options={instrumentOptions}
-                onInputChange={(inputValue) => loadOptions(inputValue, () => {})}
-                onChange={handleInstrumentChange}
-                value={selectedInstrument}
-                isClearable
-                isLoading={!instrumentOptions.length}
-            /> */}
-            <Select
-      id="buySymbol"
-      placeholder="Search instrument"
-      options={instrumentOptions}
-      onInputChange={(inputValue) => loadOptions(inputValue, () => {})}
-      onChange={handleInstrumentChange}
-      value={selectedInstrument}
-      isClearable
-      isLoading={!instrumentOptions.length}
-      styles={customStyles} // Apply custom styles here
-    />
-                    
-                    
-                 
-
-                  <div className="table-responsive text-nowrap">
+                  <div className="mt-3 mx-3 d-flex align-items-center ">
+                    <label htmlFor="basketName" className="form-label me-2">
+                      Basket Name:
+                    </label>
+                  </div>
+                  <div className="mt-3 mx-3 d-flex align-items-center mb-3 d-flex justify-content-between">
+                    <input
+                      type="text"
+                      className=" form-control form-control-sm"
+                      id="basketName"
+                      placeholder="Enter Basket Name"
+                      value={currentBasket.name}
+                      onChange={(event) =>
+                        setCurrentBasket({
+                          ...currentBasket,
+                          name: event.target.value,
+                        })
+                      }
+                    />
+                    <button
+                      className="btn btn-primary active "
+                      onClick={handleAddRow}
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="table-responsive text-nowrap ">
                     <table className="table">
                       <thead>
                         <tr>
@@ -2619,167 +1646,205 @@ const handleInstrumentChange = (selectedOption) => {
                           <th>Action</th>
                         </tr>
                       </thead>
-                      <tbody className="table-border-bottom-0">
-                        {rows.map((row, index) => (
-                          <tr key={index}>
-                            {/* <td>
-                              <select
-                                className="form-select black-text"
-                                name="instrument"
-                                value={row.instrument}
-                                onChange={(event) =>
-                                  handleInputChange(index, event)
-                                }
-                              >
-                                {instruments.map((instrument) => (
-                                  <option
-                                    key={instrument.id}
-                                    value={instrument.id}
-                                    className="black-text"
-                                  >
-                                    {instrument.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </td> */}
-                            <td>   
-            <Select
-                id="buySymbol"
-                placeholder="Search instrument"
-                options={instrumentOptions}
-                onInputChange={(inputValue) => loadOptions(inputValue, () => {})}
-                onChange={handleInstrumentChange}
-                value={selectedInstrument}
-                isClearable
-                isLoading={!instrumentOptions.length}
-            /></td>
+                      <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index}>
+                      <td>
+                        {/* <select
+                          id="defaultSelect"
+                          className="form-select"
+                          name="instrument"
+                          value={row.instrument}
+                          onChange={(event) =>
+                            handleInputChange(index, event)
+                          }
+                        >
+                          <option value="1">Instrument 1</option>
+                          <option value="2">Instrument 2</option>
+                          <option value="3">Instrument 3</option>
+                        </select> */}
+                        <AutoComplete value={value} suggestions={items} completeMethod={search} onChange={(e) => setValue(e.value)}forceSelection  />
 
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control form-control-sm"
-                                name="lotQtyBuffer"
-                                value={row.lotQtyBuffer}
-                                placeholder="Lot Qty Buffer"
-                                onChange={(event) =>
-                                  handleInputChange(index, event)
-                                }
-                              />
-                            </td>
-                            <td>
-                              <div className="form-check form-check-inline">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name="cePe"
-                                  value="1"
-                                  checked={row.cePe === "1"}
-                                  onChange={(event) =>
-                                    handleInputChange(index, event)
-                                  }
-                                />
-                                <label className="form-check-label text-success">
-                                  CE
-                                </label>
-                              </div>
-                              <div className="form-check form-check-inline ml-2">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name="cePe"
-                                  value="2"
-                                  checked={row.cePe === "2"}
-                                  onChange={(event) =>
-                                    handleInputChange(index, event)
-                                  }
-                                />
-                                <label className="form-check-label text-warning">
-                                  PE
-                                </label>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="form-check form-check-inline">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name="transactionType"
-                                  value="1"
-                                  checked={row.transactionType === "1"}
-                                  onChange={(event) =>
-                                    handleInputChange(index, event)
-                                  }
-                                />
-                                <label className="form-check-label text-info">
-                                  Buy
-                                </label>
-                              </div>
-                              <div className="form-check form-check-inline ml-2">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name="transactionType"
-                                  value="2"
-                                  checked={row.transactionType === "2"}
-                                  onChange={(event) =>
-                                    handleInputChange(index, event)
-                                  }
-                                />
-                                <label className="form-check-label text-danger">
-                                  Sell
-                                </label>
-                              </div>
-                            </td>
-                            <td>
-                              <select
-                                className="form-select form-select-sm"
-                                name="exchange"
-                                value={row.exchange}
-                                onChange={(event) =>
-                                  handleInputChange(index, event)
-                                }
-                              >
-                                <option value="1">NFO</option>
-                              </select>
-                            </td>
-                            <td>
-                              <select
-                                className="form-select form-select-sm"
-                                name="orderType"
-                                value={row.orderType}
-                                onChange={(event) =>
-                                  handleInputChange(index, event)
-                                }
-                              >
-                                <option value="1">MARKET</option>
-                              </select>
-                            </td>
-                            <td>
-                              <select
-                                className="form-select form-select-sm"
-                                name="productType"
-                                value={row.productType}
-                                onChange={(event) =>
-                                  handleInputChange(index, event)
-                                }
-                              >
-                                <option value="1">CARRYFORWARD</option>
-                              </select>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-outline-danger btn-sm"
-                                onClick={() => handleDeleteRow(index)}
-                              >
-                                <i className="ri-delete-bin-line"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="d-flex justify-content-start mt-3 mx-3 mb-3">
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="lot_quantity_buffer"
+                          placeholder="Enter Lot QYT Buffer"
+                          value={row.lot_quantity_buffer}
+                          onChange={(event) =>
+                            handleInputChange(index, event)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name={`cePe${index}`}
+                            id={`ce${index}`}
+                            value="1"
+                            checked={row.cePe === '1'}
+                            onChange={(event) =>
+                              handleInputChange(index, {
+                                target: {
+                                  name: 'cePe',
+                                  value: event.target.value,
+                                },
+                              })
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`ce${index}`}
+                          >
+                            CE
+                          </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name={`cePe${index}`}
+                            id={`pe${index}`}
+                            value="2"
+                            checked={row.cePe === '2'}
+                            onChange={(event) =>
+                              handleInputChange(index, {
+                                target: {
+                                  name: 'cePe',
+                                  value: event.target.value,
+                                },
+                              })
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`pe${index}`}
+                          >
+                            PE
+                          </label>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name={`transactionType${index}`}
+                            id={`buy${index}`}
+                            value="1"
+                            checked={row.transactionType === '1'}
+                            onChange={(event) =>
+                              handleInputChange(index, {
+                                target: {
+                                  name: 'transactionType',
+                                  value: event.target.value,
+                                },
+                              })
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`buy${index}`}
+                          >
+                            BUY Order
+                          </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name={`transactionType${index}`}
+                            id={`sell${index}`}
+                            value="2"
+                            checked={row.transactionType === '2'}
+                            onChange={(event) =>
+                              handleInputChange(index, {
+                                target: {
+                                  name: 'transactionType',
+                                  value: event.target.value,
+                                },
+                              })
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`sell${index}`}
+                          >
+                            SELL Order
+                          </label>
+                        </div>
+                      </td>
+                      <td>
+                        {/* <select
+                          id="defaultSelect"
+                          className="form-select"
+                          name="exchange"
+                          value={row.exchange}
+                          onChange={(event) =>
+                            handleInputChange(index, event)
+                          }
+                        >
+                          <option value="1">Exchange 1</option>
+                          <option value="2">Exchange 2</option>
+                          <option value="3">Exchange 3</option>
+                        </select> */}
+                                                    <AutoComplete 
+                value={values} 
+                suggestions={filteredItems} 
+                completeMethod={searches} 
+                onChange={(e) => setValues(e.value)} 
+                forceSelection 
+            />
+                      </td>
+                      <td>
+                        <select
+                          id="defaultSelect"
+                          className="form-select"
+                          name="orderType"
+                          value={row.orderType}
+                          onChange={(event) =>
+                            handleInputChange(index, event)
+                          }
+                        >
+                          <option value="1">MARKET</option>
+                          <option value="2">Order Type 2</option>
+                          <option value="3">Order Type 3</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          id="defaultSelect"
+                          className="form-select"
+                          name="productType"
+                          value={row.productType}
+                          onChange={(event) =>
+                            handleInputChange(index, event)
+                          }
+                        >
+                          <option value="1">CARRYFORWARD</option>
+                          <option value="2">Product Type 2</option>
+                          <option value="3">Product Type 3</option>
+                        </select>
+                      </td>
+                      <td>
+                      {rows.length > 1 && (
+                        <i
+                          className="ri-delete-bin-7-fill"
+                          onClick={() => handleDeleteRow(index)}
+                        ></i>
+                      )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="card-footer text-end">
+            <div className="d-flex justify-content-start mt-3 mx-3 mb-3">
                     <button
                       className="btn btn-success"
                       onClick={handleCreateBasket}
@@ -2787,17 +1852,183 @@ const handleInstrumentChange = (selectedOption) => {
                       Create Basket
                     </button>
                   </div>
-                </div>
+             
+            </div>                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <Modal show={showModal} onHide={handleCloseModal} size="xl">
+      <Modal.Header closeButton>
+        <Modal.Title>{editedBasket.name}</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div className="mb-3">
+          <label htmlFor="basketName" className="form-label">
+            Basket Name:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="basketName"
+            value={editedBasket.name}
+            onChange={handleNameChange}
+          />
+        </div>
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Instrument</th>
+              <th>Lot Qty Buffer</th>
+              <th>CE/PE</th>
+              <th>Transaction Type</th>
+              <th>Exchange</th>
+              <th>Order Type</th>
+              <th>Product Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {editedBasket.rows.map((row, index) => (
+              <tr key={index}>
+                <td>
+                  <select
+                    className="form-select"
+                    value={row.instrument}
+                    onChange={(e) => handleRowChange(index, 'instrument', e.target.value)}
+                  >
+                    <option value="1">Instrument 1</option>
+                    <option value="2">Instrument 2</option>
+                    <option value="3">Instrument 3</option>
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={row.lotQtyBuffer}
+                    onChange={(e) => handleRowChange(index, 'lotQtyBuffer', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`cePe${index}`}
+                      value="1"
+                      checked={row.cePe === '1'}
+                      onChange={(e) => handleRowChange(index, 'cePe', e.target.value)}
+                    />
+                    <label className="form-check-label">CE</label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`cePe${index}`}
+                      value="2"
+                      checked={row.cePe === '2'}
+                      onChange={(e) => handleRowChange(index, 'cePe', e.target.value)}
+                    />
+                    <label className="form-check-label">PE</label>
+                  </div>
+                </td>
+                <td>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`transactionType${index}`}
+                      value="1"
+                      checked={row.transactionType === '1'}
+                      onChange={(e) => handleRowChange(index, 'transactionType', e.target.value)}
+                    />
+                    <label className="form-check-label">BUY</label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`transactionType${index}`}
+                      value="2"
+                      checked={row.transactionType === '2'}
+                      onChange={(e) => handleRowChange(index, 'transactionType', e.target.value)}
+                    />
+                    <label className="form-check-label">SELL</label>
+                  </div>
+                </td>
+                <td>
+                  <select
+                    className="form-select"
+                    value={row.exchange}
+                    onChange={(e) => handleRowChange(index, 'exchange', e.target.value)}
+                  >
+                    <option value="1">NFO</option>
+                    <option value="2">Exchange 2</option>
+                    <option value="3">Exchange 3</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    className="form-select"
+                    value={row.orderType}
+                    onChange={(e) => handleRowChange(index, 'orderType', e.target.value)}
+                  >
+                    <option value="1">MARKET</option>
+                    <option value="2">Order Type 2</option>
+                    <option value="3">Order Type 3</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    className="form-select"
+                    value={row.productType}
+                    onChange={(e) => handleRowChange(index, 'productType', e.target.value)}
+                  >
+                    <option value="1">CARRYFORWARD</option>
+                    <option value="2">Product Type 2</option>
+                    <option value="3">Product Type 3</option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDeleteRow(index)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleCloseModal}>
+          Close
+        </Button>
+        <Button variant="info" onClick={handleExecuteAll}>
+          Execute All
+        </Button>
+      </Modal.Footer>
+    </Modal>
+
+
+
+
       <Footer />
+
+
+
+      
     </div>
   );
 };
 
 export default Basket;
-
 

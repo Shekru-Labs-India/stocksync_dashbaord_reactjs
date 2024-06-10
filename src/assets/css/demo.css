@@ -162,4 +162,26 @@ color:   #8c57ff;;
 .black-text {
   color: black;
 }
+/* Add this CSS to your stylesheet */
+.custom-autocomplete .p-autocomplete-panel {
+  width: 100px; /* Set the desired width */
+  text-align: left; /* Ensure items are left-aligned */
+}
+
+.custom-autocomplete .p-autocomplete-items .p-autocomplete-item {
+  white-space: nowrap; /* Ensure items do not wrap */
+  overflow: hidden; /* Hide overflow if any */
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+}
+
+/* Add this CSS to your stylesheet */
+.menu-item.active {
+  background-color: #8c57ff; /* Active background color */
+  color: white; /* Active text color */
+  border-radius: 4px; /* Rounded corners for button-like appearance */
+}
+
+.menu-item.active .menu-link {
+  color: white; /* Ensure the link text is white when active */
+}
 

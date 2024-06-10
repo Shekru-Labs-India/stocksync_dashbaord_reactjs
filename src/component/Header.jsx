@@ -1,31 +1,9 @@
-// import React from "react";
-import SubHeader from "./SubHeader";
-import Profile from "../screen/Profile";
+import React from "react";
+
 import { Link } from "react-router-dom";
-import Footer from "./Footer";
-import React, { useState, useEffect } from 'react';
-  import axios from 'axios';
 
-
-
+import img from "../assets/img/avatars/1.png";
 const Header = () => {
-
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
-
-
-  const handleLogout = () => {
-    axios.get('http://192.46.212.210/api/common/logout')
-      .then(response => {
-        if (response.status === 200) {
-          setIsLoggedOut(true);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
-
   return (
     <div>
       {/* <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
@@ -122,7 +100,7 @@ const Header = () => {
             </a>
 
             <a
-              href="javascript:void(0);"
+              href="/"
               className="layout-menu-toggle menu-link text-large ms-auto d-xl-none"
             >
               <i className="ri-close-fill align-middle"></i>
@@ -151,7 +129,7 @@ const Header = () => {
                 >
                   <div className="avatar avatar-online">
                     <img
-                      src="../../assets/img/avatars/1.png"
+                      src={img}
                       alt
                       className="w-px-40 h-auto rounded-circle"
                     />
@@ -167,7 +145,7 @@ const Header = () => {
                         <div className="flex-shrink-0 me-2">
                           <div className="avatar avatar-online">
                             <img
-                              src="../../assets/img/avatars/1.png"
+                              src={img}
                               alt
                               className="w-px-40 h-auto rounded-circle"
                             />
@@ -184,7 +162,7 @@ const Header = () => {
                     <div className="dropdown-divider"></div>
                   </li>
                   <li>
-                    <Link to="/user_profile" className="dropdown-item" >
+                    <Link to="/user_profile" className="dropdown-item">
                       <i className="ri-user-3-line ri-22px me-2"></i>
                       <span className="align-middle">My Profile</span>
                     </Link>
@@ -231,15 +209,14 @@ const Header = () => {
                   </li>
                   <li>
                     <div className="d-grid px-4 pt-2 pb-1">
-                      {/* <a
+                      <a
                         className="btn btn-danger d-flex"
                         href="auth-login-cover.html"
                         target="_blank"
-                      > */}
-                        {/* <small className="align-middle">Logout</small>
-                        <i className="ri-logout-box-r-line ms-2 ri-16px"></i> */}
-                        <button  className="btn btn-danger d-flex" onClick={handleLogout}>Logout</button>
-                      {/* </a> */}
+                      >
+                        <small className="align-middle">Logout</small>
+                        <i className="ri-logout-box-r-line ms-2 ri-16px"></i>
+                      </a>
                     </div>
                   </li>
                 </ul>

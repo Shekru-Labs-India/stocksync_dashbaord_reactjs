@@ -12,7 +12,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
 import config from "../config";
-const StudentOrderBook = () => {
+const StudentOrderDetails = () => {
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -60,41 +60,14 @@ const StudentOrderBook = () => {
     handleRefresh();
   }, []);
 
-  const rowClassName = (rowData, rowIndex) => {
-    return rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
-  };
-
   return (
     <>
       <StudentHeader />
       <SubHeaderS />
 
       <div className="container-xxl container-p-y">
-      <nav aria-label="breadcrumb">
-  <ol className="breadcrumb breadcrumb-style1 text-secondary">
-    <li className="breadcrumb-item">
-      <Link to="/student/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
-      </Link>
-    </li>
-    <li className="breadcrumb-item active text-secondary" aria-current="page">
-      Order Book
-    </li>
-  </ol>
-</nav>
-
         <div className="card p-5">
-          <div className="d-flex justify-content-between align-items-center mb-5">
-          <Button
-              onClick={handleBack}
-              className="btn btn-transparent p-button-text small-button"
-              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
-              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
-            </Button>
-
-            <h5 className="mb-0 mx-auto">Order Book</h5>
-            <div></div>
-          </div>
+          <h5 className="card-header text-center">Order Book Details</h5>
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
               <ProgressSpinner
@@ -135,63 +108,52 @@ const StudentOrderBook = () => {
             loading={loading}
             globalFilter={globalFilter}
             emptyMessage="No records found"
-            rowClassName={rowClassName}
           >
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
-              header="Symbols"
+              header="Variety"
               sortable
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="transactiontype"
-              header="Transaction Type"
+              header="Order Type"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="exchange"
-              header="Exchange"
+              header="Product Type"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="instrumenttype"
-              header="Instrument Type"
+              header="Quantity"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="strikeprice"
-              header="Strike Price"
+              header="Lot Size"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="optiontype"
-              header="Option Type"
+              header="Symbols"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="orderstatus"
-              header="Order Status"
+              header="Transaction Type"
             ></Column>
-            {/* <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              header="Actions"
-              body={(rowData) => (
-                <Link to="/app2/student_order_details">
-                  <button className="btn btn-primary active">
-                    <i className="ri-timeline-view"></i>
-                  </button>
-                </Link>
-              )}
-            ></Column> */}
+            
+          
           </DataTable>
         </div>
       </div>
@@ -201,4 +163,4 @@ const StudentOrderBook = () => {
   );
 };
 
-export default StudentOrderBook;
+export default StudentOrderDetails;

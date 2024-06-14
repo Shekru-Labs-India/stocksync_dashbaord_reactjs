@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
+import SubHeaderS from "./SubHeaderS";
 import StudentHeader from "./StudentHeader";
 import Footer from "../component/Footer";
-import SubHeaderS from "./SubHeaderS";
+import config from "../config";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -14,7 +15,7 @@ import axios from "axios";
 
 const StudentMyReport = () => {
   const navigate = useNavigate();
-  const userId = "44"; // Change this to dynamically get the user ID as needed
+  const userId = localStorage.getItem("userId"); // Fetch the user ID from localStorage
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ const StudentMyReport = () => {
 
     try {
       const response = await axios.post(
-        "http://192.46.212.210/api/common/my_report",
+        `${config.apiDomain}/api/common/my_report`,
         {
           user_id: userId,
         }
@@ -61,31 +62,37 @@ const StudentMyReport = () => {
 
   return (
     <>
-      <StudentHeader />
-      <SubHeaderS />
+     <StudentHeader />
+     <SubHeaderS />
 
       <div className="container-xxl container-p-y">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb breadcrumb-style1">
-            <li className="breadcrumb-item">
-              <Link to="/">Home</Link>
-            </li>
-
-            <li className="breadcrumb-item">
-              <Link to="/app2/student_profile">Profile</Link>
-            </li>
-
-            <li className="breadcrumb-item active" aria-current="page">
-              My Report
-            </li>
-          </ol>
-        </nav>
+      <nav aria-label="breadcrumb">
+  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+    <li className="breadcrumb-item">
+      <Link to="/student/dashboard" className="text-secondary">
+        <i className="ri-home-line ri-lg"></i>
+      </Link>
+    </li>
+    <li className="breadcrumb-item">
+      <Link to="/app2/student_profile" className="text-secondary">
+       Profile
+      </Link>
+    </li>
+    <li className="breadcrumb-item active text-secondary" aria-current="page">
+   My Report
+    </li>
+  </ol>
+</nav>
         <div className="card p-5">
           <div className="row align-items-center">
             <div className="col text-start mb-5 ">
-              <button onClick={handleBack} className="btn btn-transparent  ">
-                Back
-              </button>
+            <Button
+              onClick={handleBack}
+              className="btn btn-transparent p-button-text small-button"
+              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}
+            >
+              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
+            </Button>
             </div>
             <div className="col text-start mb-5">
               <h5 className="mb-0">My Report</h5>
@@ -190,9 +197,14 @@ const StudentMyReport = () => {
               style={{ border: "1px solid #ddd" }}
               header="Actions"
               body={(rowData) => (
-                <Link to="/app2/student_report_view">
-                  <button className="btn btn-primary active">
-                    <i className="ri-timeline-view"></i>
+                <Link
+                  to={{
+                    pathname: "/app2/student_report_view",
+                    state: { userId, month: rowData.month_name },
+                  }}
+                >
+                  <button className="btn btn-primary active custom-btn-action1 ">
+                    <i className="ri-timeline-view ri-lg"></i>
                   </button>
                 </Link>
               )}

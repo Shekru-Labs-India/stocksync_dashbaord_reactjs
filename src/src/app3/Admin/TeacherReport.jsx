@@ -5,17 +5,16 @@ import { InputText } from "primereact/inputtext";
 import AdminHeader from "./AdminHeader";
 import Footer from "../component/Footer";
 import AdminSubHeader from "./AdminSubHeader";
-
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
-
+import config from "../config";
 const TeacherReport = () => {
   const navigate = useNavigate();
-  const userId = "44"; // Change this to dynamically get the user ID as needed
+  const userId = "120"; // Change this to dynamically get the user ID as needed
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,9 +32,9 @@ const TeacherReport = () => {
 
     try {
       const response = await axios.post(
-        "http://192.46.212.210/api/common/my_report",
+        `${config.apiDomain}/api/admin/month_wise_teacher_report`,
         {
-          user_id: userId,
+          teacher_id: userId,
         }
       );
 
@@ -66,54 +65,45 @@ const TeacherReport = () => {
       <AdminSubHeader />
 
       <div className="container-xxl container-p-y">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb breadcrumb-style1">
-            <li className="breadcrumb-item">
-              <Link to="/">Home</Link>
-            </li>
-
-            <li className="breadcrumb-item">
-              <Link to="/admin/profile">Profile</Link>
-            </li>
-
-            <li className="breadcrumb-item active" aria-current="page">
-              <Link to="/admin/teacher_list">Teacher List</Link>
-            </li>
-
-            <li className="breadcrumb-item active" aria-current="page">
-              Teacher Report
-            </li>
-          </ol>
-        </nav>
+      <nav aria-label="breadcrumb">
+  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+    <li className="breadcrumb-item">
+      <Link to="/admin/dashboard" className="text-secondary">
+        <i className="ri-home-line ri-lg"></i>
+      </Link>
+    </li>
+    <li className="breadcrumb-item">
+      <Link to="/admin/profile" className="text-secondary">
+        
+      </Link>
+    profile
+    </li>
+    <li className="breadcrumb-item">
+      <Link to="/admin/teacher_list" className="text-secondary">
+        
+      </Link>
+   Teacher List
+    </li>
+  
+    <li className="breadcrumb-item active text-secondary" aria-current="page">
+    Teacher Report
+    </li>
+  </ol>
+</nav>
         <div className="card p-5">
           <div className="row align-items-center">
             <div className="col text-start mb-5 ">
-              <button onClick={handleBack} className="btn btn-transparent  ">
-                Back
-              </button>
+            <Button
+              onClick={handleBack}
+              className="btn btn-transparent p-button-text small-button"
+              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
+              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
+            </Button>
             </div>
             <div className="col text-start mb-5">
               <h5 className="mb-0">Teacher Report</h5>
             </div>
           </div>
-          {/* <div className="row text-center">
-            <div className="col-md-3">
-              <h4>{summary.total_trades_count}</h4>
-              <p>Total Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_profitable_trades}</h4>
-              <p>Profitable Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_losing_trades}</h4>
-              <p>Losing Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_commission} Rs.</h4>
-              <p>Commission</p>
-            </div>
-          </div> */}
 
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
@@ -186,7 +176,7 @@ const TeacherReport = () => {
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="commission2"
+              field="commission"
               header="Commission"
             ></Column>
 
@@ -195,8 +185,10 @@ const TeacherReport = () => {
               style={{ border: "1px solid #ddd" }}
               header="Actions"
               body={(rowData) => (
-                <Link to="/admin/teacher_report_details">
-                  <button className="btn btn-info active">
+                <Link
+                  to={`/admin/teacher_report_details/${userId}/${rowData.month_name}`}
+                >
+                  <button className="btn btn-info active custom-btn-action1">
                     <i className="ri-timeline-view"></i>
                   </button>
                 </Link>
@@ -212,3 +204,4 @@ const TeacherReport = () => {
 };
 
 export default TeacherReport;
+

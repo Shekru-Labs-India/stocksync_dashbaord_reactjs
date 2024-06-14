@@ -1,430 +1,543 @@
+
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Footer from "../component/Footer";
 import SubHeaderS from "./SubHeaderS";
 import StudentHeader from "./StudentHeader";
-import { Link, useNavigate } from "react-router-dom";
-
-const StudentProfile = () => {
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    mobile: "",
-    aadhar_number: "",
-    pancard_number: "",
-    trading_power: "",
-    broker_client_id: "",
-    broker_password: "",
-    broker_qr_totp_token: "",
-    broker_api_key: "",
-    broker_conn_status: false,
-    commission: "",
-  });
-
-  const [userId, setUserId] = useState(null);
-
-  const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
+import { Link } from "react-router-dom";
+import img from "../../app2/assets/img/avatars/1.png";
+import background from "../../app2/assets/img/backgrounds/sharemarket.jpg";
+import Footer from "../component/Footer";
+import config from "../config";
+const Profile = () => {
+  const [userData, setUserData] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    // const storedUserId = localStorage.getItem("user_id");
-    const storedUserId = "44";
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
-
-    const fetchProfileDetails = async () => {
-      if (!storedUserId) return;
-
+    const fetchUserProfile = async () => {
       try {
-        const response = await axios.post(
-          "http://192.46.212.210/api/common/get_profile_details",
+        const userId = localStorage.getItem("userId");
+
+        if (!userId) {
+          console.error("User ID not found in localStorage");
+          return;
+        }
+
+        const response = await fetch(
+          `${config.apiDomain}/api/common/get_profile_details`,
           {
-            user_id: storedUserId,
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: userId }),
           }
         );
-
-        if (response.data.st === 1) {
-          const user = response.data.user;
-          setProfile({
-            name: user.name || "",
-            email: user.email || "",
-            mobile: user.mobile || "",
-            aadhar_number: user.aadhar_number || "",
-            pancard_number: user.pancard_number || "",
-            trading_power: user.trading_power || "",
-            broker_client_id: user.broker_client_id || "",
-            broker_password: user.broker_password || "",
-            broker_qr_totp_token: user.broker_qr_totp_token || "",
-            broker_api_key: user.broker_api_key || "",
-            broker_conn_status: user.broker_conn_status || false,
-            commission: user.commission || "",
-          });
+        const data = await response.json();
+        if (response.ok && data.st === 1) {
+          setUserData(data.user);
+        } else {
+          console.error("Failed to fetch user profile:", data.message);
         }
       } catch (error) {
-        console.error("Error fetching profile details:", error);
+        console.error("Error fetching user profile:", error);
       }
     };
 
-    fetchProfileDetails();
-  }, []);
+    fetchUserProfile();
+  }, []); // Ensure the dependency array is empty
 
-  const handleInputChange = (e) => {
+  const handleConnectionStatus = (status) => {
+    console.log("Connection status:", status);
+  };
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile({
-      ...profile,
-      [name]: value,
+    setUserData({
+      ...userData,
+      [name]: value
     });
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        "http://192.46.212.210/api/common/save_profile_details",
+       `${config.apiDomain}/api/common/save_profile_details `,
         {
-          user_id: userId,
-          email: profile.email,
-          mobile: profile.mobile,
-          name: profile.name,
-          aadhar_number: profile.aadhar_number,
-          pancard_number: profile.pancard_number,
-          trading_power: profile.trading_power,
-          broker_client_id: profile.broker_client_id,
-          broker_password: profile.broker_password,
-          broker_qr_totp_token: profile.broker_qr_totp_token,
-          broker_api_key: profile.broker_api_key,
+          user_id: localStorage.getItem('userId'),
+          email: userData.email,
+          mobile: userData.mobile,
+          name: userData.name,
         }
       );
 
       if (response.data.st === 1) {
-        alert("Personal information updated successfully.");
+        console.log('Profile updated successfully:', response.data.msg);
+        setSuccessMessage('Profile updated successfully!');
       } else {
-        alert("Failed to update profile.");
+        console.error('Failed to update user profile:', response.data.msg);
       }
     } catch (error) {
-      console.error("Error updating profile details:", error);
-      alert("An error occurred while updating the profile.");
+      console.error('Error updating user profile:', error);
     }
   };
 
+  const handleBrokerInformation = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details`, {
+        user_id: localStorage.getItem('user_id'),
+        broker_client_id: userData.broker_client_id,
+        broker_password: userData.broker_password,
+        broker_qr_totp_token: userData.broker_qr_totp_token,
+        broker_api_key: userData.broker_api_key
+      });
+  
+      console.log('Response:', response);
+  
+      if (response.data.st === 1) {
+        console.log('Broker updated successfully:', response.data.msg);
+        setSuccessMessage('Broker updated successfully!');
+      } else {
+        console.error('Failed to update Broker profile:', response.data.msg);
+        // Handle error, show error message, etc.
+      }
+    } catch (error) {
+      console.error('Error updating Broker profile:', error);
+      if (error.response) {
+        console.error('Response Data:', error.response.data);
+      }
+    }
+  };
+  
+
   return (
-    <div>
+    <>
       <StudentHeader />
       <SubHeaderS />
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="layout-page">
             <div className="content-wrapper">
-              <div className="container-xxl flex-grow-1 container-p-y">
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb breadcrumb-style1">
-                    <li className="breadcrumb-item">
-                      <Link to="/"> Home</Link>
-                    </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      Profile
-                    </li>
-                  </ol>
-                </nav>
-                <div className="card">
-                  <div className="card-body pt-0">
-                    <div className="row align-items-center">
-                      <div className="col text-start">
-                        <button
-                          onClick={handleBack}
-                          className="btn btn-transparent mt-3"
-                        >
-                          Back
-                        </button>
-                      </div>
-                      <div className="col text-start">
-                        <h5 className="mb-0">Student Profile</h5>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-3">
-                        <div className="card mb-6 mt-5">
-                          <div className="card-body pt-0">
-                            <ul className="list-unstyled my-3 py-1">
-                              <li className="d-flex flex-column align-items-start mb-4">
-                                <span className="fw-medium fs-5">
-                                  {profile.name}
-                                </span>
-                                <span>Student</span>
-                              </li>
-                              <li className="d-flex flex-column align-items-start mb-4">
-                                <span
-                                  className={`fw-medium ${
-                                    profile.broker_conn_status
-                                      ? "text-success"
-                                      : "text-danger"
-                                  }`}
-                                >
-                                  Broker is{" "}
-                                  {profile.broker_conn_status
-                                    ? "Connected"
-                                    : "Not Connected"}
-                                </span>
-                              </li>
-                              <li className="d-flex flex-column align-items-start mb-4">
-                                <span>Commission: {profile.commission}%</span>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div className="mb-5">
-                          <div className="ms-auto text-start">
-                            <Link to="/app2/student_report">
-                              <button className="btn btn-primary active mb-3">
-                                <i className="ri-file-chart-line me-3"></i> My
-                                Report
-                              </button>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-md-9">
-                        <div className="card-body pt-0">
-                          <form
-                            id="formAccountSettings"
-                            method="POST"
-                            onSubmit={handleFormSubmit}
-                          >
-                            <div className="row mt-1">
-                              <h5 className="text-start">
-                                {" "}
-                                <i className="ri-user-line ri-ms me-2"></i>
-                                Personal Information
-                              </h5>
-                              <div className="col-md-4">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={profile.name}
-                                    onChange={handleInputChange}
-                                    placeholder="Name"
-                                    required
-                                  />
-                                  <label htmlFor="name">
-                                    {" "}
-                                    <span className="text-danger">
-                                      *
-                                    </span> Name{" "}
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    id="email"
-                                    name="email"
-                                    value={profile.email}
-                                    onChange={handleInputChange}
-                                    placeholder="E-mail"
-                                    required
-                                  />
-                                  <label htmlFor="email">
-                                    {" "}
-                                    <span className="text-danger">
-                                      *
-                                    </span>E-mail{" "}
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4">
-                                <div className="input-group input-group-merge">
-                                  <div className="form-floating form-floating-outline">
-                                    <input
-                                      type="text"
-                                      id="mobile"
-                                      name="mobile"
-                                      className="form-control"
-                                      value={profile.mobile}
-                                      onChange={handleInputChange}
-                                      placeholder="Mobile Number"
-                                      required
-                                    />
-                                    <label htmlFor="mobile">
-                                      <span className="text-danger">*</span>
-                                      Mobile Number{" "}
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-4 mt-5">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    id="aadhar_number"
-                                    name="aadhar_number"
-                                    value={profile.aadhar_number}
-                                    onChange={handleInputChange}
-                                    placeholder="Adhar Number"
-                                  />
-                                  <label htmlFor="aadhar_number">
-                                    Aadhar Number
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4 mt-5">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    id="pancard_number"
-                                    name="pancard_number"
-                                    value={profile.pancard_number}
-                                    onChange={handleInputChange}
-                                    placeholder="Pancard Number"
-                                  />
-                                  <label htmlFor="pancard_number">
-                                    Pancard Number
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4 mt-5">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    type="text"
-                                    id="trading_power"
-                                    name="trading_power"
-                                    className="form-control"
-                                    value={profile.trading_power}
-                                    onChange={handleInputChange}
-                                    placeholder="Trading Power"
-                                    required
-                                  />
-                                  <label htmlFor="trading_power">
-                                    <span className="text-danger">*</span>
-                                    Trading Power{" "}
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="mt-6 text-end">
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary active text-end me-3"
-                                >
-                                  <i className="ri-save-line me-3 ri-lg"></i>
-                                  Save changes
-                                </button>
-                              </div>
-                            </div>
-                            <hr></hr>
-                            <div className="row mb-3">
-                              <h5 className="text-start">
-                                {" "}
-                                <i className="ri-group-line ri-ms me-2"></i>
-                                Broker Information
-                              </h5>
+              <div className="container flex-grow-1 container-p-y">
+              <nav aria-label="breadcrumb">
+  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+    <li className="breadcrumb-item">
+      <Link to="/student/dashboard" className="text-secondary">
+        <i className="ri-home-line ri-lg"></i>
+      </Link>
+    </li>
+    <li className="breadcrumb-item active text-secondary" aria-current="page">
+      Profile
+    </li>
+  </ol>
+</nav>
 
-                              <div className="col-md-4">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="broker_client_id"
-                                    name="broker_client_id"
-                                    value={profile.broker_client_id}
-                                    onChange={handleInputChange}
-                                    placeholder=" Client ID"
-                                    required
-                                  />
-                                  <label htmlFor="broker_client_id">
-                                    <span className="text-danger">*</span>{" "}
-                                    Client ID{" "}
-                                  </label>
-                                </div>
+                <div className="container-xxl flex-grow-1 container-p-y">
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="card mb-6">
+                        <div className="user-profile-header-banner">
+                          <img
+                            src={background}
+                            alt="Banner image"
+                            className="rounded-top"
+                            style={{ maxWidth: "100%", height: "164px" }}
+                          />
+                        </div>
+                        <div className="user-profile-header d-flex flex-column flex-lg-row text-sm-start text-center mb-4">
+                          <div className="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+                            <img
+                              src={img}
+                              alt="user image"
+                              className="d-block h-auto ms-0 ms-sm-5 rounded user-profile-img"
+                            />
+                          </div>
+                          <div className="flex-grow-1 mt-3 mt-lg-5">
+                            <div className="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-5 flex-md-row flex-column gap-4">
+                              <div className="user-profile-info">
+                                {userData ? (
+                                  <>
+                                    <h4 className="mb-2 mt-lg-6">{userData.name}</h4>
+                                    <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
+                                      <li className="list-inline-item">
+                                        <i className="ri-user-settings-line me-2 ri-24px"></i>
+                                        <span className="fw-medium">Role: {userData.role}</span>
+                                      </li>
+                                      <li className="list-inline-item">
+                                        <i className="ri-mobile-download-line me-2 ri-24px"></i>
+                                        <span className="fw-medium">Mobile Number: {userData.mobile}</span>
+                                      </li>
+                                    </ul>
+                                  </>
+                                ) : (
+                                  <p>Loading...</p>
+                                )}
                               </div>
-
-                              <div className="col-md-4">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="broker_password"
-                                    name="broker_password"
-                                    value={profile.broker_password}
-                                    onChange={handleInputChange}
-                                    placeholder="Password"
-                                    required
-                                  />
-                                  <label htmlFor="broker_password">
-                                    <span className="text-danger">*</span>{" "}
-                                    Password{" "}
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="broker_qr_totp_token"
-                                    name="broker_qr_totp_token"
-                                    value={profile.broker_qr_totp_token}
-                                    onChange={handleInputChange}
-                                    placeholder="QR TOTP Token"
-                                    required
-                                  />
-                                  <label htmlFor="broker_qr_totp_token">
-                                    <span className="text-danger">*</span> QR
-                                    TOTP Token{" "}
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-md-4 mt-5">
-                                <div className="form-floating form-floating-outline">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="broker_api_key"
-                                    name="broker_api_key"
-                                    value={profile.broker_api_key}
-                                    onChange={handleInputChange}
-                                    placeholder="API Key"
-                                    required
-                                  />
-                                  <label htmlFor="broker_api_key">
-                                    <span className="text-danger">*</span> API
-                                    Key{" "}
-                                  </label>
-                                </div>
+                              <div className="ms-auto">
+                                {userData && (
+                                  <button
+                                    className={`btn ${userData.broker_conn_status ? "btn-success" : "btn-danger"}`}
+                                    onClick={() => handleConnectionStatus(!userData.broker_conn_status)}
+                                  >
+                                    <i className="ri-shield-check-line me-1"></i>{" "}
+                                    {userData.broker_conn_status ? "Connected" : "Not Connected"}
+                                  </button>
+                                )}
                               </div>
                             </div>
-                            <div className="mt-6 text-end">
-                              <button
-                                type="submit"
-                                className="btn btn-primary active text-end me-3"
-                              >
-                                <i className="ri-save-line me-3 ri-lg"></i>Save
-                                Information
-                              </button>
-                            </div>
-                          </form>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+            <div className="row">
+              <div className="col-md-12">
+                <div className="nav-align-top">
+                  <ul className="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
+                    <li className="nav-item  active">
+                   <Link to="/app2/student_profile"  className="nav-link active btn btn-primary ">
+                        <i className="ri-user-3-line me-1_5"></i>Profile
+                        </Link>
+                    </li>
+                    <li className="nav-item">
+                    <Link to="/student/report"  className="nav-link">
+                        <i className="ri-team-line me-1_5"></i>Reports
+                        </Link>
+                    </li>
+                    
+                  </ul>
                 </div>
               </div>
             </div>
-          </div>
-          <Footer />
+            {userData && (
+            <div className="row ">
+                          <div className="col-md-3">
+                            <div className="card ">
+                              <div className="card-body pt-0">
+                             
+                                <ul className="list-unstyled my-3 py-1">
+                               
+                                  <li className="d-flex flex-column align-items-start mb-4">
+                                 
+                                    <span className="fw-medium fs-5">
+
+                                      About
+                                    </span>
+                                   
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Name:</span>
+                                    <strong className="ml-auto">
+                                    {userData.name}
+                                    </strong>
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Role:</span>
+                                    <strong className="ml-auto">{userData.role}</strong>
+                         
+                                  
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Broker Connection:</span>
+                                    <strong className="text-success ml-auto">
+                                    <div className="ms-auto">
+                    
+                        <div
+                          className={`text-success ml-auto${
+                            userData.broker_conn_status ? "btn-success" : "btn-danger"
+                          }`}
+                          onClick={() =>
+                            handleConnectionStatus(!userData.broker_conn_status)
+                          }
+                        >
+                         {" "}
+                          {userData.broker_conn_status ? "Connected" : "Not Connected"}
+                        </div>
+                      
+                    </div>
+                                    </strong>
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Commission:</span>
+                                    <strong className="ml-auto">{userData.commission}</strong>
+                                  </li>
+                                </ul>
+                                <hr className="text-black" />
+                                <ul className="list-unstyled my-3 py-1">
+                                  <li className="d-flex flex-column align-items-start mb-4">
+                                    <span className="fw-medium fs-5">
+                                      Contacts
+                                    </span>
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Email:</span>
+                                    <strong className="ml-auto">
+                                     {userData.email}
+                                    </strong>
+                                  </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Mobile:</span>
+                                    <strong className="ml-auto">
+                                      {userData.mobile}
+                                    </strong>
+                                  </li>
+                                 
+                                </ul>
+                                <hr />
+                                <ul className="list-unstyled my-3 py-1">
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+                                    <span>Trading Power:</span>
+                                    <strong className="ml-auto fw-medium fs-5">
+                                      {userData.trading_power}
+                                    </strong>
+                                  </li>
+                                </ul>
+                            
+                              </div>
+                           
+                            </div>
+                          </div>
+                          <div className="col-md-9">
+                            <div className="card mt-1 ">
+                              <div className="card-body pt-0">
+                                <form
+                                  id="formAccountSettings"
+                                  method="POST"
+                                  //   onSubmit={handleFormSubmit}
+                                >
+                                  <div className="row mt-3">
+                                  
+                                    <span className="fw-medium fs-5 text-start mb-5">
+                                      {" "}
+                                      <i className="ri-user-line ri-ms me-1 "></i>
+                                      Personal Information
+                                    </span>
+                                    <div className="col-md-4">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      id="name"
+                                      name="name"
+                                      value={userData.name}
+                                      placeholder="Name"
+                                      required
+                                      onChange={handleChange}
+                                   
+                                     
+                                    />
+                                    <label htmlFor="name">
+                                      {' '}
+                                      <span className="text-danger">*</span> Name{' '}
+                                    </label>
+                                  </div>
+                                </div>
+                                </div>
+                                <div className="col-md-4">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      id="email"
+                                      name="email"
+                                      value={userData.email}
+                                      placeholder="E-mail"
+                                      required
+                                      onChange={handleChange}
+                                   
+                                    />
+                                    <label htmlFor="email">
+                                      {' '}
+                                      <span className="text-danger">*</span>E-mail{' '}
+                                    </label>
+                                  </div>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                  <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                      <input
+                                        type="text"
+                                        id="mobile"
+                                        name="mobile"
+                                        className="form-control"
+                                        value={userData.mobile}
+                                        placeholder="Mobile Number"
+                                        required
+                                        onChange={handleChange}
+                                      />
+                                      <label htmlFor="mobile">
+                                        <span className="text-danger">*</span>Mobile Number{' '}
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                                   
+                                <div className="col-md-4 mt-5">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      id="tradingPower"
+                                      name="tradingPower"
+                                      value={userData.trading_power}
+                                      placeholder="Trading Power"
+                                      required
+                                      onChange={handleChange}
+                                      // disabled
+                                    />
+                                    <label htmlFor="tradingPower">
+                                      <span className="text-danger">*</span>Trading Power{' '}
+                                    </label>
+                                  </div>
+                                  </div>
+                                </div>
+                              
+                                <div className="mt-6 text-end">
+                                <button
+                                 onClick={handleSubmit}
+                                  className="btn btn-primary active  text-end me-3"
+                                >
+                                  <i className="ri-save-line me-3 ri-lg"></i>Save Changes
+                                </button>
+                           
+                              </div>
+                                  </div>
+                                  <hr></hr>
+                                  <div className="row mb-3">
+                                    <h5 className="text-start">
+                                      {" "}
+                                      <i className="ri-group-line ri-ms me-2"></i>
+                                      Broker Information
+                                    </h5>
+
+                                    <div className="col-md-4">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      id="broker_client_id"
+                                      name="broker_client_id"
+                                      placeholder="Broker Client ID"
+                                      value={userData.broker_client_id }
+                                      onChange={handleChange}
+                                      // disabled
+                                    />
+                                    <label htmlFor="broker_client_id">Broker Client ID</label>
+                                  </div>
+                                  </div>
+                                </div>
+
+                                <div className="col-md-4">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      id="brokerPassword"
+                                      name="brokerPassword"
+                                      placeholder="Broker Password"
+                                      value={userData.broker_password || ''}
+                                      onChange={handleChange}
+                                     
+                                    />
+                                    <label htmlFor="brokerPassword">Broker Password</label>
+                                  </div>
+                                  </div>
+                                </div>
+                                <div className="col-md-4">
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      id="broker_qr_totp_token"
+                                      name="broker_qr_totp_token"
+                                      value={userData.broker_qr_totp_token}
+                                      placeholder="Broker QR TOTP Token"
+                                      onChange={handleChange}
+                                    />
+                                    <label htmlFor="broker_qr_totp_token">Broker QR TOTP Token</label>
+                                  </div>
+                                  </div>
+                                </div>
+                                    <div className="col-md-4 mt-5">
+                                  
+                                <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                     
+                                      name="broker_api_key"
+                                      placeholder="Broker API Key"
+                                      value={userData.broker_api_key}
+                                      onChange={handleChange}
+                                      autoComplete="broker_api_key"
+
+                                 
+
+                                    />
+                                    <label htmlFor="broker_api_key">Broker API Key</label>
+                                  </div>
+                                  </div>
+                                </div>
+                              
+                              </div>
+                              <div className="mt-6 text-end">
+                                <button
+                      onClick={ handleBrokerInformation}
+                                   className="btn btn-primary active  text-end me-3"
+                                >
+                                  <i className="ri-save-line me-3 ri-lg"></i> Save Changes
+                                </button>
+                               
+                               
+                              </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="card  ">
+                              <div className="card-body pt-0">
+                                <ul className="list-unstyled my-3 py-1">
+                                  <li className="d-flex flex-column align-items-start mb-4">
+                                    <span className="fw-medium fs-5">
+                                      Overview
+                                    </span>
+                                  </li>
+                                  <li className="d-flex flex-column align-items-start mb-4">
+                                    <span>Last Login:</span>
+                                  </li>
+                                  <li className="d-flex flex-column align-items-start mb-4">
+                                    <span>Account Created On: </span>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+            )}
+                      </div>
+                   
+                  
+                
+            
+          
+         
+          <Footer></Footer>
         </div>
       </div>
-    </div>
+      </div>
+      </div>
+      </div>
+    </>
   );
 };
 
-export default StudentProfile;
+export default Profile;

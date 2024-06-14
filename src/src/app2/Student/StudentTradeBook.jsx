@@ -11,7 +11,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
-
+import config from "../../app3/config";
 const StudentTradeBook = () => {
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -19,41 +19,10 @@ const StudentTradeBook = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Fetch data from an API
-  //   // const userId = localStorage.getItem("user_id");
-  //   const userId = "44";
-
-  //   if (!userId) {
-  //     setError(new Error("User ID not found in localStorage"));
-  //     setLoading(false);
-  //     return;
-  //   }
-  //   fetch("http://192.46.212.210/api/student/student_trade_book", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ user_id: userId }),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.st === 1 && data.data) {
-  //         setData(data.data);
-  //       } else {
-  //         setError(new Error("No data found"));
-  //       }
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setError(new Error(error.message || "Failed to fetch data"));
-  //       setLoading(false);
-  //     });
-  // }, []);
-
   const fetchData = async () => {
-    const userId = "42"; // Change this to dynamically get the user ID as needed
-    // const userId = localStorage.getItem
+    console.log("fetchData called");
+    const userId = localStorage.getItem("userId"); // Fetch the user ID from local storage
+
     if (!userId) {
       setError(new Error("User ID not found"));
       setLoading(false);
@@ -63,8 +32,8 @@ const StudentTradeBook = () => {
     setLoading(true);
 
     await axios
-      .post("http://192.46.212.210/api/student/student_trade_book", {
-        user_id: userId,
+      .post(`${config.apiDomain}/api/student/student_trade_book`, {
+        student_id: userId,
       })
       .then((response) => {
         if (response.data.data) {
@@ -83,12 +52,13 @@ const StudentTradeBook = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
   const handleRefresh = () => {
     fetchData();
   };
 
   useEffect(() => {
-    handleRefresh();
+    fetchData(); // This should ideally be called once when the component mounts
   }, []);
 
   return (
@@ -97,8 +67,30 @@ const StudentTradeBook = () => {
       <SubHeaderS />
 
       <div className="container-xxl container-p-y">
+      <nav aria-label="breadcrumb">
+  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+    <li className="breadcrumb-item">
+      <Link to="/student/dashboard" className="text-secondary">
+        <i className="ri-home-line ri-lg"></i>
+      </Link>
+    </li>
+    <li className="breadcrumb-item active text-secondary" aria-current="page">
+      Trade Book
+    </li>
+  </ol>
+</nav>
         <div className="card p-5">
-          <h5 className="card-header text-center">Trade Book</h5>
+        <div className="d-flex justify-content-between align-items-center mb-5">
+          <Button
+              onClick={handleBack}
+              className="btn btn-transparent p-button-text small-button"
+              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
+              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
+            </Button>
+
+            <h5 className="mb-0 mx-auto">Trade Book</h5>
+            <div></div>
+          </div>
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
               <ProgressSpinner
@@ -194,7 +186,7 @@ const StudentTradeBook = () => {
               field="expirydate"
               header="Expiry Date"
             ></Column>
-            <Column
+            {/* <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               header="Actions"
@@ -205,7 +197,7 @@ const StudentTradeBook = () => {
                   </button>
                 </Link>
               )}
-            ></Column>
+            ></Column> */}
           </DataTable>
         </div>
       </div>
@@ -216,3 +208,4 @@ const StudentTradeBook = () => {
 };
 
 export default StudentTradeBook;
+

@@ -6,6 +6,7 @@ import SubHeader from "../component/SubHeader";
 import { Link, useNavigate } from "react-router-dom";
 import $ from "jquery";
 import "datatables.net";
+import config from "../../app3/config";
 // import "datatables.net-dt/css/jquery.dataTables.css";
 
 const TradeBook = () => {
@@ -17,7 +18,7 @@ const TradeBook = () => {
   useEffect(() => {
     // Fetch data from an API
     axios
-      .get("http://192.46.212.210/api/teacher/teacher_order_book")
+      .get(`${config.apiDomain}/api/teacher/teacher_order_book`)
       .then((response) => {
         setData(response.data);
         setLoading(false);

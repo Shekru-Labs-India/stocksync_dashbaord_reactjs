@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import img from "../assets/img/illustrations/tree-3.png";
 import background from "../assets/img/illustrations/auth-basic-mask-light.png";
-
+import config from "../src/app3/config";
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("authToken") ? true : false
@@ -61,7 +61,7 @@ const Login = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://192.46.212.210/api/common/login", {
+      const response = await fetch(`${config.apiDomain}/api/common/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const Login = () => {
     setError(null);
     try {
       const response = await fetch(
-        "http://192.46.212.210/api/common/verify_otp",
+        `${config.apiDomain}/api/common/verify_otp`,
         {
           method: "POST",
           headers: {
@@ -100,8 +100,25 @@ const Login = () => {
       const data = await response.json();
       if (response.ok && data.st === 1) {
         localStorage.setItem("authToken", data.token); // Set authentication token
+        localStorage.setItem("userId", data.user_data.id); // Set user ID
         alert("OTP Verified!");
         setIsAuthenticated(true); // Set authentication state
+        const { role } = data.user_data;
+        switch (role) {
+          case "teacher":
+            navigate("/teacher/dashboard"); // Example path for teacher dashboard
+            break;
+          case "student":
+            navigate("/student/dashboard"); // Example path for student dashboard
+            break;
+          case "admin":
+            navigate("/admin/dashboard"); // Example path for admin dashboard
+            break;
+          default:
+            // Redirect to a default route if role doesn't match any of the above
+            navigate("/");
+            break;
+        }
       } else {
         setError(data.message || "Failed to verify OTP");
       }
@@ -111,6 +128,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];

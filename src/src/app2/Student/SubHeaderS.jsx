@@ -1,8 +1,23 @@
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 const SubHeaderS = () => {
+  const location = useLocation();
   const [activeItem, setActiveItem] = useState("");
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    if (currentPath.includes("student/dashboard")) {
+      setActiveItem("student_home");
+    } else if (currentPath.includes("app2/order_book")) {
+      setActiveItem("order_book");
+    } else if (currentPath.includes("app2/student_trade_book")) {
+      setActiveItem("trade_book");
+    } else {
+      setActiveItem("");
+    }
+  }, [location.pathname]);
+
   const [hoverItem, setHoverItem] = useState("");
 
   const handleSetActive = (item) => {
@@ -23,8 +38,6 @@ const SubHeaderS = () => {
     const isActive = activeItem === item;
     const isHovered = hoverItem === item;
     const baseStyle = {
-      // padding: "10px",
-      // cursor: "pointer",
       color: "black",
       backgroundColor: isHovered ? "#8c57ff" : "transparent", // Change background color on hover
     };
@@ -56,7 +69,7 @@ const SubHeaderS = () => {
                   style={getMenuItemStyle("student_home")}
                 >
                   <Link
-                    to="/"
+                    to="/student/dashboard"
                     className="menu-link"
                     onClick={() => handleSetActive("student_home")}
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -111,3 +124,4 @@ const SubHeaderS = () => {
 };
 
 export default SubHeaderS;
+

@@ -11,30 +11,26 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
-
+import config from "../config";
 const TeacherList = () => {
   const navigate = useNavigate();
+  const userId = "120"; // Change this to dynamically get the user ID as needed
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const userId = "44"; // Change this to dynamically get the user ID as needed
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post(
-        "http://192.46.212.210/api/common/my_report",
-        {
-          user_id: userId,
-        }
+      const response = await axios.get(
+         `${config.apiDomain}/api/admin/teacher_report_teacher_list`
       );
 
       if (response.data && response.data.st === 1) {
-        setData(response.data.completed_trades_per_month);
+        setData(response.data.teacher_data);
       } else {
         setError(new Error("No data found"));
       }
@@ -49,43 +45,51 @@ const TeacherList = () => {
     navigate(-1);
   };
 
-  const handleRefresh = () => {
-    fetchData();
-  };
-
   useEffect(() => {
-    handleRefresh();
+    fetchData();
   }, []);
+
+  const openTeacherReport = (teacherId) => {
+    navigate(`/admin/teacher_report_details/${teacherId}`);
+  };
 
   return (
     <>
       <AdminHeader />
       <AdminSubHeader />
 
-      <div className="container-xxl container-p-y" align="center">
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb breadcrumb-style1">
-            <li className="breadcrumb-item">
-              <Link to="/">Home</Link>
-            </li>
-            <li className="breadcrumb-item">
-              <Link to="/admin/profile">Profile</Link>
-            </li>
-
-            <li className="breadcrumb-item active" aria-current="page">
-              Teacher List
-            </li>
-          </ol>
-        </nav>
+      <div className="container-xxl container-p-y">
+      <nav aria-label="breadcrumb">
+  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+    <li className="breadcrumb-item">
+      <Link to="/admin/dashboard" className="text-secondary">
+        <i className="ri-home-line ri-lg"></i>
+      </Link>
+    </li>
+    <li className="breadcrumb-item">
+      <Link to="/admin/profile" className="text-secondary">
+        
+      </Link>
+    profile
+    </li>
+  
+    <li className="breadcrumb-item active text-secondary" aria-current="page">
+    Teacher List
+    </li>
+  </ol>
+</nav>
         <div className="card p-5">
           <div className="row align-items-center">
-            <div className="col text-start mb-5">
-              <button onClick={handleBack} className="btn btn-transparent">
-                Back
-              </button>
+            <div className="col text-start mb-5 ">
+            <Button
+              onClick={handleBack}
+              className="btn btn-transparent p-button-text small-button"
+              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
+              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
+            </Button>
             </div>
             <div className="col text-start mb-5">
-              <h5 className="mb-0">Teacher List</h5>
+              <h5 className="mb-0">Teacher Report</h5>
             </div>
           </div>
 
@@ -106,11 +110,11 @@ const TeacherList = () => {
                 type="button"
                 icon="pi pi-refresh"
                 text
-                onClick={handleRefresh}
+                onClick={fetchData}
               />
             )}
             <IconField iconPosition="left">
-              <InputIcon className="pi pi-search"></InputIcon>
+              <InputIcon className="pi pi-search"> </InputIcon>
               <InputText
                 type="search"
                 placeholder="Search"
@@ -120,6 +124,10 @@ const TeacherList = () => {
             </IconField>
           </div>
           <DataTable
+            style={{
+              border: "1px solid #ddd",
+            }}
+            align="center"
             value={data}
             paginator
             rows={5}
@@ -127,42 +135,30 @@ const TeacherList = () => {
             loading={loading}
             globalFilter={globalFilter}
             emptyMessage="No records found"
-            style={{ border: "1px solid #ddd" }}
           >
             <Column
-              align={"center"}
+              align="center"
               style={{ border: "1px solid #ddd" }}
-              body={() => (
-                <>
-                  <span>Viraj Hole</span>
-                </>
-              )}
+              field="name"
               header="Name"
               sortable
             ></Column>
             <Column
-              align={"center"}
+              align="center"
               style={{ border: "1px solid #ddd" }}
-              body={() => (
-                <>
-                  <span>5</span>
-                </>
-              )}
-              header="Students"
+              field="student_count"
+              header="Student Count"
             ></Column>
-
             <Column
-              align={"center"}
+              align="center"
               style={{ border: "1px solid #ddd" }}
               header="Actions"
-              body={() => (
-                <>
-                  <Link to="/admin/teacher_report">
-                    <button className="btn btn-info">
-                      <i className="ri-timeline-view"></i>
-                    </button>
-                  </Link>
-                </>
+              body={(rowData) => (
+                <Link to={`/admin/teacher_report/${rowData.teacher_id}`}>
+                  <button className="btn btn-info active custom-btn-action1">
+                    <i className="ri-timeline-view"></i>
+                  </button>
+                </Link>
               )}
             ></Column>
           </DataTable>

@@ -47,3 +47,14 @@
   font-size: 1.2em;
   color: #888;
 }
+.custom-btn-action1{
+  width:32px;
+  height: 32px;
+ 
+}
+.back-button1{
+  color: #A9A9A9;
+   border-color: #A9A9A9;
+   border-style: "solid";
+   width:72px,
+}

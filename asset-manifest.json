@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/stocksync_dashbaord_reactjs/static/css/main.27fab220.css",
-    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.14176b6c.js",
+    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.89ae6a37.js",
     "static/js/453.630971ca.chunk.js": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js",
     "static/media/sharemarket.jpg": "/stocksync_dashbaord_reactjs/static/media/sharemarket.bf0963f814911f31a0ff.jpg",
     "static/media/primeicons.svg": "/stocksync_dashbaord_reactjs/static/media/primeicons.6ed59f962963a4a73af2.svg",
@@ -15,11 +15,11 @@
     "static/media/favicon.ico": "/stocksync_dashbaord_reactjs/static/media/favicon.ec7b1b6313c506c1b420.ico",
     "index.html": "/stocksync_dashbaord_reactjs/index.html",
     "main.27fab220.css.map": "/stocksync_dashbaord_reactjs/static/css/main.27fab220.css.map",
-    "main.14176b6c.js.map": "/stocksync_dashbaord_reactjs/static/js/main.14176b6c.js.map",
+    "main.89ae6a37.js.map": "/stocksync_dashbaord_reactjs/static/js/main.89ae6a37.js.map",
     "453.630971ca.chunk.js.map": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.27fab220.css",
-    "static/js/main.14176b6c.js"
+    "static/js/main.89ae6a37.js"
   ]
 }

@@ -1,24 +1,25 @@
 {
   "files": {
     "main.css": "/stocksync_dashbaord_reactjs/static/css/main.18d755c3.css",
-    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.50477b40.js",
+    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.80358b3d.js",
     "static/js/453.630971ca.chunk.js": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js",
     "static/media/sharemarket.jpg": "/stocksync_dashbaord_reactjs/static/media/sharemarket.bf0963f814911f31a0ff.jpg",
     "static/media/primeicons.svg": "/stocksync_dashbaord_reactjs/static/media/primeicons.6ed59f962963a4a73af2.svg",
     "static/media/primeicons.eot": "/stocksync_dashbaord_reactjs/static/media/primeicons.ff0c4cd79b2ffca2de54.eot",
     "static/media/primeicons.woff": "/stocksync_dashbaord_reactjs/static/media/primeicons.8931fda1930c3bd21e96.woff",
     "static/media/primeicons.ttf": "/stocksync_dashbaord_reactjs/static/media/primeicons.a5c2a53d1ff7a9ff5933.ttf",
+    "static/media/mirrortrade.jpg": "/stocksync_dashbaord_reactjs/static/media/mirrortrade.143c87902abcbac1a629.jpg",
     "static/media/primeicons.woff2": "/stocksync_dashbaord_reactjs/static/media/primeicons.024b32cc7bf399b1a847.woff2",
     "static/media/2.png": "/stocksync_dashbaord_reactjs/static/media/2.d3c64685c1df07b335a7.png",
     "static/media/1.png": "/stocksync_dashbaord_reactjs/static/media/1.d79cbd6eda5ee96bfdfc.png",
     "static/media/illustration-upgrade-account-2.png": "/stocksync_dashbaord_reactjs/static/media/illustration-upgrade-account-2.8d16a5951ea9c43d8bed.png",
     "index.html": "/stocksync_dashbaord_reactjs/index.html",
     "main.18d755c3.css.map": "/stocksync_dashbaord_reactjs/static/css/main.18d755c3.css.map",
-    "main.50477b40.js.map": "/stocksync_dashbaord_reactjs/static/js/main.50477b40.js.map",
+    "main.80358b3d.js.map": "/stocksync_dashbaord_reactjs/static/js/main.80358b3d.js.map",
     "453.630971ca.chunk.js.map": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.18d755c3.css",
-    "static/js/main.50477b40.js"
+    "static/js/main.80358b3d.js"
   ]
 }

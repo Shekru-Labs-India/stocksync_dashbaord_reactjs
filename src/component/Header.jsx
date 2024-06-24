@@ -1,21 +1,28 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
-
-import img from "../assets/img/avatars/1.png";
+import img from "../assets/img/avatars/2.png";
+import mirror from '../src/app1/assets/mirrortrade.jpg'
 const Header = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.clear();
+    // Optionally, redirect to login page or perform other actions after logout
+  };
+  const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName");
+  const userRole = localStorage.getItem("userRole");
+  const toTitleCase = (str) => {
+    return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
   return (
     <div>
-      {/* <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-        <div className="layout-container">  */}
-
       <nav
         className="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme"
         id="layout-navbar"
       >
         <div className="container-xxl">
           <div className="navbar-brand app-brand demo d-none d-xl-flex py-0 me-6">
-            <a href="index.html" className="app-brand-link gap-2">
+            <a href="/" className="app-brand-link gap-2">
               <span className="app-brand-logo demo">
                 <span style={{ color: "var(--bs-primary)" }}>
                   <svg
@@ -100,13 +107,13 @@ const Header = () => {
             </a>
 
             <a
-              href="/"
+              href="javascript:void(0);"
               className="layout-menu-toggle menu-link text-large ms-auto d-xl-none"
             >
               <i className="ri-close-fill align-middle"></i>
             </a>
           </div>
-
+         
           <div className="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0  d-xl-none  ">
             <a
               className="nav-item nav-link px-0 me-xl-6"
@@ -115,11 +122,15 @@ const Header = () => {
               <i className="ri-menu-fill ri-24px"></i>
             </a>
           </div>
-
+        
           <div
             className="navbar-nav-right d-flex align-items-center"
             id="navbar-collapse"
           >
+              <div className="flex-grow-1 text-end me-3">
+                          <h6 className="mb-0 small">{toTitleCase(userName)}</h6>
+                          <small className="text-muted  ">{toTitleCase(userRole)}</small>
+                        </div>
             <ul className="navbar-nav flex-row align-items-center ms-auto">
               <li className="nav-item navbar-dropdown dropdown-user dropdown">
                 <a
@@ -130,7 +141,7 @@ const Header = () => {
                   <div className="avatar avatar-online">
                     <img
                       src={img}
-                      alt
+                      alt=""
                       className="w-px-40 h-auto rounded-circle"
                     />
                   </div>
@@ -146,14 +157,14 @@ const Header = () => {
                           <div className="avatar avatar-online">
                             <img
                               src={img}
-                              alt
+                              alt=""
                               className="w-px-40 h-auto rounded-circle"
                             />
                           </div>
                         </div>
                         <div className="flex-grow-1">
-                          <h6 className="mb-0 small">John Doe</h6>
-                          <small className="text-muted">Admin</small>
+                          <h6 className="mb-0 small">{userName}</h6>
+                          <small className="text-muted">{userRole}</small>
                         </div>
                       </div>
                     </a>
@@ -209,14 +220,15 @@ const Header = () => {
                   </li>
                   <li>
                     <div className="d-grid px-4 pt-2 pb-1">
-                      <a
-                        className="btn btn-danger d-flex"
-                        href="auth-login-cover.html"
-                        target="_blank"
+                      <Link
+                        to="/"
+                        onClick={handleLogout}
+                        className="dropdown-item"
                       >
-                        <small className="align-middle">Logout</small>
-                        <i className="ri-logout-box-r-line ms-2 ri-16px"></i>
-                      </a>
+                        <i className="btn btn-danger d-flex">
+                          <small className="align-middle">Logout</small>
+                        </i>
+                      </Link>
                     </div>
                   </li>
                 </ul>

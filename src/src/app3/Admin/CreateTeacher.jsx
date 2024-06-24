@@ -9,11 +9,12 @@ import axios from "axios";
 import config from "../config";
 const CreateTeacher = () => {
   const navigate = useNavigate();
+  const [backClicked, setBackClicked] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
     email: "",
-    commission: "",
+    commission: "10",
     trading_power: ""
   });
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,10 @@ const CreateTeacher = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (!backClicked) {
+      setBackClicked(true);
+      navigate(-1);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -44,7 +48,6 @@ const CreateTeacher = () => {
 
       if (response.data && response.data.st === 1) {
         // Show success message or redirect
-        alert(response.data.msg);
         navigate("/admin/manage_teacher");
       } else {
         setError(new Error(response.data.msg || "Failed to create teacher"));
@@ -66,7 +69,7 @@ const CreateTeacher = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/admin/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
+      <i class="ri-home-5-line ri-lg"></i>
       </Link>
     </li>
     <li className="breadcrumb-item">
@@ -82,12 +85,12 @@ const CreateTeacher = () => {
         <div className="card p-5">
           <div className="row align-items-center">
             <div className="col-5 text-start mb-5">
-            <Button
-              onClick={handleBack}
-              className="btn btn-transparent p-button-text small-button"
-              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
-              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
-            </Button>
+            <button
+                onClick={handleBack}
+                className="btn rounded-pill btn-outline-secondary btn-xs"
+              >
+                <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+              </button>
             </div>
             <div className="col-6  text-start mb-5">
               <h5 className="mb-0">Create Teacher</h5>
@@ -173,23 +176,14 @@ const CreateTeacher = () => {
                       </label>
                     </div>
                   </div>
-                </div>
-                <hr></hr>
-                <div className="row mb-3">
-                  <h5 className="text-start">
-                    {" "}
-                    <i className="ri-group-line ri-ms me-2"></i>
-                    Broker Information
-                  </h5>
-
-                  <div className="col-3">
+                  <div className="col-3 mt-3">
                     <div className="form-floating form-floating-outline">
                       <input
                         type="text"
                         className="form-control"
                         id="commission"
                         name="commission"
-                        value={formData.commission}
+                        value="10"
                         onChange={handleChange}
                         placeholder="Commission"
                         required
@@ -199,6 +193,16 @@ const CreateTeacher = () => {
                       </label>
                     </div>
                   </div>
+                </div>
+                <hr></hr>
+                <div className="row mb-3">
+                  <h5 className="text-start">
+                    {" "}
+                    <i className="ri-group-line ri-ms me-2"></i>
+                    Broker Information
+                  </h5>
+
+                
 
                   <div className="col-3">
                     <div className="form-floating form-floating-outline">
@@ -270,7 +274,7 @@ const CreateTeacher = () => {
                     type="submit"
                     label="Save changes"
                     icon="ri-checkbox-circle-line ri-lg"
-                    className="p-button-success"
+                    className="p-button-success rounded-pill "
                     disabled={loading}
                   />
                 </div>

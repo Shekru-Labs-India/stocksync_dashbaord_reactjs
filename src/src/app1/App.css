@@ -39,3 +39,21 @@
 .color-blue {
   color: 0069d9 !important;
 }
+
+.custom-outlined-button1 {
+  background-color: transparent;
+  border: 1px solid red;
+  color: red;
+}
+
+.custom-outlined-button1:hover {
+  background-color: rgba(255, 0, 0, 0.1); /* Optional: Adds a slight red background on hover */
+}
+.custom-search-box {
+  width: 260px; /* Adjust the width as per your requirement */
+}
+.custom-btn-action1{
+  width:32px;
+  height: 32px;
+ 
+}

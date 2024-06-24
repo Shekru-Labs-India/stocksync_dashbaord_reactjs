@@ -1,19 +1,21 @@
-import React, { useEffect, useState ,useRef} from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
-import StudentHeader from "./StudentHeader";
-import Footer from "../component/Footer";
-import SubHeaderS from "./SubHeaderS";
-import { Link, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
+import { Link, useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
 import axios from "axios";
+
+import Footer from "../component/Footer";
+import SubHeaderS from "./SubHeaderS";
+import StudentHeader from "./StudentHeader";
 import config from "../../app3/config";
-const StudentTradeBook = () => {
+import { Toast } from "primereact/toast";
+const StudentHolding = () => {
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,6 @@ const StudentTradeBook = () => {
     });
   };
   const fetchData = async () => {
-    console.log("fetchData called");
     const userId = localStorage.getItem("userId"); // Fetch the user ID from local storage
 
     if (!userId) {
@@ -39,11 +40,11 @@ const StudentTradeBook = () => {
     setLoading(true);
 
     await axios
-      .post(`${config.apiDomain}/api/common/trade_book`, {
+      .post(`${config.apiDomain}/api/common/get_all_holdings`, {
         user_id: userId,
       })
       .then((response) => {
-        if (response.data.data) {
+        if (response.data.st === 1 && response.data.data) {
           setData(response.data.data);
         } else {
           setError(new Error("No data found"));
@@ -55,6 +56,7 @@ const StudentTradeBook = () => {
         setLoading(false);
       });
   };
+
   const handleBack = () => {
     if (!backClicked) {
       setBackClicked(true);
@@ -63,24 +65,18 @@ const StudentTradeBook = () => {
   };
 
   const handleRefresh = async () => {
-    console.log("fetchData called");
+    setLoading(true);
+    setError(null);
     const userId = localStorage.getItem("userId"); // Fetch the user ID from local storage
 
     if (!userId) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "User ID not found",
-        life: 3000,
-      });
+     
       setLoading(false);
       return;
     }
 
-    setLoading(true);
-
     try {
-      const response = await axios.post(`${config.apiDomain}/api/common/trade_book`, {
+      const response = await axios.post(`${config.apiDomain}/api/common/get_all_holdings`, {
         user_id: userId,
       });
 
@@ -138,56 +134,67 @@ const StudentTradeBook = () => {
   };
 
   useEffect(() => {
-    fetchData(); // This should ideally be called once when the component mounts
+    fetchData();
   }, []);
+
+  const rowClassName = (rowData, rowIndex) => {
+    return rowIndex % 2 === 0 ? "even-row" : "odd-row";
+  };
 
   return (
     <>
-      <Toast ref={toast} />
-      <StudentHeader />
-      <SubHeaderS />
+     <Toast ref={toast} />
+       <StudentHeader />
+       <SubHeaderS />
 
       <div className="container-xxl container-p-y">
-      <nav aria-label="breadcrumb">
-  <ol className="breadcrumb breadcrumb-style1 text-secondary">
-    <li className="breadcrumb-item">
-      <Link to="/student/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
-      </Link>
-    </li>
-    <li className="breadcrumb-item active text-secondary" aria-current="page">
-      Trade Book
-    </li>
-  </ol>
-</nav>
-        <div className="card p-5">
-        <div className="d-flex justify-content-between align-items-center mb-5">
-        <button
-                onClick={handleBack}
-                className="btn rounded-pill btn-outline-secondary btn-xs"
-              >
-                <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
-              </button>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb breadcrumb-style1 text-secondary">
+            <li className="breadcrumb-item">
+              <Link to="/Student/dashboard" className="text-secondary">
+                <i className="ri-home-5-line ri-lg"></i>
+              </Link>
+            </li>
+            <li className="breadcrumb-item active text-secondary" aria-current="page">
+              Holding
+            </li>
+          </ol>
+        </nav>
 
-            <h5 className="mb-0 mx-auto">Trade Book</h5>
+        <div className="card p-5">
+          <div className="d-flex justify-content-between align-items-center mb-5">
+            <button
+              onClick={handleBack}
+              className="btn rounded-pill btn-outline-secondary btn-xs"
+            >
+              <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+            </button>
+
+            <h5 className="mb-0 mx-auto">Holding</h5>
             <div></div>
           </div>
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
-                                        <i className=" custom-target-icon ri-loader-2-line ri-lg mt-4 ms-e p-text-secondary"
+                                          <i className=" custom-target-icon ri-loader-2-line ri-lg mt-4 ms-e p-text-secondary"
 
                 strokeWidth="5"
                 fill="var(--surface-ground)"
                 animationDuration=".5s"
               />
             ) : (
-              <i
-               className=" ri ri-refresh-line ri-lg mt-4 me-3"
-                onClick={handleRefresh}
-              />
+              <div className="mt-4">
+                <Tooltip target=".custom-target-icon" />
+                <i
+                  className="custom-target-icon ri ri-refresh-line ri-lg me-3 p-text-secondary"
+                  data-pr-tooltip="Refresh"
+                  onClick={handleRefresh}
+                  data-pr-position="top"
+                  style={{ cursor: "pointer" }}
+                ></i>
+              </div>
             )}
             <IconField iconPosition="left">
-              <InputIcon className="ri ri-search-line"> </InputIcon>
+              <InputIcon className="ri ri-search-line"></InputIcon>
               <InputText
                 type="search"
                 placeholder="Search"
@@ -198,14 +205,16 @@ const StudentTradeBook = () => {
             </IconField>
           </div>
           <DataTable
+            className="text-center"
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
             rows={5}
-            loading={loading}
             showGridlines
+            loading={loading}
             globalFilter={globalFilter}
             emptyMessage="No records found"
+            rowClassName={rowClassName}
           >
             <Column
               align="center"
@@ -217,14 +226,8 @@ const StudentTradeBook = () => {
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="producttype"
-              header="Product Type"
-            ></Column>
-            <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              field="transactiontype"
-              header="Transaction Type"
+              field="quantity"
+              header="Quantity"
             ></Column>
             <Column
               align="center"
@@ -235,45 +238,27 @@ const StudentTradeBook = () => {
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="instrumenttype"
-              header="Instrument Type"
+              field="ltp"
+              header="LTP"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="strikeprice"
-              header="Strike Price"
+              field="averageprice"
+              header="Average Price"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="optiontype"
-              header="Option Type"
+              field="profitandloss"
+              header="Profit and Loss"
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              field="marketlot"
-              header="Lot Size"
+              field="pnlpercentage"
+              header="P&L Percentage"
             ></Column>
-            <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              field="expirydate"
-              header="Expiry Date"
-            ></Column>
-            {/* <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              header="Actions"
-              body={(rowData) => (
-                <Link to="/my_report_view">
-                  <button className="btn btn-primary active">
-                    <i className="ri-timeline-view"></i>
-                  </button>
-                </Link>
-              )}
-            ></Column> */}
           </DataTable>
         </div>
       </div>
@@ -283,5 +268,4 @@ const StudentTradeBook = () => {
   );
 };
 
-export default StudentTradeBook;
-
+export default StudentHolding;

@@ -5243,9 +5243,9 @@ fieldset:disabled .btn {
 .modal-backdrop.fade {
   opacity: 0;
 }
-.modal-backdrop.show {
-  opacity: var(--bs-backdrop-opacity);
-}
+/* .modal-backdrop.show {
+
+} */
 .modal-header {
   display: flex;
   flex-shrink: 0;

@@ -6,18 +6,18 @@ import AdminHeader from "./AdminHeader";
 import Footer from "../component/Footer";
 import AdminSubHeader from "./AdminSubHeader";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button } from "primereact/button";
-import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
 import config from "../config";
+
 const TeacherReportDetails = () => {
   const navigate = useNavigate();
-  const { userId, sell_month } = useParams(); // Fetch userId and sell_month from URL params
+  const { teacher_id, sell_month } = useParams(); // Fetch teacher_id and sell_month from URL params
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [backClicked, setBackClicked] = useState(false);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState({
     total_trades_count: 0,
@@ -34,7 +34,7 @@ const TeacherReportDetails = () => {
       const response = await axios.post(
         `${config.apiDomain}/api/admin/teacher_trade_details`,
         {
-          teacher_id: userId,
+          teacher_id:119,
           sell_month,
         }
       );
@@ -53,12 +53,15 @@ const TeacherReportDetails = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (!backClicked) {
+      setBackClicked(true);
+      navigate(-1);
+    }
   };
 
   useEffect(() => {
     fetchData();
-  }, [userId, sell_month]);
+  }, [teacher_id, sell_month]);
 
   return (
     <>
@@ -66,51 +69,47 @@ const TeacherReportDetails = () => {
       <AdminSubHeader />
 
       <div className="container-xxl container-p-y">
-      <nav aria-label="breadcrumb">
-  <ol className="breadcrumb breadcrumb-style1 text-secondary">
-    <li className="breadcrumb-item">
-      <Link to="/admin/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
-      </Link>
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/profile" className="text-secondary">
-        
-      </Link>
-    profile
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/teacher_list" className="text-secondary">
-        
-      </Link>
-   Teacher List
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/teacher_report" className="text-secondary">
-        
-      </Link>
-   Teacher Report
-    </li>
-  
-    <li className="breadcrumb-item active text-secondary" aria-current="page">
-    Teacher Report Details
-    </li>
-  </ol>
-</nav>
-<div className="card p-5">
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb breadcrumb-style1 text-secondary">
+            <li className="breadcrumb-item">
+              <Link to="/admin/dashboard" className="text-secondary">
+                <i className="ri-home-5-line ri-lg"></i>
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/profile" className="text-secondary">
+                profile
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/teacher_list" className="text-secondary">
+                Teacher List
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/teacher_report" className="text-secondary">
+                Teacher Report
+              </Link>
+            </li>
+            <li className="breadcrumb-item active text-secondary" aria-current="page">
+              Teacher Report Details
+            </li>
+          </ol>
+        </nav>
+        <div className="card p-5">
           <div className="row align-items-center">
             <div className="col text-start mb-5">
-            <Button
-              onClick={handleBack}
-              className="btn btn-transparent p-button-text small-button"
-              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
-              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
-            </Button>
+              <button
+                onClick={handleBack}
+                className="btn rounded-pill btn-outline-secondary btn-xs"
+              >
+                <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+              </button>
             </div>
             <div className="col text-start mb-5">
               <h5 className="mb-0"> Teacher Report Details</h5>
             </div>
-            </div>
+          </div>
           <div className="row text-center">
             <div className="col-md-3">
               <h4>{summary.total_trades_count}</h4>
@@ -132,31 +131,23 @@ const TeacherReportDetails = () => {
 
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
-              <ProgressSpinner
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  marginRight: "10px",
-                }}
+              <i
+                className="custom-target-icon ri-loader-2-line ri-lg mt-4 ms-e p-text-secondary"
                 strokeWidth="5"
                 fill="var(--surface-ground)"
                 animationDuration=".5s"
               />
             ) : (
-              <Button
-                type="button"
-                icon="pi pi-refresh"
-                text
-                onClick={fetchData}
-              />
+              <i className="ri ri-refresh-line ri-lg mt-4 me-3" onClick={fetchData} />
             )}
             <IconField iconPosition="left">
-              <InputIcon className="pi pi-search"></InputIcon>
+              <InputIcon className="ri ri-search-line"></InputIcon>
               <InputText
                 type="search"
                 placeholder="Search"
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
+                className="rounded"
               />
             </IconField>
           </div>
@@ -264,4 +255,3 @@ const TeacherReportDetails = () => {
 };
 
 export default TeacherReportDetails;
-

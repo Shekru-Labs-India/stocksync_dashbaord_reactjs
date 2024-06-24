@@ -17,6 +17,7 @@ import image  from "../../app2/assets/img/illustrations/illustration-upgrade-acc
 
 const Reports = () => {
     const [userData, setUserData] = useState(null);
+    const [backClicked, setBackClicked] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
   
     useEffect(() => {
@@ -88,6 +89,10 @@ const Reports = () => {
         console.error('Error updating user profile:', error);
       }
     };
+
+    const capitalizeFirstLetter = (string) => {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    };
   return (
     <div>
       <div>
@@ -101,7 +106,7 @@ const Reports = () => {
                 <nav aria-label="breadcrumb">
                   <ol className="breadcrumb breadcrumb-style1">
                     <li className="breadcrumb-item">
-                      <Link to="/"> <i class="ri-home-line ri-lg"></i></Link>
+                      <Link to="/admin/dashboard">  <i className="ri-home-5-line ri-lg"></i></Link>
                     </li>
                     <li
                       className="breadcrumb-item active"
@@ -137,15 +142,19 @@ const Reports = () => {
                               <div className="user-profile-info">
                                 {userData ? (
                                   <>
-                                    <h4 className="mb-2 mt-lg-6">{userData.name}</h4>
+                                     <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
                                         <i className="ri-user-settings-line me-2 ri-24px"></i>
-                                        <span className="fw-medium">Role: {userData.role}</span>
+                                        <span className="fw-medium"> {capitalizeFirstLetter (userData.role)}</span>
                                       </li>
                                       <li className="list-inline-item">
                                         <i className="ri-mobile-download-line me-2 ri-24px"></i>
-                                        <span className="fw-medium">Mobile Number: {userData.mobile}</span>
+                                        <span className="fw-medium"> {userData.mobile}</span>
+                                      </li>
+                                      <li className="list-inline-item">
+                                        <i className="ri-wallet-line me-2 ri-24px"></i>
+                                        <span className="fw-medium"> Commission: {userData.commission}%</span>
                                       </li>
                                     </ul>
                                   </>
@@ -154,15 +163,19 @@ const Reports = () => {
                                 )}
                               </div>
                               <div className="ms-auto">
-                                {userData && (
-                                  <button
-                                    className={`btn ${userData.broker_conn_status ? "btn-success" : "btn-danger"}`}
-                                    onClick={() => handleConnectionStatus(!userData.broker_conn_status)}
-                                  >
-                                    <i className="ri-shield-check-line me-1"></i>{" "}
-                                    {userData.broker_conn_status ? "Connected" : "Not Connected"}
-                                  </button>
+                             
+                             {userData && (
+                              <button
+                                className={`btn ${userData.broker_conn_status ? "btn-success" : ""}`}
+                              >
+                                {userData.broker_conn_status && (
+                                  <>
+                                    <i className="ri-shield-check-line me-1"></i>
+                                    Connected
+                                  </>
                                 )}
+                              </button>
+                            )}
                               </div>
                             </div>
                           </div>

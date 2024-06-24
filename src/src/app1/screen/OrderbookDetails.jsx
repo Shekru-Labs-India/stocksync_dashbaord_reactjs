@@ -1,21 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState ,useRef} from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import StudentHeader from "./StudentHeader";
-import Footer from "../component/Footer";
-import SubHeaderS from "./SubHeaderS";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Tooltip } from "primereact/tooltip";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { Tooltip } from "primereact/tooltip";
 import axios from "axios";
-import { Toast } from "primereact/toast";
-import config from "../config";
 
-const StudentOrderDetails = () => {
+import Footer from "../component/Footer";
+import Header from "../component/Header";
+import SubHeader from "../component/SubHeader";
+import { Toast } from "primereact/toast";
+import config from "../../app3/config";
+
+const OrderbookDetails = () => {
   const { uniqueorderid } = useParams();
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -121,6 +121,7 @@ const StudentOrderDetails = () => {
     fetchOrderDetails();
   }, [uniqueorderid]);
 
+  
   const handleBack = () => {
     if (!backClicked) {
       setBackClicked(true);
@@ -135,19 +136,19 @@ const StudentOrderDetails = () => {
   return (
     <>
       <Toast ref={toast} />
-      <StudentHeader />
-      <SubHeaderS />
+      <Header />
+      <SubHeader />
 
       <div className="container-xxl container-p-y">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
             <li className="breadcrumb-item">
-              <Link to="/student/dashboard" className="text-secondary">
+              <Link to="/teacher/dashboard" className="text-secondary">
                 <i className="ri-home-5-line ri-lg"></i>
               </Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to="/app2/order_book" className="text-secondary">
+              <Link to="/order_book" className="text-secondary">
                 Order Book
               </Link>
             </li>
@@ -159,7 +160,10 @@ const StudentOrderDetails = () => {
 
         <div className="card p-5">
           <div className="d-flex justify-content-between align-items-center mb-5">
-            <button onClick={handleBack} className="btn rounded-pill btn-outline-secondary btn-xs">
+            <button
+              onClick={handleBack}
+              className="btn rounded-pill btn-outline-secondary btn-xs"
+            >
               <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
             </button>
 
@@ -168,17 +172,22 @@ const StudentOrderDetails = () => {
           </div>
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
-              <i className="custom-target-icon ri-loader-2-line ri-lg me-3 mt-4 p-text-secondary" strokeWidth="5" fill="var(--surface-ground)" animationDuration=".5s" />
+                                   <i className=" custom-target-icon ri-loader-2-line ri-lg me-3 mt-4 p-text-secondary"
+
+                strokeWidth="5"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              />
             ) : (
               <div className="mt-4">
                 <Tooltip target=".custom-target-icon" />
-                <i
-                  className="custom-target-icon ri ri-refresh-line ri-lg me-3 p-text-secondary"
-                  data-pr-tooltip="Refresh"
-                  data-pr-position="top"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleRefresh} // Adjust unique order ID dynamically if needed
-                ></i>
+                <i className="custom-target-icon ri ri-refresh-line ri-lg me-3 p-text-secondary"
+                   data-pr-tooltip="Refresh"
+                   data-pr-position="top"
+                   style={{ cursor: 'pointer' }}
+                   onClick={fetchOrderDetails} // Adjust unique order ID dynamically if needed
+                >
+                </i>
               </div>
             )}
             <IconField iconPosition="left">
@@ -204,7 +213,7 @@ const StudentOrderDetails = () => {
             emptyMessage="No records found"
             rowClassName={rowClassName}
           >
-            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" ></Column>
+            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" sortable></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="ordertype" header="Order Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="producttype" header="Product Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="quantity" header="Quantity"></Column>
@@ -225,4 +234,5 @@ const StudentOrderDetails = () => {
     </>
   );
 };
-export default StudentOrderDetails;
+
+export default OrderbookDetails;

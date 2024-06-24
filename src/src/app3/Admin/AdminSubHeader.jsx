@@ -148,6 +148,15 @@ const AdminSubHeader = () => {
       case "/admin/manage_teacher":
         setActiveItem("manage_teacher");
         break;
+        case "/admin/holding":
+        setActiveItem("holding");
+        break;
+        case "/admin/trade_book":
+        setActiveItem("trade_book");
+        break;
+        case "/admin/order_book":
+        setActiveItem("order_book");
+        break;
       default:
         setActiveItem("");
         break;
@@ -178,7 +187,7 @@ const AdminSubHeader = () => {
                     onClick={() => handleSetActive("student_home")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon tf-icons ri-home-3-line"></i>
+                    <i className="menu-icon tf-icons ri-home-5-line"></i>
                     <div>Home</div>
                   </Link>
                 </li>
@@ -198,6 +207,63 @@ const AdminSubHeader = () => {
                   >
                     <i className="menu-icon tf-icons ri-group-line"></i>
                     <div>Manage Teachers</div>
+                  </Link>
+                </li>
+
+                <li
+                  className={`menu-item ${
+                    activeItem === "holding" ? "active" : ""
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("holding")}
+                  onMouseLeave={handleMouseLeave}
+                  style={getMenuItemStyle("holding")}
+                >
+                  <Link
+                    to="/admin/holding"
+                    className="menu-link"
+                    onClick={() => handleSetActive("holding")}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <i className="menu-icon tf-icons ri-group-line"></i>
+                    <div>Holding</div>
+                  </Link>
+                </li>
+
+                <li
+                  className={`menu-item ${
+                    activeItem === "trade_book" ? "active" : ""
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("trade_book")}
+                  onMouseLeave={handleMouseLeave}
+                  style={getMenuItemStyle("trade_book")}
+                >
+                  <Link
+                    to="/admin/trade_book"
+                    className="menu-link"
+                    onClick={() => handleSetActive("trade_book")}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <i className="menu-icon tf-icons ri-group-line"></i>
+                    <div>Trade Book</div>
+                  </Link>
+                </li>
+
+                <li
+                  className={`menu-item ${
+                    activeItem === "order_book" ? "active" : ""
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("order_book")}
+                  onMouseLeave={handleMouseLeave}
+                  style={getMenuItemStyle("order_book")}
+                >
+                  <Link
+                    to="/admin/order_book"
+                    className="menu-link"
+                    onClick={() => handleSetActive("order_book")}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <i className="menu-icon tf-icons ri-group-line"></i>
+                    <div>Order Book</div>
                   </Link>
                 </li>
               </ul>

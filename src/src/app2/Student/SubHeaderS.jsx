@@ -13,7 +13,10 @@ const SubHeaderS = () => {
       setActiveItem("order_book");
     } else if (currentPath.includes("app2/student_trade_book")) {
       setActiveItem("trade_book");
-    } else {
+     } else if (currentPath.includes("/student_holding")) {
+        setActiveItem("holding");
+      }
+    else {
       setActiveItem("");
     }
   }, [location.pathname]);
@@ -74,7 +77,7 @@ const SubHeaderS = () => {
                     onClick={() => handleSetActive("student_home")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon tf-icons ri-home-3-line"></i>
+                    <i className="menu-icon tf-icons ri-home-5-line"></i>
                     <div>Home</div>
                   </Link>
                 </li>
@@ -114,6 +117,27 @@ const SubHeaderS = () => {
                     <div>Trade Book</div>
                   </Link>
                 </li>
+
+                <li
+                  className={`menu-item ${
+                    activeItem === "holding" ? "active" : ""
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("holding")}
+                  onMouseLeave={handleMouseLeave}
+                  style={getMenuItemStyle("holding")}
+                >
+                  <Link
+                    to="/student_holding"
+                    className="menu-link"
+                    onClick={() => handleSetActive("holding")}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <i className=" menu-icon ri-terminal-window-line"></i>
+                    <div>Holding</div>
+                  </Link>
+                </li>
+                
+
               </ul>
             </div>
           </aside>

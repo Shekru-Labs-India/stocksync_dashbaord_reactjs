@@ -77,7 +77,7 @@ const Login = () => {
           <div className="authentication-inner py-6 mx-4">
             <div className="card p-7">
               <div className="app-brand justify-content-center mt-5">
-                <a href="index.html" className="app-brand-link gap-3">
+                <div  className="app-brand-link gap-3">
                   <span className="app-brand-logo demo">
                     <span style={{ color: "#9055FD" }}>
                       <svg
@@ -91,7 +91,7 @@ const Login = () => {
                       </svg>
                     </span>
                   </span>
-                </a>
+                </div>
               </div>
               <div className="card-body mt-1">
                 <span className="app-brand-text demo text-heading fw-semibold">

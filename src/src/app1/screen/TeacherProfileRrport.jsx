@@ -1,22 +1,22 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import config from "../config";
-import StudentHeader from "./StudentHeader";
+import config from "../../app3/config";
+import Header from "../component/Header";
 import Footer from "../component/Footer";
+import SubHeader from "../component/SubHeader";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import back from "../assets/img/icons/misc/triangle-light.png"
-import SubHeaderS from "./SubHeaderS";
+
 
 import img from "../../app2/assets/img/avatars/1.png";
 import background from "../../app2/assets/img/backgrounds/sharemarket.jpg";
 import image  from "../../app2/assets/img/illustrations/illustration-upgrade-account-2.png"
 
 
-const ProfileReports = () => {
-  const [backClicked, setBackClicked] = useState(false);
+const TeacherProfileReport = () => {
     const [userData, setUserData] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const capitalizeFirstLetter = (string) => {
@@ -94,8 +94,8 @@ const ProfileReports = () => {
   return (
     <div>
       <div>
-      <StudentHeader />
-      <SubHeaderS />
+      <Header />
+      <SubHeader />
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="layout-page">
@@ -104,7 +104,7 @@ const ProfileReports = () => {
               <nav aria-label="breadcrumb">
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
-      <Link to="/student/dashboard" className="text-secondary">
+      <Link to="/teacher/dashboard" className="text-secondary">
         <i className="ri-home-5-line ri-lg"></i>
       </Link>
     </li>
@@ -139,7 +139,7 @@ const ProfileReports = () => {
                               <div className="user-profile-info">
                                 {userData ? (
                                   <>
-                                    <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
+                                     <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
                                         <i className="ri-user-settings-line me-2 ri-24px"></i>
@@ -185,12 +185,12 @@ const ProfileReports = () => {
                 <div className="nav-align-top">
                   <ul className="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
                     <li className="nav-item ">
-                    <Link to="/app2/student_profile" className="nav-link" >
+                    <Link to="/teacher/user_profile" className="nav-link" >
                         <i className="ri-user-3-line me-1_5"></i>Profile
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/student/report" className="nav-link active btn btn-primary" >
+                      <Link to="/teacher/user_profile_report" className="nav-link active btn btn-primary" >
                         <i className="ri-team-line me-1_5"></i>Reports
                       </Link>
                     </li>
@@ -207,13 +207,39 @@ const ProfileReports = () => {
         <h5 className="card-title mb-5">My Reports</h5>
         <h4 className="text-light mb-0">2,2199</h4>
         <p className="mb-3">Profit This Month</p>
-        <Link to="/app2/student_my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> My Reports</i></Link>
+        <Link to="/teacher/my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> My Reports</i></Link>
       </div>
       <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
       <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>
     </div>
   </div>
   
+  <div className="col-lg-3">
+    <div className="card">
+      <div className="card-body">
+        <h5 className="card-title mb-5">Student Report</h5>
+        <h4 className="text-light mb-0">2,2199</h4>
+        <p className="mb-3">Profit This Month</p>
+        <Link to="/teacher/student_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> Student Report</i></Link>
+      </div>
+      <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
+      <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>
+    </div>
+  </div>
+ 
+  {/* <div className="col-lg-3">
+    <div className="card">
+      <div className="card-body">
+        <h5 className="card-title mb-5">Timeline</h5>
+        <h4 className="text-light mb-0">2,2199</h4>
+        <p className="mb-3">Profit This Month</p>
+        <Link to="/teacher/student_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> Timeline</i></Link>
+      </div>
+      <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
+      <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>
+    </div>
+  </div> */}
+
 </div>
 
                     
@@ -230,4 +256,4 @@ const ProfileReports = () => {
   )
 }
 
-export default ProfileReports
+export default TeacherProfileReport

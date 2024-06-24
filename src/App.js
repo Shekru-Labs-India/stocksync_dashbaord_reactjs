@@ -49,17 +49,29 @@ import UpdateStudent from "../src/src/app1/screen/UpdateStudent";
 import StudentDetails from "../src/src/app1/screen/StudentDetails";
 import Reports from "./src/app3/Admin/Reports";
 import ProfileReports from "./src/app2/Student/ProfileReport";
+import TeacherProfile from "./src/app1/screen/Profile";
+import TeacherProfileReport from "./src/app1/screen/TeacherProfileRrport";
+import StudentReportDetails from "../src/src/app1/screen/StudentDetails";
+import ViewStudent from "./src/app1/screen/ViewStudent";
+import StudentHolding from "./src/app2/Student/StudentHolding";
+import AdminHolding from "./src/app3/Admin/AdminHolding";
+import OrderbookDetails from "./src/app1/screen/OrderbookDetails";
+import StudentOrderDetails from "./src/app2/Student/StudentOrderDetails";
+import AdminOrderBook from "./src/app3/Admin/AdminOrderBook";
+import AdminOrderBookDetails from "./src/app3/Admin/AdminOrderBookDetails";
+import AdminTradeBook from "./src/app3/Admin/AdminTradeBook";
+import Signup from "./src/app1/screen/Signup";
 // import StudentOrderDetails from "./src/app1/Student/StudentOrderDetails";
 
 function App() {
   return (
-    <Router>
+
       <Routes>
         {/* <Route path="/app1/*" element={<App1 />} />
         <Route path="/app2/*" element={<App2 />} /> */}
 
         <Route path="/" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/student/dashboard" element={<Dashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/manage_teacher" element={<ManageTeacher />} />
@@ -70,6 +82,11 @@ function App() {
         <Route path="/admin/profile" element={<AdminProfile />} />
         <Route path="/admin/report" element={<Reports />} />
         <Route path="/admin/my_report" element={<AdminMyReport />} />
+        <Route path="/admin/holding" element={<AdminHolding />} />
+        <Route path="/admin/order_book" element={<AdminOrderBook />} />
+        <Route path="/admin/order_details" element={<AdminOrderBookDetails />} />
+        <Route path="/admin/trade_book" element={<AdminTradeBook />} />
+
         <Route path="/admin/update_teacher/:id" element={<UpdateTeacher />} />
         <Route
           path="/admin/report_details"
@@ -88,6 +105,8 @@ function App() {
    {/* <Route path="/app2/student_order_details" element={<StudentOrderDetails />} /> */}
         <Route path="/app2/student_my_report" element={<StudentMyReport />} />
         <Route path="/app2/student_profile" element={<StudentProfile />} />
+        <Route path="/student_holding" element={<StudentHolding />} />
+
         <Route
           path="/app2/student_report_view"
           element={<StudentMyReportView />}
@@ -95,11 +114,13 @@ function App() {
         <Route path="/app2/order_book" element={<StudentOrderBook />} />
         <Route path="/app2/student_trade_book" element={<StudentTradeBook />} />
         <Route path="/student/report" element={<ProfileReports />} />
-
+        <Route path="/app2/student_order_details/:uniqueorderid" element={<StudentOrderDetails />} />
         {/* Teacher dashboard */}
          <Route path="/teacher/dashboard" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/user_profile" element={<Profile />} />
+        {/* <Route path="/user_profile" element={<Profile />} /> */}
+        <Route path="/teacher/user_profile" element={<TeacherProfile />} />
+        <Route path="/teacher/user_profile_report" element={<TeacherProfileReport />} />
         <Route path="/user_login" element={<Login />} />
         <Route path="/user_basket" element={<Basket />} />
         <Route path="/trade_book" element={<TradeBook />} />
@@ -108,19 +129,32 @@ function App() {
         <Route path="/basic_table" element={<BasicTable />} />
         <Route path="/verify_otp" element={<VerifyOtp />} />
         <Route path="/user_holding" element={<Holding />} />
-        <Route path="/my_report" element={<MyReport />} />
-        <Route path="/my_report_view" element={<MyReportView />} />
-        <Route path="/student_report" element={<StudentReport />} />
-        <Route path="/student_report_list" element={<StudReportList />} />
+        <Route path="/orderbook_details/:uniqueorderid" element={<OrderbookDetails />} />
+
+        <Route path="/teacher/my_report" element={<MyReport />} />
+        <Route path="/teacher/my_report_view" element={<MyReportView />} />
+        <Route path="/teacher/student_report" element={<StudentReport />} />
+        {/* <Route path="/teacher/student_report_list" element={<StudReportList />} /> */}
+        <Route path="/teacher/student_report_list/:studentId/:month" element={<StudReportList />} />
+        <Route path="/teacher/student_report_details" element={<StudentReportDetails />} />
+        {/* <Route path="/teacher/student_report_details/:teacherId" element={<StudentReportDetails />} /> */}
+        <Route path="/teacher/student_report_details/:userId/:month" element={<StudentReportDetails />} />
+
         <Route path="/student_report_view" element={<StudReportView />} />
         <Route path="/time_line" element={<TimeLine />} />
-        <Route path="/manage_student" element={<ManageStudent />} />
-        <Route path="/create_student" element={<CreateStudent />} />
-        <Route path="/update_student/:id" element={<UpdateStudent />} />
-        <Route path="/student_details" element={<StudentDetails />} />
+        <Route path="/teacher/manage_student" element={<ManageStudent />} />
+        <Route path="/teacher/create_student" element={<CreateStudent />} />
+        <Route path="/teacher/update_student/:id" element={<UpdateStudent />} />
+        <Route path="/teacher/student_details" element={<StudentDetails />} />
+        {/* <Route path="/teacher/view_student" element={<ViewStudent />} /> */}
+        <Route path="/teacher/view_student/:id" element={<ViewStudent />} />
+
         <Route path="/landing_home_page" element={<LandingHomeScreen />} /> 
+
+        <Route path="/signup" element={<Signup />} /> 
+
       </Routes>
-    </Router>
+    
   );
 }
 

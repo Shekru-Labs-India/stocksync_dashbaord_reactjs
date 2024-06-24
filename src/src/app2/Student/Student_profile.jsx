@@ -7,6 +7,7 @@ import img from "../../app2/assets/img/avatars/1.png";
 import background from "../../app2/assets/img/backgrounds/sharemarket.jpg";
 import Footer from "../component/Footer";
 import config from "../config";
+import axios from "axios";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
@@ -45,9 +46,9 @@ const Profile = () => {
     fetchUserProfile();
   }, []); // Ensure the dependency array is empty
 
-  const handleConnectionStatus = (status) => {
-    console.log("Connection status:", status);
-  };
+  // const handleConnectionStatus = (status) => {
+  //   console.log("Connection status:", status);
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +110,17 @@ const Profile = () => {
     }
   };
   
-
+  const handleConnectionStatus = (status) => {
+    // Replace with your logic to update broker connection status
+    // Example logic to update userData
+    setUserData({
+      ...userData,
+      broker_conn_status: status,
+    });
+  };
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
   return (
     <>
       <StudentHeader />
@@ -123,7 +134,7 @@ const Profile = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/student/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
+        <i className="ri-home-5-line ri-lg"></i>
       </Link>
     </li>
     <li className="breadcrumb-item active text-secondary" aria-current="page">
@@ -157,15 +168,19 @@ const Profile = () => {
                               <div className="user-profile-info">
                                 {userData ? (
                                   <>
-                                    <h4 className="mb-2 mt-lg-6">{userData.name}</h4>
+                                    <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
                                         <i className="ri-user-settings-line me-2 ri-24px"></i>
-                                        <span className="fw-medium">Role: {userData.role}</span>
+                                        <span className="fw-medium"> {capitalizeFirstLetter (userData.role)}</span>
                                       </li>
                                       <li className="list-inline-item">
                                         <i className="ri-mobile-download-line me-2 ri-24px"></i>
-                                        <span className="fw-medium">Mobile Number: {userData.mobile}</span>
+                                        <span className="fw-medium"> {userData.mobile}</span>
+                                      </li>
+                                      <li className="list-inline-item">
+                                        <i className="ri-wallet-line me-2 ri-24px"></i>
+                                        <span className="fw-medium"> Commission: {userData.commission}%</span>
                                       </li>
                                     </ul>
                                   </>
@@ -174,15 +189,19 @@ const Profile = () => {
                                 )}
                               </div>
                               <div className="ms-auto">
-                                {userData && (
-                                  <button
-                                    className={`btn ${userData.broker_conn_status ? "btn-success" : "btn-danger"}`}
-                                    onClick={() => handleConnectionStatus(!userData.broker_conn_status)}
-                                  >
-                                    <i className="ri-shield-check-line me-1"></i>{" "}
-                                    {userData.broker_conn_status ? "Connected" : "Not Connected"}
-                                  </button>
-                                )}
+                             
+       {userData && (
+        <button
+          className={`btn ${userData.broker_conn_status ? "btn-success" : ""}`}
+        >
+          {userData.broker_conn_status && (
+            <>
+              <i className="ri-shield-check-line me-1"></i>
+              Connected
+            </>
+          )}
+        </button>
+      )}
                               </div>
                             </div>
                           </div>
@@ -220,26 +239,25 @@ const Profile = () => {
                                   <li className="d-flex flex-column align-items-start mb-4">
                                  
                                     <span className="fw-medium fs-5">
-
-                                      About
+                                    About
                                     </span>
                                    
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Name:</span>
-                                    <strong className="ml-auto">
-                                    {userData.name}
-                                    </strong>
+                                    <strong>Name:</strong>
+                                    <span className="ml-auto">
+                                    {capitalizeFirstLetter(userData.name)}
+                                    </span>
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Role:</span>
-                                    <strong className="ml-auto">{userData.role}</strong>
+                                    <strong>Role:</strong>
+                                    <span className="ml-auto">  {capitalizeFirstLetter(userData.role)}</span>
                          
                                   
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Broker Connection:</span>
-                                    <strong className="text-success ml-auto">
+                                    <strong>Broker Connection:</strong>
+                                    <span className="text-success ml-auto">
                                     <div className="ms-auto">
                     
                         <div
@@ -255,11 +273,11 @@ const Profile = () => {
                         </div>
                       
                     </div>
-                                    </strong>
+                                    </span>
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Commission:</span>
-                                    <strong className="ml-auto">{userData.commission}</strong>
+                                    <strong>Commission:</strong>
+                                    <span className="ml-auto">{userData.commission}%</span>
                                   </li>
                                 </ul>
                                 <hr className="text-black" />
@@ -270,29 +288,28 @@ const Profile = () => {
                                     </span>
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Email:</span>
-                                    <strong className="ml-auto">
+                                    <strong>Email:</strong>
+                                    <span className="ml-auto">
                                      {userData.email}
-                                    </strong>
+                                    </span>
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Mobile:</span>
-                                    <strong className="ml-auto">
+                                    <strong>Mobile:</strong>
+                                    <span className="ml-auto">
                                       {userData.mobile}
-                                    </strong>
+                                    </span>
                                   </li>
                                  
                                 </ul>
                                 <hr />
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <span>Trading Power:</span>
-                                    <strong className="ml-auto fw-medium fs-5">
+                                    <strong>Trading Power:</strong>
+                                    <span className="ml-auto fw-medium fs-5">
                                       {userData.trading_power}
-                                    </strong>
+                                    </span>
                                   </li>
                                 </ul>
-                            
                               </div>
                            
                             </div>
@@ -329,7 +346,7 @@ const Profile = () => {
                                     />
                                     <label htmlFor="name">
                                       {' '}
-                                      <span className="text-danger">*</span> Name{' '}
+                                      <span className="text-danger">* </span> Name{' '}
                                     </label>
                                   </div>
                                 </div>
@@ -350,7 +367,7 @@ const Profile = () => {
                                     />
                                     <label htmlFor="email">
                                       {' '}
-                                      <span className="text-danger">*</span>E-mail{' '}
+                                      <span className="text-danger">* </span>E-mail{' '}
                                     </label>
                                   </div>
                                   </div>
@@ -369,7 +386,7 @@ const Profile = () => {
                                         onChange={handleChange}
                                       />
                                       <label htmlFor="mobile">
-                                        <span className="text-danger">*</span>Mobile Number{' '}
+                                        <span className="text-danger">* </span>Mobile Number{' '}
                                       </label>
                                     </div>
                                   </div>
@@ -390,7 +407,7 @@ const Profile = () => {
                                       // disabled
                                     />
                                     <label htmlFor="tradingPower">
-                                      <span className="text-danger">*</span>Trading Power{' '}
+                                      <span className="text-danger">* </span>Trading Power{' '}
                                     </label>
                                   </div>
                                   </div>
@@ -427,7 +444,7 @@ const Profile = () => {
                                       onChange={handleChange}
                                       // disabled
                                     />
-                                    <label htmlFor="broker_client_id">Broker Client ID</label>
+                                    <label htmlFor="broker_client_id"><span className="text-danger">* </span>Broker Client ID</label>
                                   </div>
                                   </div>
                                 </div>
@@ -445,7 +462,7 @@ const Profile = () => {
                                       onChange={handleChange}
                                      
                                     />
-                                    <label htmlFor="brokerPassword">Broker Password</label>
+                                    <label htmlFor="brokerPassword"><span className="text-danger">* </span>Broker Password</label>
                                   </div>
                                   </div>
                                 </div>
@@ -461,7 +478,7 @@ const Profile = () => {
                                       placeholder="Broker QR TOTP Token"
                                       onChange={handleChange}
                                     />
-                                    <label htmlFor="broker_qr_totp_token">Broker QR TOTP Token</label>
+                                    <label htmlFor="broker_qr_totp_token"><span className="text-danger">* </span>Broker QR TOTP Token</label>
                                   </div>
                                   </div>
                                 </div>
@@ -482,7 +499,7 @@ const Profile = () => {
                                  
 
                                     />
-                                    <label htmlFor="broker_api_key">Broker API Key</label>
+                                    <label htmlFor="broker_api_key"><span className="text-danger">* </span>Broker API Key</label>
                                   </div>
                                   </div>
                                 </div>
@@ -502,7 +519,7 @@ const Profile = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-3">
+                          {/* <div className="col-md-3">
                             <div className="card  ">
                               <div className="card-body pt-0">
                                 <ul className="list-unstyled my-3 py-1">
@@ -520,7 +537,7 @@ const Profile = () => {
                                 </ul>
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
             )}
                       </div>

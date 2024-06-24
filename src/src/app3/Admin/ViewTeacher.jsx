@@ -316,6 +316,7 @@ ChartJS.register(
   Legend
 );
 
+  
 // Custom Plugin for Rounded Bar Tops
 const roundedBarPlugin = {
   id: "roundedBar",
@@ -348,11 +349,18 @@ const roundedBarPlugin = {
 ChartJS.register(roundedBarPlugin);
 
 const ViewTeacher = () => {
+  const [backClicked, setBackClicked] = useState(false);
   const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });}
+    const handleBack = () => {
+      if (!backClicked) {
+        setBackClicked(true);
+        navigate(-1);
+      }
+    };
 
   const data = {
     labels: [
@@ -452,8 +460,7 @@ const ViewTeacher = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/admin/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
-      </Link>
+      <i class="ri-home-5-line ri-lg"></i>      </Link>
     </li>
     <li className="breadcrumb-item">
       <Link to="/admin/manage_teacher" className="text-secondary">
@@ -468,12 +475,12 @@ const ViewTeacher = () => {
         <div className="card p-5">
           <div className="row align-items-center mb-5">
             <div className="col-5 text-start">
-            <Button
-              onClick={handleBack}
-              className="btn btn-transparent p-button-text small-button"
-              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
-              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
-            </Button>
+            <button
+                onClick={handleBack}
+                className="btn rounded-pill btn-outline-secondary btn-xs"
+              >
+                <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+              </button>
             </div>
             <div className="col-6 text-start">
               <h5 className="mb-0">View Teacher</h5>
@@ -485,7 +492,7 @@ const ViewTeacher = () => {
               <div className="row mt-1">
                 <div className="col-3">
                   <span className="text-black">
-                    <strong>{teacherData.name}</strong>
+                    <strong>{toTitleCase(teacherData.name)}</strong>
                   </span>
                   <div>Name</div>
                 </div>
@@ -501,29 +508,62 @@ const ViewTeacher = () => {
                   </span>
                   <div>Email</div>
                 </div>
-                
-              </div>
-            </div>
-            <div className="col-12 mt-5 mb-5">
-              <div className="row mt-1">
-                
                 <div className="col-3">
                 <span className={` ${teacherData.broker_status ? 'text-success' : 'text-danger'}`}>
                       <strong>{teacherData.broker_status ? 'Connected' : 'Disconnected'}</strong>
                     </span>
                   <div>Broker Status</div>
                 </div>
+              </div>
+            </div>
+            <div className="col-12 mt-5 mb-5">
+              <div className="row mt-1">
+                
+                
                 <div className="col-3">
                   <span className="text-black">
                     <strong>{teacherData.broker_status}</strong>
                   </span>
-                  <strong>{teacherData.amount}</strong>
+                  <strong>{teacherData.amount || 0} Rs.</strong>
                   <div>Balance</div>
                 </div>
               </div>
             </div>
 
             <hr />
+            <div className="col-12 mt-5 mb-5">
+  <div className="row mt-1">
+   
+
+    <div className="col-3">
+      <span className="text-black">
+        <strong>{teacherData.broker_api_key}</strong>
+      </span>
+      <div>Broker API Key</div>
+    </div>
+
+    <div className="col-3">
+      <span className="text-black">
+        <strong>{teacherData.broker_client_id}</strong>
+      </span>
+      <div>Broker Client ID</div>
+    </div>
+
+    <div className="col-3">
+      <span className="text-black">
+        <strong>{teacherData.broker_password}</strong>
+      </span>
+      <div>Broker Password</div>
+    </div>
+
+    <div className="col-3  mt-5">
+      <span className="text-black">
+        <strong>{teacherData.broker_qr_totp_token}</strong>
+      </span>
+      <div>Broker QR TOTP Token</div>
+      </div>
+      </div>
+      </div>
 
             <div className="col-12 mt-5">
               <div className="row mt-5">

@@ -1,42 +1,32 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import StudentHeader from "./StudentHeader";
 import Footer from "../component/Footer";
-import SubHeaderS from "./SubHeaderS";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { Tooltip } from "primereact/tooltip";
 import axios from "axios";
 import { Toast } from "primereact/toast";
 import config from "../config";
-
-const StudentOrderDetails = () => {
-  const { uniqueorderid } = useParams();
+import AdminHeader from "./AdminHeader";
+import AdminSubHeader from "./AdminSubHeader";
+const AdminOrderBookDetails = () => {
+  const {  uniqueorderid } = useParams();
   const [data, setData] = useState([]);
+  const [backClicked, setBackClicked] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const toast = useRef(null);
-  const [backClicked, setBackClicked] = useState(false);
-  const toTitleCase = (str) => {
-    return str.replace(/\w\S*/g, (txt) => {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-  };
-
   const userId = localStorage.getItem("userId");
-
   const fetchOrderDetails = async () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${config.apiDomain}/api/common/order_details`, {
+      const response = await axios.post('https://ghanish.in/api/common/order_details', {
         user_id: userId,
         uniqueorderid: uniqueorderid,
       });
@@ -54,72 +44,9 @@ const StudentOrderDetails = () => {
     }
   };
 
-  const handleRefresh = async () => {
-    setLoading(true);
-
-    try {
-      const response = await axios.post(`${config.apiDomain}/api/common/order_details`, {
-        user_id: userId,
-        uniqueorderid: uniqueorderid,
-      });
-
-      if (response.data.st === 1 && response.data.data) {
-        const orderDetails = response.data.data;
-        setData([orderDetails]); // Set the order details data
-        const errorMsg = response.data.msg || "Success";
-        toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: toTitleCase(errorMsg),
-          life: 3000,
-        });
-      } else if (response.data && response.data.st === 2) {
-        const errorMsg = response.data.msg || "Warning";
-        setError(new Error(errorMsg));
-        toast.current.show({
-          severity: "warn",
-          summary: "Warning",
-          detail: toTitleCase(errorMsg),
-          life: 3000,
-        });
-      } else if (response.data && (response.data.st === 3 || response.data.st === 4)) {
-        const errorMsg = response.data.msg || "Danger: Server Error";
-        setError(new Error(errorMsg));
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: toTitleCase(errorMsg),
-          life: 3000,
-        });
-      } else {
-        const errorMsg = response.data.msg || "Failed to fetch data";
-        setError(new Error(errorMsg));
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: toTitleCase(errorMsg),
-          life: 3000,
-        });
-      }
-    } catch (error) {
-      const errorMsg = error.response ? error.response.data.msg || "Failed to fetch data" : error.message || "Failed to fetch data";
-      setError(new Error(errorMsg));
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: toTitleCase(errorMsg),
-        life: 3000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-
-
   useEffect(() => {
     fetchOrderDetails();
-  }, [uniqueorderid]);
+  }, [ uniqueorderid]);
 
   const handleBack = () => {
     if (!backClicked) {
@@ -129,15 +56,14 @@ const StudentOrderDetails = () => {
   };
 
   const rowClassName = (rowData, rowIndex) => {
-    return rowIndex % 2 === 0 ? "even-row" : "odd-row";
+    return rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
   };
+
 
   return (
     <>
-      <Toast ref={toast} />
-      <StudentHeader />
-      <SubHeaderS />
-
+     <AdminHeader></AdminHeader>
+<AdminSubHeader></AdminSubHeader>
       <div className="container-xxl container-p-y">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -159,7 +85,10 @@ const StudentOrderDetails = () => {
 
         <div className="card p-5">
           <div className="d-flex justify-content-between align-items-center mb-5">
-            <button onClick={handleBack} className="btn rounded-pill btn-outline-secondary btn-xs">
+            <button
+              onClick={handleBack}
+              className="btn rounded-pill btn-outline-secondary btn-xs"
+            >
               <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
             </button>
 
@@ -168,17 +97,22 @@ const StudentOrderDetails = () => {
           </div>
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
-              <i className="custom-target-icon ri-loader-2-line ri-lg me-3 mt-4 p-text-secondary" strokeWidth="5" fill="var(--surface-ground)" animationDuration=".5s" />
+                                   <i className=" custom-target-icon ri-loader-2-line ri-lg me-3 mt-4 p-text-secondary"
+
+                strokeWidth="5"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              />
             ) : (
               <div className="mt-4">
                 <Tooltip target=".custom-target-icon" />
-                <i
-                  className="custom-target-icon ri ri-refresh-line ri-lg me-3 p-text-secondary"
-                  data-pr-tooltip="Refresh"
-                  data-pr-position="top"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleRefresh} // Adjust unique order ID dynamically if needed
-                ></i>
+                <i className="custom-target-icon ri ri-refresh-line ri-lg me-3 p-text-secondary"
+                   data-pr-tooltip="Refresh"
+                   data-pr-position="top"
+                   style={{ cursor: 'pointer' }}
+                   onClick={fetchOrderDetails} // Adjust unique order ID dynamically if needed
+                >
+                </i>
               </div>
             )}
             <IconField iconPosition="left">
@@ -204,7 +138,7 @@ const StudentOrderDetails = () => {
             emptyMessage="No records found"
             rowClassName={rowClassName}
           >
-            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" ></Column>
+            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" sortable></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="ordertype" header="Order Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="producttype" header="Product Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="quantity" header="Quantity"></Column>
@@ -225,4 +159,4 @@ const StudentOrderDetails = () => {
     </>
   );
 };
-export default StudentOrderDetails;
+export default AdminOrderBookDetails;

@@ -4,25 +4,25 @@ import "./index.css";
 import App2 from "./App2";
 import reportWebVitals from "./reportWebVitals";
 import ReactQueryClientProvider from "./ReactQueryClient";
-import "./assets/css/demo.css";
-import "./assets/vendor/libs/bootstrap-select/bootstrap-select";
-import "./assets/vendor/css/rtl/core.css";
+// import "./assets/css/demo.css";
+// import "./assets/vendor/libs/bootstrap-select/bootstrap-select";
+// import "./assets/vendor/css/rtl/core.css";
 
-import "./assets/vendor/css/pages/front-page.css";
+// import "./assets/vendor/css/pages/front-page.css";
 
-import "./assets/vendor/css/pages/page-profile.css";
-import "./assets/vendor/css/pages/front-page-landing.css";
-import "./assets/img/favicon/favicon.ico";
-import "./assets/vendor/css/pages/page-auth.css";
-import "./assets/vendor/libs/animate-css/animate.css";
-import "./assets/vendor/css/rtl/theme-default.css";
+// import "./assets/vendor/css/pages/page-profile.css";
+// import "./assets/vendor/css/pages/front-page-landing.css";
+// import "./assets/img/favicon/favicon.ico";
+// import "./assets/vendor/css/pages/page-auth.css";
+// import "./assets/vendor/libs/animate-css/animate.css";
+// import "./assets/vendor/css/rtl/theme-default.css";
 
-import "./assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css";
-import "./assets/vendor/libs/typeahead-js/typeahead.css";
+// import "./assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css";
+// import "./assets/vendor/libs/typeahead-js/typeahead.css";
 
-import "./assets/vendor/libs/@form-validation/form-validation.css";
-import "./assets/vendor/libs/apex-charts/apex-charts.css";
-import "./assets/vendor/libs/node-waves/node-waves.css";
+// import "./assets/vendor/libs/@form-validation/form-validation.css";
+// import "./assets/vendor/libs/apex-charts/apex-charts.css";
+// import "./assets/vendor/libs/node-waves/node-waves.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

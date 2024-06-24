@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import axios from "axios";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
-import AdminHeader from "./AdminHeader";
-import Footer from "../component/Footer";
-import AdminSubHeader from "./AdminSubHeader";
 import { Button } from "primereact/button";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
+import { InputText } from "primereact/inputtext";
 import { InputIcon } from "primereact/inputicon";
-import axios from "axios";
 import config from "../config";
+import AdminHeader from "./AdminHeader";
+import Footer from "../component/Footer";
+import AdminSubHeader from "./AdminSubHeader";
+import Header from "../component/Header";
+import SubHeader from "../component/SubHeader";
 const AdminMyReportDetails = () => {
   const location = useLocation();
+  const [backClicked, setBackClicked] = useState(false);
   const navigate = useNavigate();
-  const { userId, month } = location.state; // Extract userId and month from state
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,13 +30,27 @@ const AdminMyReportDetails = () => {
     total_commission: 0.0,
   });
 
-  const fetchData = async () => {
+  useEffect(() => {
+    const { state } = location;
+
+    // Check if required data is present in location state
+    if (!state || !state.userId || !state.month) {
+      // Handle the case where location state is not properly set
+      // You can navigate back or handle it based on your application flow
+      navigate(-1); // Navigate back
+      return;
+    }
+
+    fetchData(state.userId, state.month);
+  }, [location, navigate]);
+
+  const fetchData = async (userId, month) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await axios.post(
-         `${config.apiDomain}/api/common/trade_details`,
+        `${config.apiDomain}/api/common/trade_details`,
         {
           user_id: userId,
           sell_month: month,
@@ -54,52 +71,48 @@ const AdminMyReportDetails = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (!backClicked) {
+      setBackClicked(true);
+      navigate(-1);
+    }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <>
-      <AdminHeader />
-      <AdminSubHeader />
-
+ <AdminHeader />
+ <AdminSubHeader />
       <div className="container-xxl container-p-y">
-      <nav aria-label="breadcrumb">
-  <ol className="breadcrumb breadcrumb-style1 text-secondary">
-    <li className="breadcrumb-item">
-      <Link to="/admin/dashboard" className="text-secondary">
-        <i className="ri-home-line ri-lg"></i>
-      </Link>
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/profile" className="text-secondary">
-        
-      </Link>
-      Profile
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/my_report" className="text-secondary">
-        
-      </Link>
-      My Report
-    </li>
-    <li className="breadcrumb-item active text-secondary" aria-current="page">
-   My Report Details
-    </li>
-  </ol>
-</nav>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb breadcrumb-style1 text-secondary">
+            <li className="breadcrumb-item">
+              <Link to="/admin/dashboard" className="text-secondary">
+              <i className="ri-home-5-line ri-lg"></i>
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/profile" className="text-secondary">
+                Profile
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/my_report" className="text-secondary">
+                My Report
+              </Link>
+            </li>
+            <li className="breadcrumb-item active text-secondary" aria-current="page">
+              My Report Details
+            </li>
+          </ol>
+        </nav>
         <div className="card p-5">
           <div className="row align-items-center">
             <div className="col text-start mb-5 ">
-            <Button
-              onClick={handleBack}
-              className="btn btn-transparent p-button-text small-button"
-              style={{ color: "A9A9A9", borderColor: "A9A9A9", borderStyle: "solid",width:'72px', }}            >
-              <i className="ri-arrow-left-circle-line me-1 ri-md"></i> Back
-            </Button>
+            <button
+                onClick={handleBack}
+                className="btn rounded-pill btn-outline-secondary btn-xs"
+              >
+                <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+              </button>
             </div>
             <div className="col text-start mb-5">
               <h5 className="mb-0">My Report Details</h5>
@@ -126,26 +139,16 @@ const AdminMyReportDetails = () => {
 
           <div className="d-flex justify-content-end mb-3">
             {loading ? (
-              <ProgressSpinner
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  marginRight: "10px",
-                }}
-                strokeWidth="5"
-                fill="var(--surface-ground)"
-                animationDuration=".5s"
-              />
+                                        <i className=" custom-target-icon ri-loader-2-line ri-lg mt-4 ms-e p-text-secondary"></i>
+
             ) : (
-              <Button
-                type="button"
-                icon="pi pi-refresh"
-                text
-                onClick={fetchData}
+              <i
+                className=" ri ri-refresh-line ri-lg mt-4 me-3"
+                onClick={() => fetchData(location.state.userId, location.state.month)}
               />
             )}
             <IconField iconPosition="left">
-              <InputIcon className="pi pi-search"></InputIcon>
+              <InputIcon className="ri ri-search-line"></InputIcon>
               <InputText
                 type="search"
                 placeholder="Search"
@@ -214,6 +217,7 @@ const AdminMyReportDetails = () => {
               header="Sell Quantity"
             ></Column>
             <Column
+              align="center"
               style={{ border: "1px solid #ddd" }}
               field="sell_datetime"
               header="Sell Time"
@@ -251,7 +255,6 @@ const AdminMyReportDetails = () => {
           </DataTable>
         </div>
       </div>
-
       <Footer />
     </>
   );

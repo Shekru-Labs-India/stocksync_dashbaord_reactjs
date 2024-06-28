@@ -203,7 +203,7 @@ const Login = () => {
             <img src={mirrorLogo} alt="" className="w-40 h-auto rounded-circle" />
           </div>
           <span className="app-brand-text demo menu-text fw-semibold ms-1">
-            Trade Mirror
+            TradeMirror
           </span>
         </div>
       </div>
@@ -302,8 +302,9 @@ const Login = () => {
                       <p className="float-end">
                         Didn't receive the OTP?{" "}
                         <div
-                          className="btn btn-link p-0"
+                          className="btn-link p-0 text-primary"
                           onClick={handleResendOtp}
+                          style={{ cursor: 'pointer' }}
                         >
                           Resend now
                         </div>
@@ -334,7 +335,7 @@ const Login = () => {
                 )}
               </div>
             </div>
-            <p className="text-center mt-5">Power by <a href="https://www.shekruweb.com" target="_blank">Shekru Labs India Pvt. Ltd.</a></p>
+            <p className="text-center mt-5">Powered by <a href="https://www.shekruweb.com" target="_blank">Shekru Labs India Pvt. Ltd.</a></p>
 
             <img
               src={img}

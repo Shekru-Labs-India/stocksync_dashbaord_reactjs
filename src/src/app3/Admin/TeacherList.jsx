@@ -71,11 +71,11 @@ const TeacherList = () => {
       );
 
       if (response.data && response.data.st === 1) {
-        
+        setData(response.data.teacher_data);
 
     
           const errorMsg = response.data.msg || "Success";
-          setData(response.data.teacher_data);  // Assuming response.data.data is an array to set in DataTable
+        // Assuming response.data.data is an array to set in DataTable
          
           toast.current.show({
             severity: "success",
@@ -202,7 +202,7 @@ const TeacherList = () => {
             align="center"
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}

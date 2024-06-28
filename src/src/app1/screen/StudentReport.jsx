@@ -6,6 +6,7 @@ import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
 import Footer from "../component/Footer";
 import { Button } from "primereact/button";
+import { Modal} from "react-bootstrap"; 
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
@@ -55,11 +56,73 @@ const StudentReport = () => {
     fetchData();
   }, []);
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
   return (
     <>
       <Header />
       <SubHeader />
-
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -129,9 +192,7 @@ const StudentReport = () => {
               />
             </IconField>
           </div>
-          {error ? (
-            <div className="text-center text-danger">{error.message}</div>
-          ) : (
+      
             <div className="table-responsive">
               <table className="table table-bordered">
                 <thead className="thead-light">
@@ -153,20 +214,21 @@ const StudentReport = () => {
                       <td>{item.losing_trades}</td>
                       <td>{item.commission}</td>
                       <td>
-                        <Link
-                          to={`/teacher/student_report_list/${userId}/${item.month_name}`}
-                        >
-                          <button className="btn btn-info active custom-btn-action1">
-                            <i className="ri-timeline-view"></i>
-                          </button>
-                        </Link>
+                      <Link
+  to={`/teacher/student_report_list/${userId}/${item.month_name}`}
+>
+  <button className="btn btn-info active custom-btn-action1">
+    <i className="ri-timeline-view"></i>
+  </button>
+</Link>
+
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          )}
+         
         </div>
       </div>
 
@@ -176,3 +238,37 @@ const StudentReport = () => {
 };
 
 export default StudentReport;
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

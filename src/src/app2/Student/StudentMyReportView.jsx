@@ -236,7 +236,7 @@ const StudentMyReportView = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -247,7 +247,7 @@ const StudentMyReportView = () => {
               style={{ border: "1px solid #ddd" }}
               field="buy_price"
               header="Buy Price"
-              sortable
+              
             ></Column>
             <Column
               align="center"

@@ -355,7 +355,7 @@ const UpdateTeacher = () => {
       mobile: teacherData.mobile,
       email: teacherData.email,
       commission: teacherData.commission,
-      trading_power: teacherData.trading_power,
+      lot_size_limit: teacherData.lot_size_limit,
       broker_client_id: teacherData.broker_client_id,
       broker_password: teacherData.broker_password,
       broker_qr_totp_token: teacherData.broker_qr_totp_token,
@@ -473,23 +473,28 @@ const UpdateTeacher = () => {
                               </div>
                             </div>
                             <div className="col-md-3">
-                              <div className="form-floating form-floating-outline">
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  id="tradingPower"
-                                  name="tradingPower"
-                                  placeholder="Trading Power"
-                                  value={teacherData.trading_power}
-                                  onChange={(e) =>
-                                    setTeacherData({ ...teacherData, trading_power: e.target.value })
-                                  }
-                                  required
-                                />
-                                <label htmlFor="tradingPower"><span className="text-danger">*</span> Trading Power</label>
-                              </div>
-                            </div>
-                          </div>
+  <div className="form-floating form-floating-outline">
+    <input
+      type="number"
+      className="form-control"
+      id="lot_size_limit"
+      name="lot_size_limit"
+      placeholder="Lot Size Limit"
+      value={teacherData.lot_size_limit}
+      onChange={(e) => {
+        let value = e.target.value;
+        if (value === "" || (value >= 0 && value <= 5000)) {
+          setTeacherData({ ...teacherData, lot_size_limit: value });
+        }
+      }}
+      required
+    />
+    <label htmlFor="lot_size_limit">
+      <span className="text-danger">*</span> Lot Size Limit
+    </label>
+  </div>
+</div>
+</div>
                           <div className="row mt-3 g-3">
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">

@@ -75,19 +75,19 @@ function App() {
         <Route path="/student/dashboard" element={<Dashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/manage_teacher" element={<ManageTeacher />} />
-        <Route path="/admin/create_teacher" element={<CreateTeacher />} />
+        <Route path="/admin/manage_teacher/create_teacher" element={<CreateTeacher />} />
         {/* <Route path="/admin/update_teacher" element={<UpdateTeacher />} /> */}
         {/* <Route path="/admin/view_teacher" element={<ViewTeacher />} /> */}
-        <Route path="/admin/view_teacher/:id" element={<ViewTeacher />} />
+        <Route path="/admin/manage_teacher/view_teacher/:id" element={<ViewTeacher />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
         <Route path="/admin/report" element={<Reports />} />
         <Route path="/admin/my_report" element={<AdminMyReport />} />
         <Route path="/admin/holding" element={<AdminHolding />} />
         <Route path="/admin/order_book" element={<AdminOrderBook />} />
-        <Route path="/admin/order_details" element={<AdminOrderBookDetails />} />
+        <Route path="/admin/order_book/order_details" element={<AdminOrderBookDetails />} />
         <Route path="/admin/trade_book" element={<AdminTradeBook />} />
 
-        <Route path="/admin/update_teacher/:id" element={<UpdateTeacher />} />
+        <Route path="/admin/manage_teacher/update_teacher/:id" element={<UpdateTeacher />} />
         <Route
           path="/admin/report_details"
           element={<AdminMyReportDetails />}
@@ -100,7 +100,7 @@ function App() {
           path="/admin/teacher_report_details"
           element={<TeacherReportDetails />}
         /> */}
-                <Route path="/admin/teacher_report_details/:userId/:sell_month" element={<TeacherReportDetails />} />
+                <Route path="/admin/teacher_report_details/:teacherId/:sell_month" element={<TeacherReportDetails />} />
 
    {/* <Route path="/app2/student_order_details" element={<StudentOrderDetails />} /> */}
         <Route path="/app2/student_my_report" element={<StudentMyReport />} />
@@ -129,25 +129,26 @@ function App() {
         <Route path="/basic_table" element={<BasicTable />} />
         <Route path="/verify_otp" element={<VerifyOtp />} />
         <Route path="/user_holding" element={<Holding />} />
-        <Route path="/orderbook_details/:uniqueorderid" element={<OrderbookDetails />} />
+        <Route path="/order_book/orderbook_details/:uniqueorderid" element={<OrderbookDetails />} />
 
         <Route path="/teacher/my_report" element={<MyReport />} />
         <Route path="/teacher/my_report_view" element={<MyReportView />} />
         <Route path="/teacher/student_report" element={<StudentReport />} />
         {/* <Route path="/teacher/student_report_list" element={<StudReportList />} /> */}
-        <Route path="/teacher/student_report_list/:studentId/:month" element={<StudReportList />} />
+        <Route path="/teacher/student_report_list/:userId/:month_name" element={<StudReportList />} />
         <Route path="/teacher/student_report_details" element={<StudentReportDetails />} />
         {/* <Route path="/teacher/student_report_details/:teacherId" element={<StudentReportDetails />} /> */}
-        <Route path="/teacher/student_report_details/:userId/:month" element={<StudentReportDetails />} />
+        {/* <Route path="/teacher/student_report_details/:userId/:month_name" element={<StudentReportDetails />} /> */}
+        <Route path="/teacher/student_report_details/:userId" element={<StudentReportDetails />} />
 
         <Route path="/student_report_view" element={<StudReportView />} />
         <Route path="/time_line" element={<TimeLine />} />
         <Route path="/teacher/manage_student" element={<ManageStudent />} />
-        <Route path="/teacher/create_student" element={<CreateStudent />} />
-        <Route path="/teacher/update_student/:id" element={<UpdateStudent />} />
+        <Route path="/teacher/manage_student/create_student" element={<CreateStudent />} />
+        <Route path="/teacher/manage_student/update_student/:id" element={<UpdateStudent />} />
         <Route path="/teacher/student_details" element={<StudentDetails />} />
         {/* <Route path="/teacher/view_student" element={<ViewStudent />} /> */}
-        <Route path="/teacher/view_student/:id" element={<ViewStudent />} />
+        <Route path="/teacher/manage_student/view_student/:id" element={<ViewStudent />} />
 
         <Route path="/landing_home_page" element={<LandingHomeScreen />} /> 
 

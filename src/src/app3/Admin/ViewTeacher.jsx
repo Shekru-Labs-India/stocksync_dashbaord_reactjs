@@ -490,8 +490,10 @@ const ViewTeacher = () => {
           <div className="row">
             <div className="col-12">
               <div className="row mt-1">
+              <h4>                                      <i className="ri-user-line ri-ms me-1 "></i>
+              Personal Information</h4>
                 <div className="col-3">
-                  <span className="text-black">
+                <span className="text-black">
                     <strong>{toTitleCase(teacherData.name)}</strong>
                   </span>
                   <div>Name</div>
@@ -522,15 +524,32 @@ const ViewTeacher = () => {
                 
                 <div className="col-3">
                   <span className="text-black">
-                    <strong>{teacherData.broker_status}</strong>
+                   
+                  <strong>{(teacherData.amount || 0).toFixed(2)} Rs.</strong>
                   </span>
-                  <strong>{teacherData.amount || 0} Rs.</strong>
-                  <div>Balance</div>
+                  <div>Broker Acc. Balance</div>
+                </div>
+
+                <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.lot_size_limit} Lot</strong>
+                    </span>
+                    <div>Lot Size Limit</div>
+                  </div>
+
+                <div className="col-3">
+                  <span className="text-black">
+                   
+                  <strong>{teacherData.commission}%</strong>
+                  </span>
+                  <div>Commission</div>
                 </div>
               </div>
             </div>
 
             <hr />
+            <h4>                                  <i className="ri-group-line ri-ms me-2"></i>
+              Broker Information</h4>
             <div className="col-12 mt-5 mb-5">
   <div className="row mt-1">
    
@@ -556,7 +575,7 @@ const ViewTeacher = () => {
       <div>Broker Password</div>
     </div>
 
-    <div className="col-3  mt-5">
+    <div className="col-3 ">
       <span className="text-black">
         <strong>{teacherData.broker_qr_totp_token}</strong>
       </span>
@@ -564,6 +583,7 @@ const ViewTeacher = () => {
       </div>
       </div>
       </div>
+      <hr></hr>
 
             <div className="col-12 mt-5">
               <div className="row mt-5">

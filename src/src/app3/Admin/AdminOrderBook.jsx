@@ -142,6 +142,20 @@ const AdminOrderBook = () => {
       navigate(-1);
     }
   };
+
+  const renderTransactionType = (rowData) => {
+    const style = {
+      color: rowData.transactiontype === 'BUY' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.transactiontype}</span>;
+  };
+
+  const renderorderstatus = (rowData) => {
+    const style = {
+      color: rowData.orderstatus === 'complete' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.orderstatus}</span>;
+  };
   return (
     <>
      <AdminHeader></AdminHeader>
@@ -204,7 +218,7 @@ const AdminOrderBook = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -216,13 +230,14 @@ const AdminOrderBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+              
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="transactiontype"
               header="Transaction Type"
+              body={renderTransactionType}
             ></Column>
             <Column
               align="center"
@@ -253,15 +268,16 @@ const AdminOrderBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="orderstatus"
               header="Order Status"
+              body={renderorderstatus}
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               header="Actions"
               body={(rowData) => (
-                   <Link to={`/admin/order_details/${rowData.uniqueorderid}`}>
+                   <Link to={`/admin/order_book/order_details/${rowData.uniqueorderid}`}>
 
-                  <button className="btn btn-primary active">
+                  <button className="btn btn-primary active btn-xs">
                     <i className="ri-timeline-view"></i>
                   </button>
                 </Link>

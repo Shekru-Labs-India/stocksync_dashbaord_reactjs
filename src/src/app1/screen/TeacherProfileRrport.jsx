@@ -5,7 +5,7 @@ import config from "../../app3/config";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
 import SubHeader from "../component/SubHeader";
-
+import { Modal, Button } from "react-bootstrap"; 
 import { Link, useNavigate } from "react-router-dom";
 
 import back from "../assets/img/icons/misc/triangle-light.png"
@@ -56,46 +56,75 @@ const TeacherProfileReport = () => {
       fetchUserProfile();
     }, []); // Ensure the dependency array is empty
   
-    const handleConnectionStatus = (status) => {
-      console.log("Connection status:", status);
-    };
+    
   
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setUserData({
-        ...userData,
-        [name]: value
-      });
-    };
+    
+    const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+    useEffect(() => {
+      const checkTime = () => {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
   
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await axios.put(
-         `${config.apiDomain}/api/common/save_profile_details `,
-          {
-            user_id: localStorage.getItem('userId'),
-            email: userData.email,
-            mobile: userData.mobile,
-            name: userData.name,
-          }
-        );
-  
-        if (response.data.st === 1) {
-          console.log('Profile updated successfully:', response.data.msg);
-          setSuccessMessage('Profile updated successfully!');
-        } else {
-          console.error('Failed to update user profile:', response.data.msg);
+        // Check if it's 9:15 AM or 3:15 PM
+        if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+          setShowPopup(true);
         }
-      } catch (error) {
-        console.error('Error updating user profile:', error);
+      };
+  
+      const interval = setInterval(() => {
+        checkTime();
+      }, 60000); // Every minute
+  
+      // Clear interval on component unmount
+      return () => clearInterval(interval);
+    }, []);
+  
+    const handleClosePopup = () => {
+      setShowPopup(false);
+    };
+  
+   
+  
+   
+  
+    // Helper function to determine modal button variant
+    const getButtonVariant = () => {
+      const now = new Date();
+      const hours = now.getHours();
+  
+      if (hours === 9) {
+        return "success"; // Green color for 9:15 AM
+      } else if (hours === 15) {
+        return "danger"; // Red color for 3:15 PM
       }
+      return "secondary"; // Default color
     };
   return (
     <div>
       <div>
       <Header />
       <SubHeader />
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="layout-page">
@@ -207,7 +236,7 @@ const TeacherProfileReport = () => {
         <h5 className="card-title mb-5">My Reports</h5>
         <h4 className="text-light mb-0">2,2199</h4>
         <p className="mb-3">Profit This Month</p>
-        <Link to="/teacher/my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> My Reports</i></Link>
+        <Link to="/teacher/my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md me-2"> </i> My Reports</Link>
       </div>
       <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
       <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>
@@ -220,7 +249,7 @@ const TeacherProfileReport = () => {
         <h5 className="card-title mb-5">Student Report</h5>
         <h4 className="text-light mb-0">2,2199</h4>
         <p className="mb-3">Profit This Month</p>
-        <Link to="/teacher/student_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> Student Report</i></Link>
+        <Link to="/teacher/student_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md me-2"> </i> Student Report</Link>
       </div>
       <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
       <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>
@@ -257,3 +286,37 @@ const TeacherProfileReport = () => {
 }
 
 export default TeacherProfileReport
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

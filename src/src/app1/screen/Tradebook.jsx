@@ -17,7 +17,7 @@ import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
 import config from "../../app3/config";
 import { Toast } from "primereact/toast";
-
+import { Modal } from "react-bootstrap"; 
 const TradeBook = () => {
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -148,11 +148,113 @@ const TradeBook = () => {
     fetchData(); // This should ideally be called once when the component mounts
   }, []);
 
+  const renderTransactionType = (rowData) => {
+    const style = {
+      color: rowData.transactiontype === 'BUY' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.transactiontype}</span>;
+  };
+
+  const formatExpiryDate = (dateString) => {
+    const monthMap = {
+      JAN: 'January',
+      FEB: 'February',
+      MAR: 'March',
+      APR: 'April',
+      MAY: 'May',
+      JUN: 'June',
+      JUL: 'July',
+      AUG: 'August',
+      SEP: 'September',
+      OCT: 'October',
+      NOV: 'November',
+      DEC: 'December'
+    };
+
+    const day = dateString.slice(0, 2);
+    const monthAbbr = dateString.slice(2, 5).toUpperCase();
+    const year = dateString.slice(5);
+
+    const month = monthMap[monthAbbr];
+
+    if (day && month && year) {
+      return `${day} ${month} ${year}`;
+    }
+    return dateString;
+  };
+
+  const renderExpiryDate = (rowData) => {
+    return formatExpiryDate(rowData.expirydate);
+  };
+
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
   return (
     <>
       <Toast ref={toast} />
             <Header />
             <SubHeader />
+            <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <div className="container-xxl container-p-y">
       <nav aria-label="breadcrumb">
@@ -219,7 +321,7 @@ const TradeBook = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             loading={loading}
             showGridlines
             globalFilter={globalFilter}
@@ -230,7 +332,7 @@ const TradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+             
             ></Column>
             <Column
               align="center"
@@ -243,6 +345,7 @@ const TradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="transactiontype"
               header="Transaction Type"
+              body={renderTransactionType}
             ></Column>
             <Column
               align="center"
@@ -279,19 +382,9 @@ const TradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="expirydate"
               header="Expiry Date"
+               body={renderExpiryDate}
             ></Column>
-            {/* <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              header="Actions"
-              body={(rowData) => (
-                <Link to="/my_report_view">
-                  <button className="btn btn-primary active">
-                    <i className="ri-timeline-view"></i>
-                  </button>
-                </Link>
-              )}
-            ></Column> */}
+           
           </DataTable>
         </div>
       </div>
@@ -303,3 +396,37 @@ const TradeBook = () => {
 
 export default TradeBook;
 
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

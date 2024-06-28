@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -7,42 +7,52 @@ import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
+import { Modal } from "react-bootstrap"; 
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
 import config from "../../app3/config";
 import { Tooltip } from 'primereact/tooltip';
+import { Toast } from "primereact/toast";
 
 const ManageStudent = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [students, setStudents] = useState([]);
-  const userId = localStorage.getItem("userId");
   const [backClicked, setBackClicked] = useState(false);
 
 
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
- 
+  const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false); // Track if file has been uploaded
   const [successCount, setSuccessCount] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
   const [errorDetails, setErrorDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Track loading status
+  const toast = useRef(null);
+  // Get teacher ID from localStorage
+  const userId = localStorage.getItem('userId');
 
-  const teacherId = localStorage.getItem('teacherId'); // Get teacher ID from localStorage
- 
-  
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
+    const allowedTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+
     if (selectedFile) {
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
-      setError(null);
+      const fileType = selectedFile.name.split('.').pop(); // Get file extension
+      if (!allowedTypes.includes(selectedFile.type) && !(fileType === 'csv' || fileType === 'xlsx')) {
+        setError('Please select a CSV or Excel file.');
+        setFile(null);
+        setFileName('');
+      } else {
+        setFile(selectedFile);
+        setFileName(selectedFile.name);
+        setError(null);
+      }
     } else {
       setFile(null);
       setFileName('');
@@ -54,6 +64,8 @@ const ManageStudent = () => {
       setError('Please select a file.');
       return;
     }
+
+    setIsLoading(true); // Set loading to true
 
     const formData = new FormData();
     formData.append('teacher_id', userId);
@@ -76,9 +88,13 @@ const ManageStudent = () => {
       }
     } catch (error) {
       setError('Failed to upload file.');
+    } finally {
+      setIsLoading(false); // Set loading to false
     }
   };
 
+
+  
 
 
   const fetchData = async () => {
@@ -179,18 +195,155 @@ const ManageStudent = () => {
     }
   };
 
-  const handleRefresh = () => {
-    fetchData();
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${config.apiDomain}/api/teacher/manage_students/listview`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ teacher_id: userId })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (data.st === 1) {
+          setStudents(data.data);
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: data.msg || "Data refreshed successfully",
+            life: 3000,
+          });
+        } else if (data.st === 2) {
+          toast.current.show({
+            severity: "warn",
+            summary: "Warning",
+            detail: data.msg || "Warning: Data may not be refreshed",
+            life: 3000,
+          });
+        } else if (data.st === 3) {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: data.msg || "Failed to fetch data",
+            life: 3000,
+          });
+        } else if (data.st === 4) {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: data.msg || "Method not allowed",
+            life: 3000,
+          });
+        }
+      } else {
+        throw new Error(data.msg || 'Failed to fetch data');
+      }
+    } catch (error) {
+      console.error('Network error', error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Network error: Failed to fetch data",
+        life: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleEdit = (rowData) => {
+    navigate(`/teacher/manage_student/update_student/${rowData.student_id}`, { state: rowData });
+  };
+  const nameBodyTemplate = (rowData) => {
+    return <span>{toTitleCase(rowData.name)}</span>;
+  };
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   };
 
-  const handleEdit = (rowData) => {
-    navigate(`/teacher/update_student/${rowData.student_id}`, { state: rowData });
+// Custom render function for lot size limit
+const lotSizeBodyTemplate = (rowData) => {
+  return `${rowData.lot_size_limit} Lot`;
+};
+
+// Custom render function for commission
+const commissionBodyTemplate = (rowData) => {
+  return `${rowData.commission}%`;
+};
+
+const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+useEffect(() => {
+  const checkTime = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // Check if it's 9:15 AM or 3:15 PM
+    if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+      setShowPopup(true);
+    }
   };
+
+  const interval = setInterval(() => {
+    checkTime();
+  }, 60000); // Every minute
+
+  // Clear interval on component unmount
+  return () => clearInterval(interval);
+}, []);
+
+const handleClosePopup = () => {
+  setShowPopup(false);
+};
+
+
+
+if (error) {
+  return <div>Error: {error}</div>;
+}
+
+// Helper function to determine modal button variant
+const getButtonVariant = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "success"; // Green color for 9:15 AM
+  } else if (hours === 15) {
+    return "danger"; // Red color for 3:15 PM
+  }
+  return "secondary"; // Default color
+};
 
   return (
     <>
+       <Toast ref={toast} />
       <Header />
       <SubHeader />
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y" align="center">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -218,16 +371,19 @@ const ManageStudent = () => {
         <h5 className="mb-0">Manage Student</h5>
       </div>
       <div className="col text-end mb-5">
-     
-        <button
+      <Tooltip target=".btn-upload" /> 
+      <Button
           type="button"
-          className="btn btn-primary me-3"
+          className="btn btn-primary btn-upload me-2" 
           onClick={() => setModalOpen(true)}
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
+          data-pr-tooltip="Student Bulk Upload" 
+          data-pr-position="top" 
+          icon="ri-folder-upload-fill"
         >
-          <i className="ri-folder-upload-fill"></i>
-        </button>
+          
+        </Button>
        
 
         <div
@@ -237,11 +393,11 @@ const ManageStudent = () => {
           aria-labelledby="exampleModalLabel"
           aria-hidden="true"
         >
-          <div className="modal-dialog">
+         <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                  File Upload
+                  Bulk Student Upload
                 </h5>
                 <button
                   type="button"
@@ -259,66 +415,79 @@ const ManageStudent = () => {
               <div className="modal-body">
                 <form>
                   <div className="mb-3">
-                    
                     <div className="d-flex align-items-center">
                       <input
                         type="file"
                         className="form-control me-2"
                         id="fileUpload"
                         onChange={handleFileChange}
+                        accept=".csv, .xls, .xlsx"
                       />
-                    
                       {error && <p className="text-danger me-2 mb-0">{error}</p>}
-                      <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                        Submit
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                        ) : (
+                          <>
+                            <i className="ri-checkbox-circle-line ri-lg me-1"></i>
+                            Submit
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
                 </form>
-           
-              
 
               {/* Table display */}
+              {/* Table display */}
               {fileUploaded && (
-                <div className="modal-body mt-3">
-            
-                  <h5 className="text-start">Success Uploaded: {successCount}</h5>
-                  <h5 className="text-start">Error Uploaded: {errorCount}</h5>
-                  <table className="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Row</th>
-                        <th>Error</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {errorDetails.map((detail, index) => (
-                        <tr key={index}>
-                          <td>{detail.row}</td>
-                          <td>{detail.error}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {error && <div className="text-danger">{error}</div>}
-                </div>
-              )}
-               
-               </div>
-               <div className="modal-footer">
-               
-               
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                  <div className="modal-body mt-3">
+                    <h5 className="text-start">Success Uploaded: {successCount}</h5>
+                    <h5 className="text-start">Error Uploaded: {errorCount}</h5>
+                    <div className="table-responsive" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                      <table className="table table-sm table-bordered">
+                        <thead>
+                          <tr>
+                          <th style={{ textTransform: 'capitalize' }}>Rows</th>
+                          <th style={{ textTransform: 'capitalize' }}>Error</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {errorDetails.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.row}</td>
+                              <td>{item.error}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {error && <div className="text-danger">{error}</div>}
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer justify-content-start">
+                <button type="button" className="btn btn-outline-secondary me-auto" data-bs-dismiss="modal">
+                  <i className="ri-close-line me-1"></i>
                   Close
                 </button>
-                </div>
+              </div>
                 </div>
                 
           </div>
           </div>
         
       
-        <Link to="/teacher/create_student">
+        <Link to="/teacher/manage_student/create_student">
           <button className="btn btn-success">
             <i className="ri-add-circle-line ri-lg me-2"></i><span>Create Student</span>
           </button>
@@ -356,7 +525,7 @@ const ManageStudent = () => {
           <DataTable
             value={students}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -368,7 +537,7 @@ const ManageStudent = () => {
               style={{ border: "1px solid #ddd" }}
               field="name"
               header="Name"
-              sortable
+              body={nameBodyTemplate}
             />
             <Column
               align={"center"}
@@ -376,39 +545,64 @@ const ManageStudent = () => {
               field="mobile"
               header="Mobile"
             />
-            <Column
+              
+           
+
+           
+               <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
-              header="Status"
+              field="lot_size_limit"
+              header="Lot Size Limit"
+              body={lotSizeBodyTemplate}
+            />
+              <Column
+              align={"center"}
+              style={{ border: "1px solid #ddd" }}
+              field="commission"
+              header="Commission"
+              body={commissionBodyTemplate}
+            />
+
+<Column
+              align={"center"}
+              style={{ border: "1px solid #ddd" }}
+              header=" Broker Conn. Status"
               body={(rowData) => (
-                <button
-                  className={`btn rounded-pill btn-xs ${
+                <div
+                  className={` ${
                     rowData.broker_status
-                      ? "btn-outline-success"
-                      : "btn-outline-danger"
-                  } waves-effect`}
+                      ? "text-success"
+                      : "text-danger"
+                  } `}
                 >
                   {rowData.broker_status ? "Connected" : "Disconnected"}
-                </button>
+                </div>
               )}
             />
+            
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
-              header="Active Status"
+              header="Account Status"
               body={(rowData) => (
                 <button
-                  className={`btn rounded-pill btn-xs ${
-                    rowData.active_status
+                  className={`btn rounded-pill  btn-xs ${rowData.active_status
                       ? "btn-outline-success"
                       : "btn-outline-danger"
-                  } waves-effect`}
+                    } waves-effect`}
                   onClick={() => handleToggle(rowData.student_id)}
                 >
-                  {rowData.active_status ? 'Active' : 'Inactive'}
+                  {rowData.active_status ? "Active" : "Inactive"}
                 </button>
               )}
             />
+                {/* <Column
+              align={"center"}
+              style={{ border: "1px solid #ddd" }}
+              field="amount"
+              header="Account Balance"
+            /> */}
             <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
@@ -416,7 +610,7 @@ const ManageStudent = () => {
               body={(rowData) => (
                 <>
                   <Link
-                    to={`/teacher/view_student/${rowData.student_id}`}
+                    to={`/teacher/manage_student/view_student/${rowData.student_id}`}
                     state={{ teacherId: rowData.student_id }}
                   >
                     <button className="btn btn-primary me-3 custom-btn-action1">
@@ -425,7 +619,7 @@ const ManageStudent = () => {
                   </Link>
 
                   <Link
-                    to={`/teacher/update_student/${rowData.student_id}`}
+                    to={`/teacher/manage_student/update_student/${rowData.student_id}`}
                     state={{ teacherId: rowData.student_id }}
                   >
                   <button
@@ -455,3 +649,38 @@ const ManageStudent = () => {
 };
 
 export default ManageStudent;
+
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

@@ -1733,6 +1733,7 @@ import Header from "../component/Header";
 import config from "../../app3/config";
 import SubHeader from "../component/SubHeader";
 import { Button } from "primereact/button";
+import { Modal } from "react-bootstrap"; 
 import { Toast } from "primereact/toast";
 import { useNavigate, Link } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -1746,6 +1747,8 @@ const userId = localStorage.getItem("userId");
 
 const Position = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const toast = useRef(null);
   const [positionsSelected, setPositionsSelected] = useState(false);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -1914,6 +1917,95 @@ const Position = () => {
   // }, []);
 
 
+ const handleRefreshes = async () => {
+  setLoading(true);
+  try {
+    const requestOptions = {
+      method: "Post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teacher_id: userId }),
+    };
+
+    const response = await fetch(
+      `${config.apiDomain}/api/teacher/get_order_placed_student_list`,
+      requestOptions
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data && data.st === 1) {
+      setData(
+        data.data.map((student) => ({
+          name: student.name,
+          user_id: student.user_id,
+          instruments: student.orders.map((order) => order.symbol),
+          lots: student.orders.map((order) => ({
+            size: order.buy_lots,
+            price: order.buy_price,
+            status: order.sell_lots > 0 ? "completed" : "pending",
+            sell: order.sell_lots,
+            sellPrice: order.sell_price,
+            symboltoken: order.token,
+          })),
+        }))
+      );
+      setFilteredeData(
+        data.data.map((student) => ({
+          name: student.name,
+          user_id: student.user_id,
+          instruments: student.orders.map((order) => order.symbol),
+          lots: student.orders.map((order) => ({
+            size: order.buy_lots,
+            price: order.buy_price,
+            status: order.sell_lots > 0 ? "completed" : "pending",
+            sell: order.sell_lots,
+            sellPrice: order.sell_price,
+            symboltoken: order.token,
+          })),
+        }))
+      );
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: data.msg || "Data refreshed successfully",
+        life: 3000,
+      });
+    } else if (data.st === 2) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Warning",
+        detail: data.msg || "Warning: Data may not be refreshed",
+        life: 3000,
+      });
+    } else if (data.st === 3 || data.st === 4) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: data.msg || "Failed to fetch data",
+        life: 3000,
+      });
+    } else {
+      console.error("No data found in get_order_placed_student_list");
+    }
+  } catch (error) {
+    console.error("Error fetching order placed student list:", error);
+    toast.current.show({
+      severity: "error",
+      summary: "Error",
+      detail: "Network error: Failed to fetch data",
+      life: 3000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
   const getOrderPlacedStudentList = async () => {
     try {
       setLoading(true);
@@ -2000,14 +2092,23 @@ const Position = () => {
       const responseData = await response.json();
       console.log("Exit all instruments response:", responseData);
   
-      // Refresh student list after exiting
-      await getOrderPlacedStudentList();
+      // Check if `st = 1` in the response
+      if (responseData.st === 1) {
+        console.log("Status is 1");
+  
+        // Update the local state to reflect changes
+        await getOrderPlacedStudentList();
+      } else {
+        console.log("Status is not 1");
+      }
     } catch (error) {
       console.error("Error exiting all student instruments:", error);
+      setError(error.message);
     } finally {
       setLoading(false); // Ensure loading state is set to false
     }
   };
+  
   
   const handleExit = async (studentId, instrumentData) => {
     try {
@@ -2320,13 +2421,148 @@ const Position = () => {
     }
   };
 
-  const handleRefresh = () => {
-    getPositionList();
+ 
+  const handleRefresh = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await fetch(
+        `${config.apiDomain}/api/teacher/get_position_list`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ teacher_id: userId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.st === 1) {
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: data.msg || "Data fetched successfully",
+          life: 3000,
+        });
+      } else if (data.st === 2) {
+        toast.current.show({
+          severity: "warn",
+          summary: "Warning",
+          detail: data.msg || "Warning: Data may not be fully refreshed",
+          life: 3000,
+        });
+      } else if (data.st === 3 || data.st === 4) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: data.msg || "Failed to fetch data",
+          life: 3000,
+        });
+      } else {
+        console.error("Unexpected status code:", data.st);
+      }
+
+      let openPositionRows = [];
+      let closedPositionRows = [];
+      let totalRealisedPnl = 0.0;
+      let totalUnrealisedPnl = 0.0;
+
+      data.position_list.forEach((item) => {
+        const dailyDiffPercent = (
+          ((item.ltp - item.close) / item.close) *
+          100
+        ).toFixed(2);
+
+        const netqty = parseInt(item.netqty);
+        const lotsize = parseInt(item.lotsize);
+        const lotquantity = parseInt(netqty / lotsize);
+        const ordertype = netqty > 0 ? "BUY" : "SELL";
+        const color_ordertype = netqty > 0 ? "text-success" : "text-danger";
+        const avg_price =
+          netqty > 0 ? item.totalbuyavgprice : item.totalsellavgprice;
+        const color_pnl = item.pnl > 0 ? "text-success" : "text-danger";
+        const color_diff_percent =
+          dailyDiffPercent > 0 ? "text-success" : "text-danger";
+
+        if (netqty !== 0) {
+          totalUnrealisedPnl += parseFloat(item.unrealised);
+          const dropdownOptions = Array.from(
+            { length: lotquantity },
+            (_, index) => lotquantity - index
+          );
+          openPositionRows.push({
+            tradingsymbol: item.tradingsymbol,
+            symboltoken: item.symboltoken,
+            producttype: item.producttype,
+            optiontype: item.optiontype,
+            exchange: item.exchange,
+            lotsize: item.lotsize,
+            netqty: item.netqty,
+            ltp: item.ltp,
+            close: item.close,
+            totalbuyavgprice: item.totalbuyavgprice,
+            totalsellavgprice: item.totalsellavgprice,
+            pnl: item.pnl,
+            dailyDiffPercent,
+            ordertype,
+            color_ordertype,
+            color_pnl,
+            color_diff_percent,
+            dropdownOptions,
+            lotquantity,
+            avg_price,
+          });
+        } else {
+          totalRealisedPnl += parseFloat(item.realised);
+          closedPositionRows.push(
+            <tr key={item.tradingsymbol}>
+              <td>
+                <span className="instrument_symbol">{item.tradingsymbol}</span>{" "}
+                <span className="d-none instrument_token">
+                  {item.symboltoken}
+                </span>
+              </td>
+              <td>{item.producttype}</td>
+              <td>{item.optiontype}</td>
+              <td>{item.exchange}</td>
+              <td>
+                0 Lots{" "}
+                <span className="text-body-tertiary">
+                  (1 Lot = {item.lotsize})
+                </span>
+              </td>
+              <td>
+                <span className={color_diff_percent}>{item.ltp} ₹</span>{" "}
+                <span className="text-body-tertiary">
+                  ({dailyDiffPercent}%)
+                </span>
+              </td>
+              <td>{item.totalbuyavgprice} ₹</td>
+              <td>{item.totalsellavgprice} ₹</td>
+              <td className={color_pnl}>{item.pnl} ₹</td>
+            </tr>
+          );
+        }
+      });
+
+      setPositionData({
+        openPositions: openPositionRows,
+        closedPositions: closedPositionRows,
+        totalRealisedPnl,
+        totalUnrealisedPnl,
+      });
+    } catch { 
+    }
   };
 
-  const handleRefreshes = () => {
-    getOrderPlacedStudentList();
-  };
+  // const handleRefreshes = () => {
+  //   getOrderPlacedStudentList();
+  // };
  
   const handleBack = () => {
     if (!backClicked) {
@@ -2369,12 +2605,111 @@ const Position = () => {
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const isMarketOpen = () => {
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+
+    // Market open from 9:15 AM to 3:15 PM
+    const marketOpenHour = 9;
+    const marketOpenMinute = 15;
+    const marketCloseHour = 15;
+    const marketCloseMinute = 15;
+
+    if (
+      (currentHour > marketOpenHour || (currentHour === marketOpenHour && currentMinute >= marketOpenMinute)) &&
+      (currentHour < marketCloseHour || (currentHour === marketCloseHour && currentMinute <= marketCloseMinute))
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
+
   return (
     <>
       <Header />
       <SubHeader />
       <Toast ref={toast} />
+     
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y">
+    
+      
+        {isMarketOpen() ? (
+          <div className="text-center mb-3" style={{ border: '2px solid green', padding: '10px', color: 'green', backgroundColor: 'white', borderRadius: '5px' }}>
+            Market is Open
+          </div>
+        ) : (
+          <div className="text-center mb-3" style={{ border: '2px solid orange', padding: '10px', color: 'orange', backgroundColor: 'white', borderRadius: '5px' }}>
+            Market is Closed
+          </div>
+        )}
+   
+  
+
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
             <li className="breadcrumb-item">
@@ -2544,7 +2879,7 @@ const Position = () => {
                             <td>
                               <div className="d-flex align-items-center">
                                 <select
-                                  className="form-control"
+                                  className=""
                                   id={`${item.tradingsymbol}-lot-size`}
                                   onChange={(event) =>
                                     handleLotSizeChange(
@@ -2553,6 +2888,7 @@ const Position = () => {
                                       item.symboltoken
                                     )
                                   }
+                                  disabled
                                 >
                                   {item.dropdownOptions.map(
                                     (option, optionIndex) => (
@@ -2638,8 +2974,8 @@ const Position = () => {
                         <th>Exchange</th>
                         <th>Lots</th>
                         <th>LTP</th>
-                        <th>Sell Price</th>
                         <th>Buy Price</th>
+                        <th>Sell Price</th>
                         <th>Profit & Loss</th>
                       </tr>
                     </thead>
@@ -2658,7 +2994,8 @@ const Position = () => {
                     type="button"
                     className="btn btn-danger rounded btn-md w-100 ms-5 me-5"
                     onClick={handleExitAllPending}
-                    // disabled={pendingCount === 0}
+                     disabled={filteredeData.length === 0} 
+                   
                   >
                     <i className="ri-telegram-line ri-lg me-3 "></i> Exit All
                     Pendings
@@ -2793,9 +3130,44 @@ const Position = () => {
         </div>
       </div>
       {/* </div> */}
-      {/* <Footer/> */}
+      <Footer/>
     </>
   );
 };
 
 export default Position;
+
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

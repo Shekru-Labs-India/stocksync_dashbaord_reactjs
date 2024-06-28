@@ -13,7 +13,7 @@ import config from "../config";
 
 const TeacherReportDetails = () => {
   const navigate = useNavigate();
-  const { teacher_id, sell_month } = useParams(); // Fetch teacher_id and sell_month from URL params
+  const { teacher_id, month_name } = useParams(); // Fetch teacher_id and sell_month from URL params
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ const TeacherReportDetails = () => {
         `${config.apiDomain}/api/admin/teacher_trade_details`,
         {
           teacher_id:119,
-          sell_month,
+          sell_month:month_name
         }
       );
 
@@ -61,7 +61,7 @@ const TeacherReportDetails = () => {
 
   useEffect(() => {
     fetchData();
-  }, [teacher_id, sell_month]);
+  }, [teacher_id, month_name]);
 
   return (
     <>
@@ -155,7 +155,7 @@ const TeacherReportDetails = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -166,7 +166,7 @@ const TeacherReportDetails = () => {
               style={{ border: "1px solid #ddd" }}
               field="buy_price"
               header="Buy Price"
-              sortable
+              
             ></Column>
             <Column
               align="center"

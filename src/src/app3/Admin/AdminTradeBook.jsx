@@ -142,6 +142,45 @@ const AdminTradeBook = () => {
     fetchData(); // This should ideally be called once when the component mounts
   }, []);
 
+  const renderTransactionType = (rowData) => {
+    const style = {
+      color: rowData.transactiontype === 'BUY' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.transactiontype}</span>;
+  };
+
+
+  const formatExpiryDate = (dateString) => {
+    const monthMap = {
+      JAN: 'January',
+      FEB: 'February',
+      MAR: 'March',
+      APR: 'April',
+      MAY: 'May',
+      JUN: 'June',
+      JUL: 'July',
+      AUG: 'August',
+      SEP: 'September',
+      OCT: 'October',
+      NOV: 'November',
+      DEC: 'December'
+    };
+
+    const day = dateString.slice(0, 2);
+    const monthAbbr = dateString.slice(2, 5).toUpperCase();
+    const year = dateString.slice(5);
+
+    const month = monthMap[monthAbbr];
+
+    if (day && month && year) {
+      return `${day} ${month} ${year}`;
+    }
+    return dateString;
+  };
+
+  const renderExpiryDate = (rowData) => {
+    return formatExpiryDate(rowData.expirydate);
+  };
   return (
     <>
      <Toast ref={toast} />
@@ -201,7 +240,7 @@ const AdminTradeBook = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             loading={loading}
             showGridlines
             globalFilter={globalFilter}
@@ -212,7 +251,7 @@ const AdminTradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+           
             ></Column>
             <Column
               align="center"
@@ -225,6 +264,7 @@ const AdminTradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="transactiontype"
               header="Transaction Type"
+              body={renderTransactionType}
             ></Column>
             <Column
               align="center"
@@ -261,6 +301,7 @@ const AdminTradeBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="expirydate"
               header="Expiry Date"
+              body={renderExpiryDate}
             ></Column>
             {/* <Column
               align="center"

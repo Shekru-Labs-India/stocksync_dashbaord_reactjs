@@ -17,7 +17,6 @@ const ViewStudent = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
- 
   const handleBack = () => {
     if (!backClicked) {
       setBackClicked(true);
@@ -57,13 +56,13 @@ const ViewStudent = () => {
 
   // Dummy data for the chart
   const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [
       {
-        label: 'Student Progress',
+        label: "Student Progress",
         data: [65, 59, 80, 81, 56, 55],
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: "rgba(75,192,192,1)",
         borderWidth: 1,
       },
     ],
@@ -94,7 +93,10 @@ const ViewStudent = () => {
                 Manage Teacher
               </Link>
             </li>
-            <li className="breadcrumb-item active text-secondary" aria-current="page">
+            <li
+              className="breadcrumb-item active text-secondary"
+              aria-current="page"
+            >
               View Teacher
             </li>
           </ol>
@@ -102,7 +104,7 @@ const ViewStudent = () => {
         <div className="card p-5">
           <div className="row align-items-center mb-5">
             <div className="col-5 text-start">
-            <button
+              <button
                 onClick={handleBack}
                 className="btn rounded-pill btn-outline-secondary btn-xs"
               >
@@ -119,6 +121,11 @@ const ViewStudent = () => {
             <div className="row">
               <div className="col-12">
                 <div className="row mt-1">
+                  <h4>
+                    {" "}
+                    <i className="ri-user-line ri-ms me-1 "></i>
+                    Personal Information
+                  </h4>
                   <div className="col-3">
                     <span className="text-black">
                       <strong>{teacherData.name}</strong>
@@ -138,61 +145,88 @@ const ViewStudent = () => {
                     <div>Email</div>
                   </div>
                   <div className="col-3">
-                    <span className={` ${teacherData.broker_status ? 'text-success' : 'text-danger'}`}>
-                      <strong>{teacherData.broker_status ? 'Connected' : 'Disconnected'}</strong>
+                    <span
+                      className={` ${
+                        teacherData.broker_status
+                          ? "text-success"
+                          : "text-danger"
+                      }`}
+                    >
+                      <strong>
+                        {teacherData.broker_status
+                          ? "Connected"
+                          : "Disconnected"}
+                      </strong>
                     </span>
                     <div>Broker Status</div>
                   </div>
-                 
                 </div>
               </div>
               <div className="col-12 mt-5 mb-5">
-              <div className="row mt-1">
-                  
+                <div className="row mt-1">
                   <div className="col-3">
                     <span className="text-black">
-                      <strong>{teacherData.amount}</strong>
+                      <strong>
+                        {(teacherData.amount || 0).toFixed(2)} Rs.
+                      </strong>
                     </span>
-                    <div>Balance</div>
+                    <div>Broker Acc. Balance</div>
+                  </div>
+
+                  <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.lot_size_limit} Lot</strong>
+                    </span>
+                    <div>Lot Size Limit</div>
+                  </div>
+
+                  <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.commission}%</strong>
+                    </span>
+                    <div>Commission</div>
                   </div>
                 </div>
               </div>
 
               <hr />
+              <h4>
+                {" "}
+                <i className="ri-group-line ri-ms me-2"></i>
+                Broker Information
+              </h4>
               <div className="col-12 mt-5 mb-5">
-  <div className="row mt-1">
-  
+                <div className="row mt-1">
+                  <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.broker_api_key}</strong>
+                    </span>
+                    <div>Broker API Key</div>
+                  </div>
 
-    <div className="col-3">
-      <span className="text-black">
-        <strong>{teacherData.broker_api_key}</strong>
-      </span>
-      <div>Broker API Key</div>
-    </div>
+                  <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.broker_client_id}</strong>
+                    </span>
+                    <div>Broker Client ID</div>
+                  </div>
 
-    <div className="col-3">
-      <span className="text-black">
-        <strong>{teacherData.broker_client_id}</strong>
-      </span>
-      <div>Broker Client ID</div>
-    </div>
+                  <div className="col-3">
+                    <span className="text-black">
+                      <strong>{teacherData.broker_password}</strong>
+                    </span>
+                    <div>Broker Password</div>
+                  </div>
 
-    <div className="col-3">
-      <span className="text-black">
-        <strong>{teacherData.broker_password}</strong>
-      </span>
-      <div>Broker Password</div>
-    </div>
-
-    <div className="col-3  mt-5">
-      <span className="text-black">
-        <strong>{teacherData.broker_qr_totp_token}</strong>
-      </span>
-      <div>Broker QR TOTP Token</div>
-    </div>
-  </div>
-</div>
-
+                  <div className="col-3 ">
+                    <span className="text-black">
+                      <strong>{teacherData.broker_qr_totp_token}</strong>
+                    </span>
+                    <div>Broker QR TOTP Token</div>
+                  </div>
+                </div>
+              </div>
+              <hr></hr>
               <div className="col-12 mt-5">
                 <div className="row mt-5">
                   <div className="col-12 text-center">

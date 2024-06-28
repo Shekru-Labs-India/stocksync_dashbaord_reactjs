@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { Modal } from "react-bootstrap"; 
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputText } from "primereact/inputtext";
@@ -12,6 +13,9 @@ import { InputIcon } from "primereact/inputicon";
 import config from "../../app3/config";
 import Footer from "../component/Footer";
 import { Tooltip } from 'primereact/tooltip';
+import { Toast } from "primereact/toast";
+import Header from "../component/Header";
+import SubHeader from "../component/SubHeader";
 const MyReportView = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,6 +24,7 @@ const MyReportView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [backClicked, setBackClicked] = useState(false);
+  const toast = useRef(null);
   const [summary, setSummary] = useState({
     total_trades_count: 0,
     total_profitable_trades: 0,
@@ -67,6 +72,74 @@ const MyReportView = () => {
     }
   };
 
+
+  const handleRefresh = async (userId, month) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        `${config.apiDomain}/api/common/trade_details`,
+        {
+          user_id: userId,
+          sell_month: month,
+        }
+      );
+
+      if (response.data) {
+        setData(response.data.trades);
+        setSummary(response.data.completed_trades_aggregate);
+        const errorMsg = response.data.msg || "Success";
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
+        });
+     
+       } else if (response.data && response.data.st === 2) {
+          const errorMsg = response.data.msg || "Warning";
+          setError(new Error(errorMsg));
+          toast.current.show({
+            severity: "warn",
+            summary: "Warning",
+            detail: toTitleCase(errorMsg),
+            life: 3000,
+          });
+        } else if (response.data && (response.data.st === 3 || response.data.st === 4)) {
+          const errorMsg = response.data.msg || "Danger: Server Error";
+          setError(new Error(errorMsg));
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: toTitleCase(errorMsg),
+            life: 3000,
+          });
+        } else {
+          const errorMsg = response.data.msg || "Failed to fetch data";
+          setError(new Error(errorMsg));
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: toTitleCase(errorMsg),
+            life: 3000,
+          });
+        }
+      
+      } catch (error) {
+        const errorMsg = error.response ? error.response.data.msg || "Failed to fetch data" : error.message || "Failed to fetch data";
+        setError(new Error(errorMsg));
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
+        });
+      }  finally {
+        setLoading(false);
+      }
+    };
+
  
   const handleBack = () => {
     if (!backClicked) {
@@ -74,9 +147,81 @@ const MyReportView = () => {
       navigate(-1);
     }
   };
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
   return (
     <>
+    <Header></Header>
+    <SubHeader></SubHeader>
+
+      <Toast ref={toast} />
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -173,7 +318,7 @@ const MyReportView = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -184,7 +329,7 @@ const MyReportView = () => {
               style={{ border: "1px solid #ddd" }}
               field="buy_price"
               header="Buy Price"
-              sortable
+             
             ></Column>
             <Column
               align="center"
@@ -273,3 +418,38 @@ const MyReportView = () => {
 };
 
 export default MyReportView;
+
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

@@ -239,7 +239,7 @@ const AdminMyReport = () => {
             align="center"
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -250,7 +250,7 @@ const AdminMyReport = () => {
               style={{ border: "1px solid #ddd" }}
               field="month_name"
               header="Month"
-              sortable
+             
             ></Column>
             <Column
               align="center"

@@ -238,7 +238,7 @@ const ManageTeacher = () => {
               <h5 className="mb-0">Manage Teacher</h5>
             </div>
             <div className="col text-end mb-5">
-              <Link to="/admin/create_teacher">
+              <Link to="/admin/manage_teacher/create_teacher">
                 <button className="btn btn-success">
                   <i className="ri-add-circle-line ri-lg me-1"> </i>
                   <span>Create Teacher</span>
@@ -278,7 +278,7 @@ const ManageTeacher = () => {
           <DataTable
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -305,16 +305,16 @@ const ManageTeacher = () => {
             <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
-              header=" Broker Status"
+              header=" Broker Conn. Status"
               body={(rowData) => (
-                <button
-                  className={`btn rounded-pill btn-xs ${rowData.broker_status
-                      ? "btn-outline-success"
-                      : "btn-outline-danger"
-                    } waves-effect`}
+                <div
+                  className={` ${rowData.broker_status
+                      ? "text-success"
+                      : "text-danger"
+                    } `}
                 >
                   {rowData.broker_status ? "Connected" : "Disconnected"}
-                </button>
+                </div>
               )}
             ></Column>
             <Column
@@ -340,7 +340,7 @@ const ManageTeacher = () => {
               body={(rowData) => (
                 <>
                   <Link
-                    to={`/admin/view_teacher/${rowData.user_id}`}
+                    to={`/admin/manage_teacher/view_teacher/${rowData.user_id}`}
                     state={{ teacherId: rowData.user_id }}
                   >
                     <button className="btn btn-primary me-3 custom-btn-action1">
@@ -348,7 +348,7 @@ const ManageTeacher = () => {
                     </button>
                   </Link>
                   <Link
-                    to={`/admin/update_teacher/${rowData.user_id}`}
+                    to={`/admin/manage_teacher/update_teacher/${rowData.user_id}`}
                     state={{ teacherId: rowData.user_id }}
                   >
                   <button

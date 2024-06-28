@@ -139,6 +139,19 @@ const StudentOrderBook = () => {
     return rowIndex % 2 === 0 ? 'even-row' : 'odd-row';
   };
 
+  const renderTransactionType = (rowData) => {
+    const style = {
+      color: rowData.transactiontype === 'BUY' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.transactiontype}</span>;
+  };
+
+  const renderorderstatus = (rowData) => {
+    const style = {
+      color: rowData.orderstatus === 'complete' ? 'green' : 'orange'
+    };
+    return <span style={style}>{rowData.orderstatus}</span>;
+  };
   return (
     <>
      <Toast ref={toast} />
@@ -202,7 +215,7 @@ const StudentOrderBook = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -214,13 +227,14 @@ const StudentOrderBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+              
             ></Column>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               field="transactiontype"
               header="Transaction Type"
+              body={renderTransactionType}
             ></Column>
             <Column
               align="center"
@@ -251,6 +265,7 @@ const StudentOrderBook = () => {
               style={{ border: "1px solid #ddd" }}
               field="orderstatus"
               header="Order Status"
+              body={renderorderstatus}
             ></Column>
             <Column
               align="center"
@@ -259,7 +274,7 @@ const StudentOrderBook = () => {
               body={(rowData) => (
                    <Link to={`/app2/student_order_details/${rowData.uniqueorderid}`}>
 
-                  <button className="btn btn-primary active">
+                  <button className="btn btn-primary active btn-xs">
                     <i className="ri-timeline-view"></i>
                   </button>
                 </Link>

@@ -207,7 +207,7 @@ const ProfileReports = () => {
         <h5 className="card-title mb-5">My Reports</h5>
         <h4 className="text-light mb-0">2,2199</h4>
         <p className="mb-3">Profit This Month</p>
-        <Link to="/app2/student_my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md"> My Reports</i></Link>
+        <Link to="/app2/student_my_report" className="btn btn-sm btn-primary"><i className="ri-user-follow-fill ri-md me-2"> </i>My Reports</Link>
       </div>
       <img src={back} className="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background" data-app-light-img="icons/misc/triangle-light.png" data-app-dark-img="icons/misc/triangle-dark.png"/>
       <img src={image} className="scaleX-n1-rtl position-absolute bottom-0 end-0 me-5 mb-3" height="176" alt="Upgrade Account"/>

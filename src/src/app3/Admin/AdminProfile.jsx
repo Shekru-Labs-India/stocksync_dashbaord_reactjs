@@ -16,6 +16,9 @@ const AdminProfile = () => {
   const [userData, setUserData] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [backClicked, setBackClicked] = useState(false);
+  const [error, setError] = useState('');
+  const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -57,10 +60,36 @@ const AdminProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value
-    });
+
+    if (name === "lot_size_limit") {
+      if (/^\d*$/.test(value)) { // Only allow digits
+        if (parseInt(value, 10) > 5000) {
+          setError('Maximum limit is 5000');
+          setUserData({
+            ...userData,
+            [name]: 5000
+          });
+        } else {
+          setError('');
+          setUserData({
+            ...userData,
+            [name]: value
+          });
+        }
+      } else {
+        setError('Only digits are allowed');
+      }
+    } else {
+      setUserData({
+        ...userData,
+        [name]: value
+      });
+
+      // If the "Trading Power" field is edited, set it as editable
+      if (name === "tradingPower") {
+        setIsTradingPowerEditable(true);
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +102,7 @@ const AdminProfile = () => {
           email: userData.email,
           mobile: userData.mobile,
           name: userData.name,
+          lot_size_limit:userData.lot_size_limit
         }
       );
 
@@ -230,7 +260,7 @@ const AdminProfile = () => {
             {userData && (
             <div className="row ">
                           <div className="col-md-3">
-                            <div className="card mb-6 mt-5">
+                            <div className="card mb-6 ">
                               <div className="card-body pt-0">
                              
                                 <ul className="list-unstyled my-3 py-1">
@@ -279,8 +309,12 @@ const AdminProfile = () => {
                                     <strong>Commission:</strong>
                                     <span className="ml-auto">{userData.commission}%</span>
                                   </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+  <strong>Broker Acc. Balance:</strong>
+  <span className="ml-auto">{(userData.amount || 0).toFixed(2)} Rs.</span>
+</li>
                                 </ul>
-                                <hr className="text-black" />
+                                <hr  />
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex flex-column align-items-start mb-4">
                                     <span className="fw-medium fs-5">
@@ -304,9 +338,9 @@ const AdminProfile = () => {
                                 <hr />
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Trading Power:</strong>
+                                    <strong>Lot Size Limit:</strong>
                                     <span className="ml-auto fw-medium fs-5">
-                                      {userData.trading_power}
+                                      {userData.lot_size_limit} Lot
                                     </span>
                                   </li>
                                 </ul>
@@ -316,7 +350,7 @@ const AdminProfile = () => {
                             </div>
                           </div>
                           <div className="col-md-9">
-                            <div className="card mt-1">
+                            <div className="card ">
                               <div className="card-body pt-0">
                                 <form
                                   id="formAccountSettings"
@@ -368,7 +402,7 @@ const AdminProfile = () => {
                                     />
                                     <label htmlFor="email">
                                       {' '}
-                                      <span className="text-danger">*</span>E-mail{' '}
+                                      <span className="text-danger">*</span> E-mail{' '}
                                     </label>
                                   </div>
                                   </div>
@@ -387,32 +421,33 @@ const AdminProfile = () => {
                                         onChange={handleChange}
                                       />
                                       <label htmlFor="mobile">
-                                        <span className="text-danger">*</span>Mobile Number{' '}
+                                        <span className="text-danger">*</span> Mobile Number{' '}
                                       </label>
                                     </div>
                                   </div>
                                 </div>
                                    
                                 <div className="col-md-4 mt-5">
-                                <div className="input-group input-group-merge">
-                                    <div className="form-floating form-floating-outline">
-                                    <input
-                                      className="form-control"
-                                      type="text"
-                                      id="tradingPower"
-                                      name="tradingPower"
-                                      value={userData.trading_power}
-                                      placeholder="Trading Power"
-                                      required
-                                      onChange={handleChange}
-                                      // disabled
-                                    />
-                                    <label htmlFor="tradingPower">
-                                      <span className="text-danger">*</span>Trading Power{' '}
-                                    </label>
-                                  </div>
-                                  </div>
-                                </div>
+      <div className="input-group input-group-merge">
+        <div className="form-floating form-floating-outline">
+          <input
+            className="form-control"
+            type="text"
+            id="lot_size_limit"
+            name="lot_size_limit"
+            value={userData.lot_size_limit || ''}
+            placeholder="Lot Size Limit"
+            required
+            onChange={handleChange}
+            onClick={() => setIsTradingPowerEditable(true)}
+          />
+          <label htmlFor="lot_size_limit">
+            <span className="text-danger">* </span>Lot Size Limit{' '}
+          </label>
+          {error && <p className="text-danger">{error}</p>}
+        </div>
+      </div>
+    </div>
                               
                                 <div className="mt-6 text-end">
                                 <button
@@ -443,9 +478,11 @@ const AdminProfile = () => {
                                       placeholder="Broker Client ID"
                                       value={userData.broker_client_id }
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
+
                                       // disabled
                                     />
-                                    <label htmlFor="broker_client_id">Broker Client ID</label>
+                                    <label htmlFor="broker_client_id"> <span className="text-danger">*</span> Broker Client ID</label>
                                   </div>
                                   </div>
                                 </div>
@@ -461,9 +498,11 @@ const AdminProfile = () => {
                                       placeholder="Broker Password"
                                       value={userData.broker_password || ''}
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
+
                                      
                                     />
-                                    <label htmlFor="brokerPassword">Broker Password</label>
+                                    <label htmlFor="brokerPassword"> <span className="text-danger">*</span> Broker Password</label>
                                   </div>
                                   </div>
                                 </div>
@@ -478,8 +517,10 @@ const AdminProfile = () => {
                                       value={userData.broker_qr_totp_token}
                                       placeholder="Broker QR TOTP Token"
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
+
                                     />
-                                    <label htmlFor="broker_qr_totp_token">Broker QR TOTP Token</label>
+                                    <label htmlFor="broker_qr_totp_token"> <span className="text-danger">*</span> Broker QR TOTP Token</label>
                                   </div>
                                   </div>
                                 </div>
@@ -496,16 +537,18 @@ const AdminProfile = () => {
                                       value={userData.broker_api_key}
                                       onChange={handleChange}
                                       autoComplete="broker_api_key"
+                                      disabled={userData.broker_conn_status}
 
                                  
 
                                     />
-                                    <label htmlFor="broker_api_key">Broker API Key</label>
+                                    <label htmlFor="broker_api_key"> <span className="text-danger">*</span> Broker API Key</label>
                                   </div>
                                   </div>
                                 </div>
                               
                               </div>
+                              {!userData.broker_conn_status && (
                               <div className="mt-6 text-end">
                                 <button
                       onClick={ handleBrokerInformation}
@@ -516,6 +559,7 @@ const AdminProfile = () => {
                                
                                
                               </div>
+                              )}
                                 </form>
                               </div>
                             </div>

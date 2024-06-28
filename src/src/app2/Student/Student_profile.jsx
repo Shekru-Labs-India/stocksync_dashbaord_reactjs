@@ -11,6 +11,8 @@ import axios from "axios";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState('');
+  const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -52,12 +54,37 @@ const Profile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value
-    });
-  };
 
+    if (name === "lot_size_limit") {
+      if (/^\d*$/.test(value)) { // Only allow digits
+        if (parseInt(value, 10) > 5000) {
+          setError('Maximum limit is 5000');
+          setUserData({
+            ...userData,
+            [name]: 5000
+          });
+        } else {
+          setError('');
+          setUserData({
+            ...userData,
+            [name]: value
+          });
+        }
+      } else {
+        setError('Only digits are allowed');
+      }
+    } else {
+      setUserData({
+        ...userData,
+        [name]: value
+      });
+
+      // If the "Trading Power" field is edited, set it as editable
+      if (name === "tradingPower") {
+        setIsTradingPowerEditable(true);
+      }
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,6 +95,7 @@ const Profile = () => {
           email: userData.email,
           mobile: userData.mobile,
           name: userData.name,
+          lot_size_limit:userData.lot_size_limit
         }
       );
 
@@ -262,7 +290,7 @@ const Profile = () => {
                     
                         <div
                           className={`text-success ml-auto${
-                            userData.broker_conn_status ? "btn-success" : "btn-danger"
+                            userData.broker_conn_status ? "text-success" : "text-danger"
                           }`}
                           onClick={() =>
                             handleConnectionStatus(!userData.broker_conn_status)
@@ -279,8 +307,12 @@ const Profile = () => {
                                     <strong>Commission:</strong>
                                     <span className="ml-auto">{userData.commission}%</span>
                                   </li>
+                                  <li className="d-flex justify-content-between align-items-center mb-4">
+  <strong>Broker Acc. Balance:</strong>
+  <span className="ml-auto">{(userData.amount || 0).toFixed(2)} Rs.</span>
+</li>
                                 </ul>
-                                <hr className="text-black" />
+                                <hr  />
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex flex-column align-items-start mb-4">
                                     <span className="fw-medium fs-5">
@@ -304,9 +336,9 @@ const Profile = () => {
                                 <hr />
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Trading Power:</strong>
+                                    <strong>Lot Size Limit:</strong>
                                     <span className="ml-auto fw-medium fs-5">
-                                      {userData.trading_power}
+                                      {userData.lot_size_limit} Lot
                                     </span>
                                   </li>
                                 </ul>
@@ -315,7 +347,7 @@ const Profile = () => {
                             </div>
                           </div>
                           <div className="col-md-9">
-                            <div className="card mt-1 ">
+                            <div className="card ">
                               <div className="card-body pt-0">
                                 <form
                                   id="formAccountSettings"
@@ -393,25 +425,26 @@ const Profile = () => {
                                 </div>
                                    
                                 <div className="col-md-4 mt-5">
-                                <div className="input-group input-group-merge">
-                                    <div className="form-floating form-floating-outline">
-                                    <input
-                                      className="form-control"
-                                      type="text"
-                                      id="tradingPower"
-                                      name="tradingPower"
-                                      value={userData.trading_power}
-                                      placeholder="Trading Power"
-                                      required
-                                      onChange={handleChange}
-                                      // disabled
-                                    />
-                                    <label htmlFor="tradingPower">
-                                      <span className="text-danger">* </span>Trading Power{' '}
-                                    </label>
-                                  </div>
-                                  </div>
-                                </div>
+      <div className="input-group input-group-merge">
+        <div className="form-floating form-floating-outline">
+          <input
+            className="form-control"
+            type="text"
+            id="lot_size_limit"
+            name="lot_size_limit"
+            value={userData.lot_size_limit || ''}
+            placeholder="Lot Size Limit"
+            required
+            onChange={handleChange}
+            onClick={() => setIsTradingPowerEditable(true)}
+          />
+          <label htmlFor="lot_size_limit">
+            <span className="text-danger">* </span>Lot Size Limit{' '}
+          </label>
+          {error && <p className="text-danger">{error}</p>}
+        </div>
+      </div>
+    </div>
                               
                                 <div className="mt-6 text-end">
                                 <button
@@ -442,6 +475,7 @@ const Profile = () => {
                                       placeholder="Broker Client ID"
                                       value={userData.broker_client_id }
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
                                       // disabled
                                     />
                                     <label htmlFor="broker_client_id"><span className="text-danger">* </span>Broker Client ID</label>
@@ -455,14 +489,15 @@ const Profile = () => {
                                     <input
                                       type="text"
                                       className="form-control"
-                                      id="brokerPassword"
-                                      name="brokerPassword"
+                                      id="broker_password"
+                                      name="broker_password"
                                       placeholder="Broker Password"
                                       value={userData.broker_password || ''}
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
                                      
                                     />
-                                    <label htmlFor="brokerPassword"><span className="text-danger">* </span>Broker Password</label>
+                                    <label htmlFor="broker_password"><span className="text-danger">* </span>Broker Password</label>
                                   </div>
                                   </div>
                                 </div>
@@ -477,6 +512,7 @@ const Profile = () => {
                                       value={userData.broker_qr_totp_token}
                                       placeholder="Broker QR TOTP Token"
                                       onChange={handleChange}
+                                      disabled={userData.broker_conn_status}
                                     />
                                     <label htmlFor="broker_qr_totp_token"><span className="text-danger">* </span>Broker QR TOTP Token</label>
                                   </div>
@@ -495,6 +531,7 @@ const Profile = () => {
                                       value={userData.broker_api_key}
                                       onChange={handleChange}
                                       autoComplete="broker_api_key"
+                                      disabled={userData.broker_conn_status}
 
                                  
 
@@ -505,6 +542,7 @@ const Profile = () => {
                                 </div>
                               
                               </div>
+                              {!userData.broker_conn_status && (
                               <div className="mt-6 text-end">
                                 <button
                       onClick={ handleBrokerInformation}
@@ -515,6 +553,7 @@ const Profile = () => {
                                
                                
                               </div>
+                              )}
                                 </form>
                               </div>
                             </div>

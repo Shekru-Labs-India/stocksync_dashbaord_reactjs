@@ -8,7 +8,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import axios from "axios";
-
+import { Modal, Button } from "react-bootstrap"; 
 import Footer from "../component/Footer";
 import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
@@ -133,12 +133,74 @@ const OrderbookDetails = () => {
     return rowIndex % 2 === 0 ? "even-row" : "odd-row";
   };
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
   return (
     <>
       <Toast ref={toast} />
       <Header />
       <SubHeader />
-
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -185,7 +247,7 @@ const OrderbookDetails = () => {
                    data-pr-tooltip="Refresh"
                    data-pr-position="top"
                    style={{ cursor: 'pointer' }}
-                   onClick={fetchOrderDetails} // Adjust unique order ID dynamically if needed
+                   onClick={handleRefresh} // Adjust unique order ID dynamically if needed
                 >
                 </i>
               </div>
@@ -206,14 +268,14 @@ const OrderbookDetails = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
             emptyMessage="No records found"
             rowClassName={rowClassName}
           >
-            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" sortable></Column>
+            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" ></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="ordertype" header="Order Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="producttype" header="Product Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="quantity" header="Quantity"></Column>
@@ -236,3 +298,37 @@ const OrderbookDetails = () => {
 };
 
 export default OrderbookDetails;
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

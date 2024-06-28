@@ -7,6 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import axios from "axios";
 import config from "../config";
+
 const CreateTeacher = () => {
   const navigate = useNavigate();
   const [backClicked, setBackClicked] = useState(false);
@@ -15,13 +16,28 @@ const CreateTeacher = () => {
     mobile: "",
     email: "",
     commission: "10",
-    trading_power: ""
+    trading_power: "",
+    lot_size_limit: "1" // Added missing lot_size_limit in initial state
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Allow only digits and set a maximum limit of 5000
+    if (name === 'lot_size_limit') {
+      if (!/^\d*$/.test(value)) {
+        setError('Only digits are allowed');
+        return;
+      } else if (parseInt(value, 10) > 5000) {
+        setError('Maximum limit is 5000');
+        return;
+      } else {
+        setError(null); // Clear error if valid
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: value
@@ -65,34 +81,34 @@ const CreateTeacher = () => {
       <AdminSubHeader />
 
       <div className="container-xxl flex-grow-1 container-p-y">
-      <nav aria-label="breadcrumb">
-  <ol className="breadcrumb breadcrumb-style1 text-secondary">
-    <li className="breadcrumb-item">
-      <Link to="/admin/dashboard" className="text-secondary">
-      <i class="ri-home-5-line ri-lg"></i>
-      </Link>
-    </li>
-    <li className="breadcrumb-item">
-      <Link to="/admin/manage_teacher" className="text-secondary">
-      Manage Teacher
-      </Link>
-    </li>
-    <li className="breadcrumb-item active text-secondary" aria-current="page">
-   Create Teacher
-    </li>
-  </ol>
-</nav>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb breadcrumb-style1 text-secondary">
+            <li className="breadcrumb-item">
+              <Link to="/admin/dashboard" className="text-secondary">
+                <i className="ri-home-5-line ri-lg"></i>
+              </Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/manage_teacher" className="text-secondary">
+                Manage Teacher
+              </Link>
+            </li>
+            <li className="breadcrumb-item active text-secondary" aria-current="page">
+              Create Teacher
+            </li>
+          </ol>
+        </nav>
         <div className="card p-5">
           <div className="row align-items-center">
             <div className="col-5 text-start mb-5">
-            <button
+              <button
                 onClick={handleBack}
                 className="btn rounded-pill btn-outline-secondary btn-xs"
               >
                 <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
               </button>
             </div>
-            <div className="col-6  text-start mb-5">
+            <div className="col-6 text-start mb-5">
               <h5 className="mb-0">Create Teacher</h5>
             </div>
           </div>
@@ -164,16 +180,19 @@ const CreateTeacher = () => {
                       <input
                         className="form-control"
                         type="text"
-                        id="trading_power"
-                        name="trading_power"
-                        value={formData.trading_power}
+                        id="lot_size_limit"
+                        name="lot_size_limit"
+                        value={formData.lot_size_limit}
                         onChange={handleChange}
-                        placeholder="Trading Power"
+                        placeholder="Lot Size Limit"
                         required
                       />
-                      <label htmlFor="trading_power">
-                        <span className="text-danger">*</span> Trading Power{" "}
+                      <label htmlFor="lot_size_limit">
+                        <span className="text-danger">*</span> Lot Size Limit{" "}
                       </label>
+                      {error && typeof error === 'string' && (
+                        <p className="text-danger">{error}</p>
+                      )}
                     </div>
                   </div>
                   <div className="col-3 mt-3">
@@ -201,8 +220,6 @@ const CreateTeacher = () => {
                     <i className="ri-group-line ri-ms me-2"></i>
                     Broker Information
                   </h5>
-
-                
 
                   <div className="col-3">
                     <div className="form-floating form-floating-outline">
@@ -252,8 +269,8 @@ const CreateTeacher = () => {
                       </label>
                     </div>
                   </div>
-                  <div className="col-3  ">
-                    <div className="form-floating form-floating-outline mt-3">
+                  <div className="col-3">
+                    <div className="form-floating form-floating-outline">
                       <input
                         type="text"
                         className="form-control"

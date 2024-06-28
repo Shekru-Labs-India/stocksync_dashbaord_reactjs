@@ -3,6 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Modal } from "react-bootstrap"; 
 import { Link, useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IconField } from "primereact/iconfield";
@@ -64,53 +65,71 @@ const Holding = () => {
 
   const handleRefresh = async () => {
     setLoading(true);
+    setError(null);
     const userId = localStorage.getItem("userId"); // Fetch the user ID from local storage
 
     if (!userId) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "User ID not found",
-      });
+     
       setLoading(false);
       return;
     }
 
-    await axios
-      .post(`${config.apiDomain}/api/common/get_all_holdings`, {
+    try {
+      const response = await axios.post(`${config.apiDomain}/api/common/get_all_holdings`, {
         user_id: userId,
-      })
-      .then((response) => {
-        if (response.data.st === 1 && response.data.data) {
-          setData(response.data.data);
-          toast.current.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Data fetched successfully",
-          });
-        } else if (response.data.st === 2) {
-          toast.current.show({
-            severity: "warn",
-            summary: "Warning",
-            detail: "No data found",
-          });
-        } else if (response.data.st === 3 || response.data.st === 4) {
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to fetch data",
-          });
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
+      });
+
+      if (response.data && response.data.st === 1) {
+        const errorMsg = response.data.msg || "Success";
+        setData(response.data.data); // Assuming response.data.data is an array to set in DataTable
+       
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
+        });
+      } else if (response.data && response.data.st === 2) {
+        const errorMsg = response.data.msg || "Warning";
+        setError(new Error(errorMsg));
+        toast.current.show({
+          severity: "warn",
+          summary: "Warning",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
+        });
+      } else if (response.data && (response.data.st === 3 || response.data.st === 4)) {
+        const errorMsg = response.data.msg || "Danger: Server Error";
+        setError(new Error(errorMsg));
         toast.current.show({
           severity: "error",
           summary: "Error",
-          detail: error.message || "Failed to fetch data",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
         });
-        setLoading(false);
+      } else {
+        const errorMsg = response.data.msg || "Failed to fetch data";
+        setError(new Error(errorMsg));
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: toTitleCase(errorMsg),
+          life: 3000,
+        });
+      }
+    
+    } catch (error) {
+      const errorMsg = error.response ? error.response.data.msg || "Failed to fetch data" : error.message || "Failed to fetch data";
+      setError(new Error(errorMsg));
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: toTitleCase(errorMsg),
+        life: 3000,
       });
+    }  finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -120,12 +139,80 @@ const Holding = () => {
   const rowClassName = (rowData, rowIndex) => {
     return rowIndex % 2 === 0 ? "even-row" : "odd-row";
   };
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
+
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
 
   return (
     <>
       <Header />
       <SubHeader />
-
+  <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl container-p-y">
         <Toast ref={toast} />
         <nav aria-label="breadcrumb">
@@ -184,7 +271,7 @@ const Holding = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -244,3 +331,38 @@ const Holding = () => {
 };
 
 export default Holding;
+
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

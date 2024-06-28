@@ -1,6 +1,3 @@
-
-
- 
 import React, { useEffect, useState } from "react";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
@@ -8,13 +5,14 @@ import SubHeader from "../component/SubHeader";
 import { Link } from "react-router-dom";
 import img from "../../app2/assets/img/avatars/1.png";
 import background from "../../app2/assets/img/backgrounds/sharemarket.jpg";
-
+import { Modal, Button } from "react-bootstrap"; 
 import config from "../../app3/config";
 import axios from "axios";
 const TeacherProfile = () => {
   const [userData, setUserData] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
-
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
+  const [error, setError] = useState("");
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -55,60 +53,91 @@ const TeacherProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value
-    });
+
+    if (name === "lot_size_limit") {
+      if (/^\d*$/.test(value)) {
+        // Only allow digits
+        if (parseInt(value, 10) > 5000) {
+          setError("Maximum limit is 5000");
+          setUserData({
+            ...userData,
+            [name]: 5000,
+          });
+        } else {
+          setError("");
+          setUserData({
+            ...userData,
+            [name]: value,
+          });
+        }
+      } else {
+        setError("Only digits are allowed");
+      }
+    } else {
+      setUserData({
+        ...userData,
+        [name]: value,
+      });
+
+      // If the "Trading Power" field is edited, set it as editable
+      if (name === "tradingPower") {
+        setIsTradingPowerEditable(true);
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-       `${config.apiDomain}/api/common/save_profile_details `,
+        `${config.apiDomain}/api/common/save_profile_details `,
         {
-          user_id: localStorage.getItem('userId'),
+          user_id: localStorage.getItem("userId"),
           email: userData.email,
           mobile: userData.mobile,
           name: userData.name,
+          lot_size_limit: userData.lot_size_limit,
         }
       );
 
       if (response.data.st === 1) {
-        console.log('Profile updated successfully:', response.data.msg);
-        setSuccessMessage('Profile updated successfully!');
+        console.log("Profile updated successfully:", response.data.msg);
+        setSuccessMessage("Profile updated successfully!");
       } else {
-        console.error('Failed to update user profile:', response.data.msg);
+        console.error("Failed to update user profile:", response.data.msg);
       }
     } catch (error) {
-      console.error('Error updating user profile:', error);
+      console.error("Error updating user profile:", error);
     }
   };
 
   const handleBrokerInformation = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details`, {
-        user_id: localStorage.getItem("userId"), 
-        broker_client_id: userData.broker_client_id,
-        broker_password: userData.broker_password,
-        broker_qr_totp_token: userData.broker_qr_totp_token,
-        broker_api_key: userData.broker_api_key
-      });
-  
-      console.log('Response:', response);
-  
+      const response = await axios.put(
+        `${config.apiDomain}/api/common/save_broker_details`,
+        {
+          user_id: localStorage.getItem("userId"),
+          broker_client_id: userData.broker_client_id,
+          broker_password: userData.broker_password,
+          broker_qr_totp_token: userData.broker_qr_totp_token,
+          broker_api_key: userData.broker_api_key,
+        }
+      );
+
+      console.log("Response:", response);
+
       if (response.data.st === 1) {
-        console.log('Broker updated successfully:', response.data.msg);
-        setSuccessMessage('Broker updated successfully!');
+        console.log("Broker updated successfully:", response.data.msg);
+        setSuccessMessage("Broker updated successfully!");
       } else {
-        console.error('Failed to update Broker profile:', response.data.msg);
+        console.error("Failed to update Broker profile:", response.data.msg);
         // Handle error, show error message, etc.
       }
     } catch (error) {
-      console.error('Error updating Broker profile:', error);
+      console.error("Error updating Broker profile:", error);
       if (error.response) {
-        console.error('Response Data:', error.response.data);
+        console.error("Response Data:", error.response.data);
       }
     }
   };
@@ -116,28 +145,94 @@ const TeacherProfile = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
 
   return (
     <>
-       <Header />
-       <SubHeader />
+      <Header />
+      <SubHeader />
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="layout-page">
             <div className="content-wrapper">
               <div className="container flex-grow-1 container-p-y">
-              <nav aria-label="breadcrumb">
-          <ol className="breadcrumb breadcrumb-style1 text-secondary">
-            <li className="breadcrumb-item">
-              <Link to="/teacher/dashboard" className="text-secondary">
-                <i className="ri-home-5-line ri-lg"></i>
-              </Link>
-            </li>
-            <li className="breadcrumb-item active text-secondary" aria-current="page">
-            Profile
-            </li>
-          </ol>
-        </nav>
+                <nav aria-label="breadcrumb">
+                  <ol className="breadcrumb breadcrumb-style1 text-secondary">
+                    <li className="breadcrumb-item">
+                      <Link to="/teacher/dashboard" className="text-secondary">
+                        <i className="ri-home-5-line ri-lg"></i>
+                      </Link>
+                    </li>
+                    <li
+                      className="breadcrumb-item active text-secondary"
+                      aria-current="page"
+                    >
+                      Profile
+                    </li>
+                  </ol>
+                </nav>
 
                 <div className="container-xxl flex-grow-1 container-p-y">
                   <div className="row">
@@ -164,19 +259,31 @@ const TeacherProfile = () => {
                               <div className="user-profile-info">
                                 {userData ? (
                                   <>
-                                    <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
+                                    <h4 className="mb-2 mt-lg-6">
+                                      {" "}
+                                      {capitalizeFirstLetter(userData.name)}
+                                    </h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
                                         <i className="ri-user-settings-line me-2 ri-24px"></i>
-                                        <span className="fw-medium"> {capitalizeFirstLetter (userData.role)}</span>
+                                        <span className="fw-medium">
+                                          {" "}
+                                          {capitalizeFirstLetter(userData.role)}
+                                        </span>
                                       </li>
                                       <li className="list-inline-item">
                                         <i className="ri-mobile-download-line me-2 ri-24px"></i>
-                                        <span className="fw-medium"> {userData.mobile}</span>
+                                        <span className="fw-medium">
+                                          {" "}
+                                          {userData.mobile}
+                                        </span>
                                       </li>
                                       <li className="list-inline-item">
                                         <i className="ri-wallet-line me-2 ri-24px"></i>
-                                        <span className="fw-medium"> Commission: {userData.commission}%</span>
+                                        <span className="fw-medium">
+                                          {" "}
+                                          Commission: {userData.commission}%
+                                        </span>
                                       </li>
                                     </ul>
                                   </>
@@ -185,19 +292,22 @@ const TeacherProfile = () => {
                                 )}
                               </div>
                               <div className="ms-auto">
-                             
-                             {userData && (
-                              <button
-                                className={`btn ${userData.broker_conn_status ? "btn-success" : ""}`}
-                              >
-                                {userData.broker_conn_status && (
-                                  <>
-                                    <i className="ri-shield-check-line me-1"></i>
-                                    Connected
-                                  </>
+                                {userData && (
+                                  <button
+                                    className={`btn ${
+                                      userData.broker_conn_status
+                                        ? "btn-success"
+                                        : ""
+                                    }`}
+                                  >
+                                    {userData.broker_conn_status && (
+                                      <>
+                                        <i className="ri-shield-check-line me-1"></i>
+                                        Connected
+                                      </>
+                                    )}
+                                  </button>
                                 )}
-                              </button>
-                            )}
                               </div>
                             </div>
                           </div>
@@ -205,169 +315,175 @@ const TeacherProfile = () => {
                       </div>
                     </div>
                   </div>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="nav-align-top">
-                  <ul className="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
-                    <li className="nav-item  active">
-                   <Link to="/teacher/user_profile"  className="nav-link active btn btn-primary ">
-                        <i className="ri-user-3-line me-1_5"></i>Profile
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                    <Link to="/teacher/user_profile_report"  className="nav-link">
-                        <i className="ri-team-line me-1_5"></i>Reports
-                        </Link>
-                    </li>
-                    
-                  </ul>
-                </div>
-              </div>
-            </div>
-            {userData && (
-            <div className="row ">
-                          <div className="col-md-3">
-                            <div className="card ">
-                              <div className="card-body pt-0">
-                             
-                                <ul className="list-unstyled my-3 py-1">
-                               
-                                  <li className="d-flex flex-column align-items-start mb-4">
-                                 
-                                    <span className="fw-medium fs-5">
-
-                                      About
-                                    </span>
-                                   
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Name:</strong>
-                                    <span className="ml-auto">
-                                    {capitalizeFirstLetter(userData.name)}
-                                    </span>
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Role:</strong>
-                                    <span className="ml-auto">  {capitalizeFirstLetter(userData.role)}</span>
-                         
-                                  
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Broker Connection:</strong>
-                                    <span className="text-success ml-auto">
-                                    <div className="ms-auto">
-                    
-                        <div
-                          className={`text-success ml-auto${
-                            userData.broker_conn_status ? "btn-success" : "btn-danger"
-                          }`}
-                          onClick={() =>
-                            handleConnectionStatus(!userData.broker_conn_status)
-                          }
-                        >
-                         {" "}
-                          {userData.broker_conn_status ? "Connected" : "Not Connected"}
-                        </div>
-                      
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div className="nav-align-top">
+                        <ul className="nav nav-pills flex-column flex-sm-row mb-6 gap-2 gap-lg-0">
+                          <li className="nav-item  active">
+                            <Link
+                              to="/teacher/user_profile"
+                              className="nav-link active btn btn-primary "
+                            >
+                              <i className="ri-user-3-line me-1_5"></i>Profile
+                            </Link>
+                          </li>
+                          <li className="nav-item">
+                            <Link
+                              to="/teacher/user_profile_report"
+                              className="nav-link"
+                            >
+                              <i className="ri-team-line me-1_5"></i>Reports
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                                    </span>
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Commission:</strong>
-                                    <span className="ml-auto">{userData.commission}%</span>
-                                  </li>
-                                </ul>
-                                <hr className="text-black" />
-                                <ul className="list-unstyled my-3 py-1">
-                                  <li className="d-flex flex-column align-items-start mb-4">
-                                    <span className="fw-medium fs-5">
-                                      Contacts
-                                    </span>
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Email:</strong>
-                                    <span className="ml-auto">
-                                     {userData.email}
-                                    </span>
-                                  </li>
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Mobile:</strong>
-                                    <span className="ml-auto">
-                                      {userData.mobile}
-                                    </span>
-                                  </li>
-                                 
-                                </ul>
-                                <hr />
-                                <ul className="list-unstyled my-3 py-1">
-                                  <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Trading Power:</strong>
-                                    <span className="ml-auto fw-medium fs-5">
-                                      {userData.trading_power}
-                                    </span>
-                                  </li>
-                                </ul>
-                            
-                              </div>
-                           
-                            </div>
-                          </div>
-                          <div className="col-md-9">
-                            <div className="card mt-1 ">
-                              <div className="card-body pt-0">
-                                <form
-                                  id="formAccountSettings"
-                                  method="POST"
-                                  //   onSubmit={handleFormSubmit}
-                                >
-                                  <div className="row mt-3">
-                                  
-                                    <span className="fw-medium fs-5 text-start mb-5">
+                  </div>
+                  {userData && (
+                    <div className="row ">
+                      <div className="col-md-3">
+                        <div className="card ">
+                          <div className="card-body pt-0">
+                            <ul className="list-unstyled my-3 py-1">
+                              <li className="d-flex flex-column align-items-start mb-4">
+                                <span className="fw-medium fs-5">About</span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Name:</strong>
+                                <span className="ml-auto">
+                                  {capitalizeFirstLetter(userData.name)}
+                                </span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Role:</strong>
+                                <span className="ml-auto">
+                                  {" "}
+                                  {capitalizeFirstLetter(userData.role)}
+                                </span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Broker Connection:</strong>
+                                <span className="text-success ml-auto">
+                                  <div className="ms-auto">
+                                    <div
+                                      className={`text-success ml-auto${
+                                        userData.broker_conn_status
+                                          ? "btn-success"
+                                          : "btn-danger"
+                                      }`}
+                                      onClick={() =>
+                                        handleConnectionStatus(
+                                          !userData.broker_conn_status
+                                        )
+                                      }
+                                    >
                                       {" "}
-                                      <i className="ri-user-line ri-ms me-1 "></i>
-                                      Personal Information
-                                    </span>
-                                    <div className="col-md-4">
-                                <div className="input-group input-group-merge">
-                                    <div className="form-floating form-floating-outline">
-                                    <input
-                                      className="form-control"
-                                      type="text"
-                                      id="name"
-                                      name="name"
-                                      value={userData.name}
-                                      placeholder="Name"
-                                      required
-                                      onChange={handleChange}
-                                   
-                                     
-                                    />
-                                    <label htmlFor="name">
-                                      {' '}
-                                      <span className="text-danger">* </span> Name{' '}
-                                    </label>
+                                      {userData.broker_conn_status
+                                        ? "Connected"
+                                        : "Not Connected"}
+                                    </div>
                                   </div>
-                                </div>
+                                </span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Commission:</strong>
+                                <span className="ml-auto">
+                                  {userData.commission}%
+                                </span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Broker Acc. Balance:</strong>
+                                <span className="ml-auto">
+                                  {(userData.amount || 0).toFixed(2)} Rs.
+                                </span>
+                              </li>
+                            </ul>
+                            <hr />
+                            <ul className="list-unstyled my-3 py-1">
+                              <li className="d-flex flex-column align-items-start mb-4">
+                                <span className="fw-medium fs-5">Contacts</span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Email:</strong>
+                                <span className="ml-auto">
+                                  {userData.email}
+                                </span>
+                              </li>
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Mobile:</strong>
+                                <span className="ml-auto">
+                                  {userData.mobile}
+                                </span>
+                              </li>
+                            </ul>
+                            <hr />
+                            <ul className="list-unstyled my-3 py-1">
+                              <li className="d-flex justify-content-between align-items-center mb-4">
+                                <strong>Lot Size Limit:</strong>
+                                <span className="ml-auto fw-medium fs-5">
+                                  {userData.lot_size_limit} Lot
+                                </span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-md-9">
+                        <div className="card ">
+                          <div className="card-body pt-0">
+                            <form
+                              id="formAccountSettings"
+                              method="POST"
+                              //   onSubmit={handleFormSubmit}
+                            >
+                              <div className="row mt-3">
+                                <span className="fw-medium fs-5 text-start mb-5">
+                                  {" "}
+                                  <i className="ri-user-line ri-ms me-1 "></i>
+                                  Personal Information
+                                </span>
+                                <div className="col-md-4">
+                                  <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                      <input
+                                        className="form-control"
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={userData.name}
+                                        placeholder="Name"
+                                        required
+                                        onChange={handleChange}
+                                      />
+                                      <label htmlFor="name">
+                                        {" "}
+                                        <span className="text-danger">
+                                          *{" "}
+                                        </span>{" "}
+                                        Name{" "}
+                                      </label>
+                                    </div>
+                                  </div>
                                 </div>
                                 <div className="col-md-4">
-                                <div className="input-group input-group-merge">
+                                  <div className="input-group input-group-merge">
                                     <div className="form-floating form-floating-outline">
-                                    <input
-                                      className="form-control"
-                                      type="text"
-                                      id="email"
-                                      name="email"
-                                      value={userData.email}
-                                      placeholder="E-mail"
-                                      required
-                                      onChange={handleChange}
-                                   
-                                    />
-                                    <label htmlFor="email">
-                                      {' '}
-                                      <span className="text-danger">* </span>E-mail{' '}
-                                    </label>
-                                  </div>
+                                      <input
+                                        className="form-control"
+                                        type="text"
+                                        id="email"
+                                        name="email"
+                                        value={userData.email}
+                                        placeholder="E-mail"
+                                        required
+                                        onChange={handleChange}
+                                      />
+                                      <label htmlFor="email">
+                                        {" "}
+                                        <span className="text-danger">* </span>
+                                        E-mail{" "}
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
                                 <div className="col-md-4">
@@ -384,139 +500,158 @@ const TeacherProfile = () => {
                                         onChange={handleChange}
                                       />
                                       <label htmlFor="mobile">
-                                        <span className="text-danger">* </span>Mobile Number{' '}
+                                        <span className="text-danger">* </span>
+                                        Mobile Number{" "}
                                       </label>
                                     </div>
                                   </div>
                                 </div>
-                                   
                                 <div className="col-md-4 mt-5">
-        <div className="input-group input-group-merge">
-          <div className="form-floating form-floating-outline">
-            <input
-              className="form-control"
-              type="text"
-              id="tradingPower"
-              name="tradingPower"
-              value={userData.trading_power || ''}
-              placeholder="Trading Power"
-              required
-              onChange={handleChange}
-              // disabled  // Remove disabled attribute to make it editable
-            />
-            <label htmlFor="tradingPower">
-              <span className="text-danger">* </span>Trading Power{' '}
-            </label>
-          </div>
-        </div>
-      </div>
-                              
+                                  <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                      <input
+                                        className="form-control"
+                                        type="text"
+                                        id="lot_size_limit"
+                                        name="lot_size_limit"
+                                        value={userData.lot_size_limit || ""}
+                                        placeholder="Lot Size Limit"
+                                        required
+                                        onChange={handleChange}
+                                        onClick={() =>
+                                          setIsTradingPowerEditable(true)
+                                        }
+                                      />
+                                      <label htmlFor="lot_size_limit">
+                                        <span className="text-danger">* </span>
+                                        Lot Size Limit{" "}
+                                      </label>
+                                      {error && (
+                                        <p className="text-danger">{error}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
                                 <div className="mt-6 text-end">
-                                <button
-                                 onClick={handleSubmit}
-                                  className="btn btn-primary active  text-end me-3"
-                                >
-                                  <i className="ri-save-line me-3 ri-lg"></i>Save Changes
-                                </button>
-                           
+                                  <button
+                                    onClick={handleSubmit}
+                                    className="btn btn-primary active  text-end me-3"
+                                  >
+                                    <i className="ri-save-line me-3 ri-lg"></i>
+                                    Save Changes
+                                  </button>
+                                </div>
                               </div>
-                                  </div>
-                                  <hr></hr>
-                                  <div className="row mb-3">
-                                    <h5 className="text-start">
-                                      {" "}
-                                      <i className="ri-group-line ri-ms me-2"></i>
-                                      Broker Information
-                                    </h5>
+                              <hr></hr>
+                             
+                              <div className="row mb-3">
+                                <h5 className="text-start">
+                                  {" "}
+                                  <i className="ri-group-line ri-ms me-2"></i>
+                                  Broker Information
+                                </h5>
 
-                                    <div className="col-md-4">
-                                <div className="input-group input-group-merge">
+                                <div className="col-md-4">
+                                  <div className="input-group input-group-merge">
                                     <div className="form-floating form-floating-outline">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      id="broker_client_id"
-                                      name="broker_client_id"
-                                      placeholder="Broker Client ID"
-                                      value={userData.broker_client_id }
-                                      onChange={handleChange}
-                                      // disabled
-                                    />
-                                    <label htmlFor="broker_client_id"> <span className="text-danger">* </span>Broker Client ID</label>
-                                  </div>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        id="broker_client_id"
+                                        name="broker_client_id"
+                                        placeholder="Broker Client ID"
+                                        value={userData.broker_client_id}
+                                        onChange={handleChange}
+                                        disabled={userData.broker_conn_status}
+                                        // disabled
+                                      />
+                                      <label htmlFor="broker_client_id">
+                                        {" "}
+                                        <span className="text-danger">* </span>
+                                        Broker Client ID
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
 
                                 <div className="col-md-4">
-        <div className="input-group input-group-merge">
-          <div className="form-floating form-floating-outline">
-            <input
-              type="text" 
-              className="form-control"
-              id="brokerPassword"
-              name="broker_password"
-              placeholder="Broker Password"
-              value={userData.broker_password || ''}
-              onChange={handleChange}
-            />
-            <label htmlFor="brokerPassword"><span className="text-danger">* </span>Broker Password</label>
-          </div>
-        </div>
-      </div>
+                                  <div className="input-group input-group-merge">
+                                    <div className="form-floating form-floating-outline">
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        id="brokerPassword"
+                                        name="broker_password"
+                                        placeholder="Broker Password"
+                                        value={userData.broker_password || ""}
+                                        onChange={handleChange}
+                                        disabled={userData.broker_conn_status}
+                                      />
+                                      <label htmlFor="brokerPassword">
+                                        <span className="text-danger">* </span>
+                                        Broker Password
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
                                 <div className="col-md-4">
-                                <div className="input-group input-group-merge">
+                                  <div className="input-group input-group-merge">
                                     <div className="form-floating form-floating-outline">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      id="broker_qr_totp_token"
-                                      name="broker_qr_totp_token"
-                                      value={userData.broker_qr_totp_token}
-                                      placeholder="Broker QR TOTP Token"
-                                      onChange={handleChange}
-                                    />
-                                    <label htmlFor="broker_qr_totp_token"><span className="text-danger">* </span>Broker QR TOTP Token</label>
-                                  </div>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        id="broker_qr_totp_token"
+                                        name="broker_qr_totp_token"
+                                        value={userData.broker_qr_totp_token}
+                                        placeholder="Broker QR TOTP Token"
+                                        onChange={handleChange}
+                                        disabled={userData.broker_conn_status}
+                                      />
+                                      <label htmlFor="broker_qr_totp_token">
+                                        <span className="text-danger">* </span>
+                                        Broker QR TOTP Token
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
-                                    <div className="col-md-4 mt-5">
-                                  
-                                <div className="input-group input-group-merge">
+                                <div className="col-md-4 mt-5">
+                                  <div className="input-group input-group-merge">
                                     <div className="form-floating form-floating-outline">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                     
-                                      name="broker_api_key"
-                                      placeholder="Broker API Key"
-                                      value={userData.broker_api_key}
-                                      onChange={handleChange}
-                                      autoComplete="broker_api_key"
-
-                                 
-
-                                    />
-                                    <label htmlFor="broker_api_key"><span className="text-danger">* </span>Broker API Key</label>
-                                  </div>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        name="broker_api_key"
+                                        placeholder="Broker API Key"
+                                        value={userData.broker_api_key}
+                                        onChange={handleChange}
+                                        autoComplete="broker_api_key"
+                                        disabled={userData.broker_conn_status}
+                                      />
+                                      <label htmlFor="broker_api_key">
+                                        <span className="text-danger">* </span>
+                                        Broker API Key
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
-                              
                               </div>
+                              {!userData.broker_conn_status && (
                               <div className="mt-6 text-end">
                                 <button
-                      onClick={ handleBrokerInformation}
-                                   className="btn btn-primary active  text-end me-3"
+                                  onClick={handleBrokerInformation}
+                                  className="btn btn-primary active  text-end me-3"
                                 >
-                                  <i className="ri-save-line me-3 ri-lg"></i> Save Changes
+                                  <i className="ri-save-line me-3 ri-lg"></i>{" "}
+                                  Save Changes
                                 </button>
-                               
-                               
                               </div>
-                                </form>
-                              </div>
-                            </div>
+                                )}
+                            </form>
                           </div>
-                          {/* <div className="col-md-3">
+                        </div>
+                      </div>
+                      {/* <div className="col-md-3">
                             <div className="card  ">
                               <div className="card-body pt-0">
                                 <ul className="list-unstyled my-3 py-1">
@@ -535,23 +670,53 @@ const TeacherProfile = () => {
                               </div>
                             </div>
                           </div> */}
-                        </div>
-            )}
-                      </div>
-                   
-                  
-                
-            
-          
-         
-          <Footer></Footer>
+                    </div>
+                  )}
+                </div>
+
+                <Footer></Footer>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      </div>
-      </div>
       </div>
     </>
   );
 };
 
 export default TeacherProfile;
+
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

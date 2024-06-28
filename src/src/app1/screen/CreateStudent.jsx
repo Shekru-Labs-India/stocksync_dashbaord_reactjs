@@ -1,13 +1,14 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import Footer from "../component/Footer";
 import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Modal } from "react-bootstrap"; 
 import axios from "axios";
 import config from "../../app3/config";
 const CreateStudent = () => {
@@ -19,13 +20,27 @@ const CreateStudent = () => {
     mobile: "",
     email: "",
     commission: "10",
-    trading_power: ""
+    lot_size_limit: "1"
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Allow only digits and set a maximum limit of 5000
+    if (name === 'lot_size_limit') {
+      if (!/^\d*$/.test(value)) {
+        setError('Only digits are allowed');
+        return;
+      } else if (parseInt(value, 10) > 5000) {
+        setError('Maximum limit is 5000');
+        return;
+      } else {
+        setError(null); // Clear error if valid
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: value
@@ -65,11 +80,76 @@ const CreateStudent = () => {
     }
   };
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
+
   return (
     <>
        <Header />
        <SubHeader />
-
+       <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="container-xxl flex-grow-1 container-p-y">
       <nav aria-label="breadcrumb">
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
@@ -166,22 +246,23 @@ const CreateStudent = () => {
                     </div>
                   </div>
                   <div className="col-3">
-                    <div className="form-floating form-floating-outline">
-                      <input
-                        className="form-control"
-                        type="text"
-                        id="trading_power"
-                        name="trading_power"
-                        value={formData.trading_power}
-                        onChange={handleChange}
-                        placeholder="Trading Power"
-                        required
-                      />
-                      <label htmlFor="trading_power">
-                        <span className="text-danger">*</span> Trading Power{" "}
-                      </label>
-                    </div>
-                  </div>
+      <div className="form-floating form-floating-outline">
+        <input
+          className="form-control"
+          type="text"
+          id="lot_size_limit"
+          name="lot_size_limit"
+          value={formData.lot_size_limit}
+          onChange={handleChange}
+          placeholder="Lot Size Limit"
+          required
+        />
+        <label htmlFor="lot_size_limit">
+          <span className="text-danger">*</span> Lot Size Limit{" "}
+        </label>
+        {error && <p className="text-danger">{error}</p>}
+      </div>
+    </div>
                   
                   <div className="col-3 mt-3">
                     <div className="form-floating form-floating-outline">
@@ -259,7 +340,7 @@ const CreateStudent = () => {
                     </div>
                   </div>
                   <div className="col-3  ">
-                    <div className="form-floating form-floating-outline mt-3">
+                    <div className="form-floating form-floating-outline ">
                       <input
                         type="text"
                         className="form-control"
@@ -296,3 +377,36 @@ const CreateStudent = () => {
 };
 
 export default CreateStudent;
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

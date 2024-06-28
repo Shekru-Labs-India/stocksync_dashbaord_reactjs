@@ -209,7 +209,7 @@ const StudentHolding = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
@@ -221,7 +221,7 @@ const StudentHolding = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+              
             ></Column>
             <Column
               align="center"

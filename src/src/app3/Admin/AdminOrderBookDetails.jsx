@@ -131,14 +131,14 @@ const AdminOrderBookDetails = () => {
             style={{ border: "1px solid #ddd" }}
             value={data}
             paginator
-            rows={5}
+            rows={20}
             showGridlines
             loading={loading}
             globalFilter={globalFilter}
             emptyMessage="No records found"
             rowClassName={rowClassName}
           >
-            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" sortable></Column>
+            <Column align="center" style={{ border: "1px solid #ddd" }} field="variety" header="Variety" ></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="ordertype" header="Order Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="producttype" header="Product Type"></Column>
             <Column align="center" style={{ border: "1px solid #ddd" }} field="quantity" header="Quantity"></Column>

@@ -5,7 +5,7 @@ import Footer from "../component/Footer";
 import SubHeader from "../component/SubHeader";
 import axios from "axios";
 import config from "../../app3/config";
-
+import { Modal, Button } from "react-bootstrap"; 
 const UpdateStudent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,7 +60,7 @@ const UpdateStudent = () => {
       mobile: teacherData.mobile,
       email: teacherData.email,
       commission: teacherData.commission,
-      trading_power: teacherData.trading_power,
+      lot_size_limit: teacherData.lot_size_limit,
       broker_client_id: teacherData.broker_client_id,
       broker_password: teacherData.broker_password,
       broker_qr_totp_token: teacherData.broker_qr_totp_token,
@@ -85,10 +85,73 @@ const UpdateStudent = () => {
     }
   };
 
+  const [showPopup, setShowPopup] = useState(false); // State for displaying the Popup component
+
+ 
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+
+      // Check if it's 9:15 AM or 3:15 PM
+      if ((hours === 9 && minutes === 15) || (hours === 15 && minutes === 15)) {
+        setShowPopup(true);
+      }
+    };
+
+    const interval = setInterval(() => {
+      checkTime();
+    }, 60000); // Every minute
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+ 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Helper function to determine modal button variant
+  const getButtonVariant = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours === 9) {
+      return "success"; // Green color for 9:15 AM
+    } else if (hours === 15) {
+      return "danger"; // Red color for 3:15 PM
+    }
+    return "secondary"; // Default color
+  };
   return (
     <div>
       <Header />
       <SubHeader />
+      <Modal
+        show={showPopup}
+        onHide={handleClosePopup}
+        dialogClassName={getColorModalClass()}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{getModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{getModalBody()}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant={getButtonVariant()} onClick={handleClosePopup}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="Container">
@@ -178,23 +241,28 @@ const UpdateStudent = () => {
                               </div>
                             </div>
                             <div className="col-md-3">
-                              <div className="form-floating form-floating-outline">
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  id="tradingPower"
-                                  name="tradingPower"
-                                  placeholder="Trading Power"
-                                  value={teacherData.trading_power}
-                                  onChange={(e) =>
-                                    setTeacherData({ ...teacherData, trading_power: e.target.value })
-                                  }
-                                  required
-                                />
-                                <label htmlFor="tradingPower"><span className="text-danger">*</span> Trading Power</label>
-                              </div>
-                            </div>
-                          </div>
+  <div className="form-floating form-floating-outline">
+    <input
+      type="number"
+      className="form-control"
+      id="lot_size_limit"
+      name="lot_size_limit"
+      placeholder="Lot Size Limit"
+      value={teacherData.lot_size_limit}
+      onChange={(e) => {
+        let value = e.target.value;
+        if (value === "" || (value >= 0 && value <= 5000)) {
+          setTeacherData({ ...teacherData, lot_size_limit: value });
+        }
+      }}
+      required
+    />
+    <label htmlFor="lot_size_limit">
+      <span className="text-danger">*</span> Lot Size Limit
+    </label>
+  </div>
+</div>
+</div>
                           <div className="row mt-3 g-3">
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
@@ -300,3 +368,37 @@ const UpdateStudent = () => {
 };
 
 export default UpdateStudent;
+
+const getColorModalClass = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9 || hours === 15) {
+    return hours === 9 ? "modal-green" : "modal-red"; // Apply custom modal background colors
+  }
+  return "";
+};
+
+const getModalTitle = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is Open!";
+  } else if (hours === 15) {
+    return "Market is Closed!";
+  }
+  return "";
+};
+
+const getModalBody = () => {
+  const now = new Date();
+  const hours = now.getHours();
+
+  if (hours === 9) {
+    return "Market is currently open. Take necessary actions.";
+  } else if (hours === 15) {
+    return "Market is currently closed. Come back tomorrow.";
+  }
+  return "";
+};

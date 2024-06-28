@@ -13,6 +13,8 @@ const Profile = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
+  const userId = localStorage.getItem("userId");
+  
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -114,7 +116,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details`, {
-        user_id: localStorage.getItem('user_id'),
+        user_id: localStorage.getItem('userId'),
         broker_client_id: userData.broker_client_id,
         broker_password: userData.broker_password,
         broker_qr_totp_token: userData.broker_qr_totp_token,

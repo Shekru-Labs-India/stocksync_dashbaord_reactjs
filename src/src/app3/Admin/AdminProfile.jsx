@@ -339,7 +339,7 @@ const AdminProfile = () => {
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex justify-content-between align-items-center mb-4">
                                     <strong>Lot Size Limit:</strong>
-                                    <span className="ml-auto fw-medium fs-5">
+                                    <span className="ml-auto ">
                                       {userData.lot_size_limit} Lot
                                     </span>
                                   </li>

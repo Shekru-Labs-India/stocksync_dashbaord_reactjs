@@ -114,7 +114,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details`, {
-        user_id: localStorage.getItem('user_id'),
+        user_id: localStorage.getItem('userId'),
         broker_client_id: userData.broker_client_id,
         broker_password: userData.broker_password,
         broker_qr_totp_token: userData.broker_qr_totp_token,
@@ -337,7 +337,7 @@ const Profile = () => {
                                 <ul className="list-unstyled my-3 py-1">
                                   <li className="d-flex justify-content-between align-items-center mb-4">
                                     <strong>Lot Size Limit:</strong>
-                                    <span className="ml-auto fw-medium fs-5">
+                                    <span className="ml-auto ">
                                       {userData.lot_size_limit} Lot
                                     </span>
                                   </li>

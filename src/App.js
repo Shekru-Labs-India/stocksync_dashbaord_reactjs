@@ -100,8 +100,8 @@ function App() {
           path="/admin/teacher_report_details"
           element={<TeacherReportDetails />}
         /> */}
-                <Route path="/admin/teacher_report_details/:teacherId/:sell_month" element={<TeacherReportDetails />} />
-
+                <Route path="/admin/teacher_report_details/:teacherId/:monthName" element={<TeacherReportDetails />} />
+          
    {/* <Route path="/app2/student_order_details" element={<StudentOrderDetails />} /> */}
         <Route path="/app2/student_my_report" element={<StudentMyReport />} />
         <Route path="/app2/student_profile" element={<StudentProfile />} />

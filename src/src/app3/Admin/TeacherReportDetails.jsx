@@ -12,8 +12,10 @@ import axios from "axios";
 import config from "../config";
 
 const TeacherReportDetails = () => {
+  const { teacherId, monthName } = useParams();
   const navigate = useNavigate();
-  const { teacher_id, month_name } = useParams(); // Fetch teacher_id and sell_month from URL params
+
+  // Fetch teacher_id and sell_month from URL params
   const [data, setData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,8 +36,8 @@ const TeacherReportDetails = () => {
       const response = await axios.post(
         `${config.apiDomain}/api/admin/teacher_trade_details`,
         {
-          teacher_id:119,
-          sell_month:month_name
+          teacher_id: teacherId,
+          sell_month: monthName,
         }
       );
 
@@ -61,7 +63,7 @@ const TeacherReportDetails = () => {
 
   useEffect(() => {
     fetchData();
-  }, [teacher_id, month_name]);
+  }, [teacherId, monthName]);
 
   return (
     <>
@@ -111,23 +113,25 @@ const TeacherReportDetails = () => {
             </div>
           </div>
           <div className="row text-center">
-            <div className="col-md-3">
-              <h4>{summary.total_trades_count}</h4>
-              <p>Total Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_profitable_trades}</h4>
-              <p>Profitable Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_losing_trades}</h4>
-              <p>Losing Trades</p>
-            </div>
-            <div className="col-md-3">
-              <h4>{summary.total_commission} Rs.</h4>
-              <p>Commission</p>
-            </div>
-          </div>
+  <div className="col-md-3">
+    <h4 style={{ marginBottom: '4px' }}>{summary.total_trades_count}</h4>
+    <p style={{ marginTop: '0px' }}>Total Trades</p>
+  </div>
+  <div className="col-md-3">
+    <h4 style={{ marginBottom: '4px' }}>{summary.total_profitable_trades}</h4>
+    <p style={{ marginTop: '0px' }}>Profitable Trades</p>
+  </div>
+  <div className="col-md-3">
+    <h4 style={{ marginBottom: '4px' }}>{summary.total_losing_trades}</h4>
+    <p style={{ marginTop: '0px' }}>Losing Trades</p>
+  </div>
+  <div className="col-md-3">
+    <h4 style={{ marginBottom: '4px' }}>{summary.total_commission} Rs.</h4>
+    <p style={{ marginTop: '0px' }}>Commission</p>
+  </div>
+</div>
+
+          
 
           <div className="d-flex justify-content-end mb-3">
             {loading ? (

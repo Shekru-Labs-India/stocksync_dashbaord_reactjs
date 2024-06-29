@@ -4292,9 +4292,10 @@ const Position = () => {
                 <div className=" text-center">
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <h4 className="text-danger">
-                        {positionData.totalUnrealisedPnl.toFixed(2)} ₹
-                      </h4>
+                    <h4 className={positionData.totalUnrealisedPnl < 0 ? "text-danger" : "text-success"}>
+  {positionData.totalUnrealisedPnl.toFixed(2)} ₹
+</h4>
+
                       <p className="mb-0">Unrealised Profit & Loss</p>
                     </div>
                     <div className="col-md-4 mb-3">

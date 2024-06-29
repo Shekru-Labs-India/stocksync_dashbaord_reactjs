@@ -878,8 +878,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
+import Select from 'react-select';
 import Footer from "../component/Footer";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from 'primereact/button';
+import { Modal } from "react-bootstrap";
 import axios from "axios";
 import { RadioButton } from "primereact/radiobutton";
 import { Link, useNavigate } from "react-router-dom";
@@ -984,28 +986,69 @@ const Basket = () => {
     fetchBaskets();
   }, []);
 
-  const handleDeleteAllBaskets = async () => {
-    try {
-      const response = await axios.post(
-        `${config.apiDomain}/api/teacher/delete_baskets_all`,
-        {
-          teacher_id: userId,
-        }
-      );
+  // const handleDeleteAllBaskets = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${config.apiDomain}/api/teacher/delete_baskets_all`,
+  //       {
+  //         teacher_id: userId,
+  //       }
+  //     );
 
-      // Handle success response
-      if (response.data && response.data.st === 1) {
-        console.log("All baskets deleted successfully");
-        fetchBaskets(); // Fetch baskets again to reflect the changes
-      } else {
-        console.error("Failed to delete all baskets:", response.data.msg);
-        console.log("Response data:", response.data); // Debugging log
+  //     // Handle success response
+  //     if (response.data && response.data.st === 1) {
+  //       console.log("All baskets deleted successfully");
+  //       fetchBaskets(); // Fetch baskets again to reflect the changes
+  //     } else {
+  //       console.error("Failed to delete all baskets:", response.data.msg);
+  //       console.log("Response data:", response.data); // Debugging log
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to delete all baskets:", error.message);
+  //     console.log("Error details:", error); // Debugging log
+  //   }
+  // };
+
+
+ 
+    
+    const [deleteLoading, setDeleteLoading] = useState(false);
+  
+    const handleDeleteAllBaskets = async () => {
+      setShowModal(true); // Show modal to confirm deletion
+    };
+  
+    const confirmDeleteAll = async () => {
+      try {
+        setDeleteLoading(true); // Set loading state while deleting
+  
+        const response = await axios.post(
+          `${config.apiDomain}/api/teacher/delete_baskets_all`,
+          {
+            teacher_id: userId,
+          }
+        );
+  
+        // Handle success response
+        if (response.data && response.data.st === 1) {
+          console.log("All baskets deleted successfully");
+          fetchBaskets(); // Fetch baskets again to reflect the changes
+        } else {
+          console.error("Failed to delete all baskets:", response.data.msg);
+          console.log("Response data:", response.data); // Debugging log
+        }
+      } catch (error) {
+        console.error("Failed to delete all baskets:", error.message);
+        console.log("Error details:", error); // Debugging log
+      } finally {
+        setDeleteLoading(false); // Reset loading state
+        setShowModal(false); // Close the modal after deletion
       }
-    } catch (error) {
-      console.error("Failed to delete all baskets:", error.message);
-      console.log("Error details:", error); // Debugging log
-    }
-  };
+    };
+  
+    const closeModal = () => {
+      setShowModal(false); // Close modal on cancel
+    };
 
   // const handleRefresh = () => {
   //   fetchBaskets();
@@ -1357,26 +1400,22 @@ const Basket = () => {
       return;
     }
 
+    setLoading(true); // Show loading icon
+
     try {
-      // Proceed with API call if validation passes
-      const response = await fetch(
+      const response = await axios.post(
         `${config.apiDomain}/api/teacher/create_update_basket`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            basket_id: null,
-            basket_name: editedBasket.name,
-            teacher_id: userId,
-            basket_data: rows,
-          }),
+          basket_id: null,
+          basket_name: editedBasket.name,
+          teacher_id: userId,
+          basket_data: rows,
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
+
         setBaskets([...baskets, data]);
         setRows([
           {
@@ -1386,7 +1425,7 @@ const Basket = () => {
             exchange: "NFO",
             orderType: "MARKET",
             productType: "CARRYFORWARD",
-          },
+          }
         ]);
         setEditedBasket({
           name: "",
@@ -1394,11 +1433,18 @@ const Basket = () => {
         });
         setShowModal(false);
         fetchBaskets();
+
+        // Show success toast message
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
       } else {
         console.error("Failed to create basket:", response.statusText);
+        toast.current.show({ severity: 'error', summary: 'Error',detail: response.data.msg, life: 3000});
       }
     } catch (error) {
       console.error("An error occurred while creating basket:", error);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg, life: 3000 });
+    } finally {
+      setLoading(false); // Hide loading icon
     }
   };
 
@@ -1496,9 +1542,21 @@ const Basket = () => {
     window.location.reload(); // This will refresh the entire page
   };
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
+
   const isMarketOpen = () => {
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
+    const currentDay = currentTime.getDay();
 
     // Market open from 9:15 AM to 3:15 PM
     const marketOpenHour = 9;
@@ -1506,10 +1564,15 @@ const Basket = () => {
     const marketCloseHour = 15;
     const marketCloseMinute = 15;
 
+    // Check if today is Saturday (6) or Sunday (0)
+    if (currentDay === 0 || currentDay === 6) {
+      return false;
+    }
+
+    // Check if the current time is within market hours
     if (
       (currentHour > marketOpenHour ||
-        (currentHour === marketOpenHour &&
-          currentMinute >= marketOpenMinute)) &&
+        (currentHour === marketOpenHour && currentMinute >= marketOpenMinute)) &&
       (currentHour < marketCloseHour ||
         (currentHour === marketCloseHour && currentMinute <= marketCloseMinute))
     ) {
@@ -1584,36 +1647,40 @@ const Basket = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div className="mt-3 container-xxl">
+      {isMarketOpen() ? (
+        <div
+          className="text-center "
+          style={{
+            border: "2px solid green",
+            padding: "10px",
+            color: "green",
+            backgroundColor: "white",
+            borderRadius: "5px",
+          }}
+        >
+          Market is Open
+        </div>
+      ) : (
+        <div
+          className="text-center "
+          style={{
+            border: "2px solid orange",
+            padding: "10px",
+            color: "orange",
+            backgroundColor: "white",
+            borderRadius: "5px",
+          }}
+        >
+          Market is Closed
+        </div>
+      )}
+    </div>
+
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
           <div className="container-xxl flex-grow-1 container-p-y">
-            {isMarketOpen() ? (
-              <div
-                className="text-center mb-3"
-                style={{
-                  border: "2px solid green",
-                  padding: "10px",
-                  color: "green",
-                  backgroundColor: "white",
-                  borderRadius: "5px",
-                }}
-              >
-                Market is Open
-              </div>
-            ) : (
-              <div
-                className="text-center mb-3"
-                style={{
-                  border: "2px solid orange",
-                  padding: "10px",
-                  color: "orange",
-                  backgroundColor: "white",
-                  borderRadius: "5px",
-                }}
-              >
-                Market is Closed
-              </div>
-            )}
+       
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb breadcrumb-style1 text-secondary">
                 <li className="breadcrumb-item">
@@ -1648,29 +1715,25 @@ const Basket = () => {
                     </strong>
                   </div>
 
-                  <div className="mt-3 mx-3 d-flex align-items-center ">
-                    <label
-                      htmlFor="basketName "
-                      className="form-label me-2"
-                      style={{ fontSize: "1.0rem" }}
-                    >
-                      <strong>Basket Name:</strong>
-                    </label>
-                  </div>
-                  <div className="mx-3  align-items-center mb-3  ">
-                    <input
-                      type="text"
-                      className="form-control form-control-sm me-3  w-50"
-                      placeholder="Enter basket name"
-                      value={editedBasket.name}
-                      onChange={handleNameChange}
-                    />
-                    {validationErrors.name && (
-                      <span className="text-danger ">
-                        {validationErrors.name}
-                      </span>
-                    )}
-                  </div>
+                 
+                  <div className="mx-3 align-items-center mb-3">
+  <div className={`form-floating form-floating-outline ${validationErrors.name ? 'has-error' : ''}`}>
+    <input
+      type="text"
+      className={`form-control form-control-sm me-3 w-50 ${validationErrors.name ? 'is-invalid' : ''}`}
+      placeholder="Enter basket name"
+      value={editedBasket.name}
+      onChange={handleNameChange}
+    />
+    <label htmlFor="brokerApiKey">Basket Name</label>
+    {validationErrors.name && (
+      <span className="text-danger">{validationErrors.name}</span>
+    )}
+  </div>
+</div>
+
+
+                  
                   <div className="m-3 table-responsive table-bordered">
                     <table className="table table-sm">
                       <thead>
@@ -1678,7 +1741,7 @@ const Basket = () => {
                           <th>Instrument</th>
                           <th>Lot Qty Buffer</th>
 
-                          <th>Transaction Type</th>
+                          <th>Trans. Type</th>
                           <th>Exchange</th>
                           <th>Order Type</th>
                           <th>Product Type</th>
@@ -1699,8 +1762,16 @@ const Basket = () => {
                                   handleAutoCompleteChange(e, index)
                                 }
                                 placeholder="Search for instruments"
-                              />
-                             
+                              /> 
+                               {/* <Select
+       value={row.instrument}
+      options={items}
+      onChange={(e) =>
+        handleAutoCompleteChange(e, index)}
+      placeholder="Search instrument"
+      isClearable
+      noOptionsMessage={() => 'No options'}
+    /> */}
                               {validationErrors.rows[index]?.instrument && (
                                 <span className="text-danger">
                                   {validationErrors.rows[index].instrument}
@@ -1859,27 +1930,58 @@ const Basket = () => {
                     </table>
                   </div>
                   <div className="text-end mb-5 me-5 mt-3">
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-success"
-                      onClick={handleCreateBasket}
-                    >
-                      <i className="ri-add-large-line ri-lg me-2"></i>
-                      Create Basket
-                    </button>
-                  </div>
+      {loading && <i className="ri-loader-line text-secondary me-2"></i>}
+      <Button
+        type="button"
+        className="btn btn-success rounded-pill"
+        onClick={handleCreateBasket}
+        disabled={loading}
+        icon="ri-checkbox-circle-line ri-lg"
+        label="Save Data"
+      />
+      
+      <Toast ref={toast} position="top-right" className="text-start"/>
+
+    </div>
+  );
                 </div>
               </div>
               <div className="col-xl-3 d-flex flex-row">
                 <div className="card">
                   <div className="col-5 text-start mb-5 mt-2  ms-auto">
-                    <button
+                    {/* <button
                       onClick={handleDeleteAllBaskets}
                       className="btn btn-warning btn-xs rounded-pill"
                     >
-                      <i className="ri-close-circle-line me-1 ri-lg"></i> Delete
+                      <i className="ri-close-large-line me-1 ri-lg"></i> Delete
                       all
-                    </button>
+                    </button> */}
+
+<button
+        onClick={handleDeleteAllBaskets}
+        className="btn btn-warning btn-xs rounded-pill"
+      >
+        <i className="ri-close-large-line me-1 ri-lg"></i> Delete all
+      </button>
+
+      <Modal show={showModal} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete all baskets?
+        </Modal.Body>
+        <Modal.Footer>
+        <div className="d-flex justify-content-between w-100">
+            <Button variant="outline-secondary" onClick={closeModal} size="sm">
+              <i className="ri-close-large-line me-2"></i> <span className="text-secondary">Cancel</span>
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteAll} disabled={deleteLoading} size="sm">
+              <i className="ri-close-large-line me-2"></i> {deleteLoading ? 'Deleting...' : 'Delete All'}
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
                   </div>
 
                   <div className="d-flex justify-content-start ms-4 mb-3 me-3">
@@ -1912,6 +2014,7 @@ const Basket = () => {
                   {loading ? (
                     <p>Loading...</p>
                   ) : (
+                    
                     <VirtualScroller
                       items={filterBaskets()}
                       itemSize={70} // Adjust item size as needed
@@ -1975,7 +2078,7 @@ const Basket = () => {
                                           : ""
                                       }
                                     >
-                                      Buy: {basket.buy_instruments_count}/10
+                                     <span className="text-secondary" >Buy:</span> {basket.buy_instruments_count}/10
                                     </span>
                                   </small>
                                 </td>
@@ -1988,7 +2091,7 @@ const Basket = () => {
                                           : ""
                                       }
                                     >
-                                      Sell: {basket.sell_instruments_count}/10
+                                     <span className="text-secondary">Sell:</span>  {basket.sell_instruments_count}/10
                                     </span>
                                   </small>
                                 </td>
@@ -2037,7 +2140,7 @@ const Basket = () => {
                             <th>Instrument</th>
                             <th>Lot Qty Buffer</th>
 
-                            <th>Transaction Type</th>
+                            <th>Trans. Type</th>
                             <th>Exchange</th>
                             <th>Order Type</th>
                             <th>Product Type</th>

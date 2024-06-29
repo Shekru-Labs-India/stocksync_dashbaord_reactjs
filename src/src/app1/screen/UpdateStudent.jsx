@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
 import SubHeader from "../component/SubHeader";
+import { Toast } from 'primereact/toast';
 import axios from "axios";
 import config from "../../app3/config";
 import { Modal, Button } from "react-bootstrap"; 
@@ -15,7 +16,7 @@ const UpdateStudent = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [backClicked, setBackClicked] = useState(false);
-
+  const toast = useRef(null); 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -54,6 +55,8 @@ const UpdateStudent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
+
     const payload = {
       student_id: id,
       name: teacherData.name,
@@ -73,15 +76,21 @@ const UpdateStudent = () => {
           "Content-Type": "application/json"
         }
       });
+
       if (response.data.st === 1) {
-        alert("Student updated successfully");
+        // Show success toast
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
         navigate("/teacher/manage_student");
       } else {
-        alert(response.data.msg || "Failed to update student");
+        // Show error toast
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg || 'Failed to update student', life: 3000 });
       }
     } catch (error) {
       console.error("Network error", error);
-      alert("Network error");
+      // Show network error toast
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Network error', life: 3000 });
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -164,9 +173,9 @@ const UpdateStudent = () => {
                     </Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/teacher/manage_student">Manage Student</Link>
+                    <Link to="/teacher/manage_student" className="text-secondary">Manage Student</Link>
                   </li>
-                  <li className="breadcrumb-item active" aria-current="page">Update Student</li>
+                  <li className="breadcrumb-item active text-secondary" aria-current="page" >Update Student</li>
                 </ol>
               </nav>
               {loading && <div>Loading...</div>}
@@ -187,6 +196,11 @@ const UpdateStudent = () => {
                       <div className="card-body pt-0">
                         <form id="formAccountSettings" onSubmit={handleSubmit}>
                           <div className="row mt-1 g-3">
+                          <h5 className="text-start">
+              {" "}
+              <i className="ri-user-line ri-ms me-2"></i>
+              Personal Information
+            </h5>
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
                                 <input
@@ -264,6 +278,7 @@ const UpdateStudent = () => {
 </div>
 </div>
                           <div className="row mt-3 g-3">
+                     
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
                                 <input
@@ -284,6 +299,11 @@ const UpdateStudent = () => {
                           </div>
                           <hr />
                           <div className="row mt-3 g-3">
+                          <h5 className="text-start">
+                    {" "}
+                    <i className="ri-group-line ri-ms me-2"></i>
+                    Broker Information
+                  </h5>
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
                                 <input
@@ -349,9 +369,25 @@ const UpdateStudent = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="mt-3 text-end">
-                            <button type="submit" className="btn rounded-pill btn-success btn-sm "><i className="ri-checkbox-circle-line ri-lg me-2"></i>Update Record</button>
-                          </div>
+                          <Toast ref={toast} />
+                          <div className="row">
+  <div className="col text-start mt-4">
+    <button
+      onClick={handleBack}
+      className="btn rounded-pill btn-outline-secondary btn-xs"
+    >
+      <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+    </button>
+  </div>
+  <div className="col text-end mt-4">
+  {loading && <i className="ri-loader-2-line text-secondary me-2"></i>}
+<button type="submit" className="btn rounded-pill btn-info btn-sm">
+      <i className="ri-checkbox-circle-line ri-lg me-2"></i> Save Data
+    </button>
+
+    
+  </div>
+</div>
                         </form>
                       </div>
                     </div>

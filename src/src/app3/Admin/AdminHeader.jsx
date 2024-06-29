@@ -60,30 +60,32 @@ const AdminHeader = () => {
 
         {/* Center Section: Current Time */}
         <div className="d-none d-xl-block">
-          <span>{formatTime(currentTime)}</span>
+          <span className="text-secondary">{formatTime(currentTime)}</span>
      <br></br>
      <div className="text-center ">
-          <strong className="fs-5">{formatTimee(currentTime)}</strong>
+          <strong className="fs-4">{formatTimee(currentTime)}</strong>
           </div>
         </div>
         {/* Right Section: User Info and Profile Menu */}
         <div className="d-flex align-items-center">
         <div className="text-end me-3">
-  <h6 className="mb-0" style={{ fontSize: '15px' }}>{toTitleCase(userName)}</h6>
-  <div className="text-center">
+  <h6 className="mb-0" style={{ fontSize: '16px' }}>{toTitleCase(userName)}</h6>
+  {/* <div className="text-center"> */}
     {/* Inline style for badge */}
-    <span className="badge bg-success" style={{ fontSize: '10px' }}>{toTitleCase(userRole)}</span>
-  </div>
+    <span className="badge bg-success" style={{ fontSize: '14px' }}>{toTitleCase(userRole)}</span>
+  {/* </div> */}
 </div>
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="nav-item navbar-dropdown dropdown-user dropdown">
               <a className="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
-                <div className="avatar">
-                  <img src={mirrorLogo} alt="Profile" className="w-px-40 h-auto rounded-circle" />
-                </div>
+              <div className="w-px-40 h-auto rounded-circle position-relative">
+  <div className="d-flex justify-content-center align-items-center border border-success border-3 rounded-circle" style={{ width: '40px', height: '40px' }}>
+    <i className="ri-user-line" style={{ fontSize: '20px' }}></i>
+  </div>
+  </div>
               </a>
               <ul className="dropdown-menu dropdown-menu-end mt-3 py-2">
-                <li>
+                {/* <li>
                   <a className="dropdown-item" href="pages-account-settings-account.html">
                     <div className="d-flex align-items-center">
                       <div className="avatar me-2">
@@ -98,11 +100,11 @@ const AdminHeader = () => {
                 </li>
                 <li>
                   <div className="dropdown-divider"></div>
-                </li>
+                </li> */}
                 <li>
                     <Link to="/admin/profile" className="dropdown-item">
-                      <i className="ri-user-3-line ri-22px me-2"></i>
-                      <span className="align-middle"> Profile</span>
+                      <i className="ri-user-line ri-22px me-2"></i>
+                        <span className="align-middle"> Profile</span>
                     </Link>
                   </li>
                   
@@ -111,7 +113,7 @@ const AdminHeader = () => {
                   <li>
   <div className="d-grid px-4 pt-2 pb-1">
     <Link to="/" onClick={handleLogout} className="dropdown-item btn btn-danger d-flex align-items-center">
-      <span className="align-middle">Logout</span>
+    <i className="ri-logout-box-r-line ri-lg me-1"></i> <span className="align-middle">Logout</span>
     </Link>
   </div>
 </li>

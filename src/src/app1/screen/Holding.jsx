@@ -283,7 +283,7 @@ const Holding = () => {
               style={{ border: "1px solid #ddd" }}
               field="tradingsymbol"
               header="Symbols"
-              sortable
+            
             ></Column>
             <Column
               align="center"

@@ -88,7 +88,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("student_home")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon tf-icons ri-home-5-line"></i>
+                    <i className="menu-icon tf-icons ri-home-7-line"></i>
                     <div>Home</div>
                   </Link>
                 </li>
@@ -124,7 +124,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("order_book")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className=" menu-icon ri-list-unordered"></i>
+                    <i className=" menu-icon ri-book-marked-line"></i>
                     <div>Order Book</div>
                   </Link>
                 </li>
@@ -142,7 +142,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("trade_book")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className=" menu-icon ri-terminal-window-line"></i>
+                    <i className=" menu-icon ri-swap-2-line"></i>
                     <div>Trade Book</div>
                   </Link>
                 </li>
@@ -160,7 +160,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("trade_position")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className=" menu-icon ri-logout-circle-r-line"></i>
+                    <i className=" menu-icon ri-stock-line"></i>
                     <div>Position</div>
                   </Link>
                 </li>
@@ -178,7 +178,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("user_holding")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon ri-file-list-2-line"></i>
+                    <i className="menu-icon ri-refund-2-line"></i>
                     <div>Holding</div>
                   </Link>
                 </li>
@@ -197,7 +197,7 @@ const SubHeader = () => {
                     onClick={() => handleSetActive("manage_student")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon ri-group-line"></i>
+                    <i className="menu-icon ri-group-3-line"></i>
                     <div>Manage Student</div>
                   </Link>
                 </li>

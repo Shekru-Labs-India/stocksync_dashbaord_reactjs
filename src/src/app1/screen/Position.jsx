@@ -3706,6 +3706,7 @@ const Position = () => {
   const [showActionColumn, setShowActionColumn] = useState(false);
 
   const getPositionList = async () => {
+    setLoading(true);
     try {
       const userId = localStorage.getItem("userId");
       const response = await fetch(
@@ -3956,6 +3957,7 @@ const Position = () => {
 
  
   const handleRefresh = async () => {
+    
     try {
       const userId = localStorage.getItem("userId");
       const response = await fetch(
@@ -4139,9 +4141,21 @@ const Position = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
+
   const isMarketOpen = () => {
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
+    const currentDay = currentTime.getDay();
 
     // Market open from 9:15 AM to 3:15 PM
     const marketOpenHour = 9;
@@ -4149,9 +4163,17 @@ const Position = () => {
     const marketCloseHour = 15;
     const marketCloseMinute = 15;
 
+    // Check if today is Saturday (6) or Sunday (0)
+    if (currentDay === 0 || currentDay === 6) {
+      return false;
+    }
+
+    // Check if the current time is within market hours
     if (
-      (currentHour > marketOpenHour || (currentHour === marketOpenHour && currentMinute >= marketOpenMinute)) &&
-      (currentHour < marketCloseHour || (currentHour === marketCloseHour && currentMinute <= marketCloseMinute))
+      (currentHour > marketOpenHour ||
+        (currentHour === marketOpenHour && currentMinute >= marketOpenMinute)) &&
+      (currentHour < marketCloseHour ||
+        (currentHour === marketCloseHour && currentMinute <= marketCloseMinute))
     ) {
       return true;
     } else {
@@ -4188,9 +4210,7 @@ const Position = () => {
 
 
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  
 
   // Helper function to determine modal button variant
   const getButtonVariant = () => {
@@ -4228,18 +4248,40 @@ const Position = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div className="mt-3 container-xxl">
+      {isMarketOpen() ? (
+        <div
+          className="text-center "
+          style={{
+            border: "2px solid green",
+            padding: "10px",
+            color: "green",
+            backgroundColor: "white",
+            borderRadius: "5px",
+          }}
+        >
+          Market is Open
+        </div>
+      ) : (
+        <div
+          className="text-center"
+          style={{
+            border: "2px solid orange",
+            padding: "10px",
+            color: "orange",
+            backgroundColor: "white",
+            borderRadius: "5px",
+          }}
+        >
+          Market is Closed
+        </div>
+      )}
+    </div>
+
       <div className="container-xxl container-p-y">
     
       
-        {isMarketOpen() ? (
-          <div className="text-center mb-3" style={{ border: '2px solid green', padding: '10px', color: 'green', backgroundColor: 'white', borderRadius: '5px' }}>
-            Market is Open
-          </div>
-        ) : (
-          <div className="text-center mb-3" style={{ border: '2px solid orange', padding: '10px', color: 'orange', backgroundColor: 'white', borderRadius: '5px' }}>
-            Market is Closed
-          </div>
-        )}
+       
    
   
 
@@ -4292,9 +4334,9 @@ const Position = () => {
                 <div className=" text-center">
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <h4 className="text-danger">
-                        {positionData.totalUnrealisedPnl.toFixed(2)} ₹
-                      </h4>
+                    <h4 className={positionData.totalUnrealisedPnl < 0 ? "text-danger" : "text-success"}>
+  {positionData.totalUnrealisedPnl.toFixed(2)} ₹
+</h4>
                       <p className="mb-0">Unrealised Profit & Loss</p>
                     </div>
                     <div className="col-md-4 mb-3">
@@ -4327,7 +4369,7 @@ const Position = () => {
         <h5 className="text-center flex-grow-1 m-0">Open Position</h5>
         <div>
           {loading ? (
-            <i className=" custom-target-icon ri-loader-2-line ri-lg ms-3 p-text-secondary"></i>
+            <i className=" custom-target-icon ri-loader-line ri-lg ms-3 p-text-secondary"></i>
           ) : (
             <div>
               <Tooltip target=".custom-target-icon" />
@@ -4412,7 +4454,7 @@ const Position = () => {
                             <td>
                               <div className="d-flex align-items-center">
                                 <select
-                                  className=""
+                                  className="form-control"
                                   id={`${item.tradingsymbol}-lot-size`}
                                   onChange={(event) =>
                                     handleLotSizeChange(
@@ -4482,7 +4524,7 @@ const Position = () => {
                   </h5>
 
                   {loading ? (
-                    <i className=" custom-target-icon ri-loader-2-line ri-lg ms-3 p-text-secondary"></i>
+                    <i className=" custom-target-icon ri-loader-line ri-lg ms-3 p-text-secondary"></i>
                   ) : (
                     <div>
                       <Tooltip target=".custom-target-icon" />

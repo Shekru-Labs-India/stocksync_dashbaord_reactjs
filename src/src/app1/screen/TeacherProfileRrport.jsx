@@ -143,7 +143,7 @@ const TeacherProfileReport = () => {
   </ol>
 </nav>
 
-                <div className="container-xxl flex-grow-1 container-p-y">
+                
                   <div className="row">
                     <div className="col-12">
                       <div className="card mb-6">
@@ -171,15 +171,15 @@ const TeacherProfileReport = () => {
                                      <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
-                                        <i className="ri-user-settings-line me-2 ri-24px"></i>
+                                        <i className="ri-user-settings-line  ri-24px"></i>
                                         <span className="fw-medium"> {capitalizeFirstLetter (userData.role)}</span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-mobile-download-line me-2 ri-24px"></i>
+                                        <i className="ri-mobile-download-line  ri-24px"></i>
                                         <span className="fw-medium"> {userData.mobile}</span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-wallet-line me-2 ri-24px"></i>
+                                        <i className="ri-wallet-line  ri-24px"></i>
                                         <span className="fw-medium"> Commission: {userData.commission}%</span>
                                       </li>
                                     </ul>
@@ -191,16 +191,17 @@ const TeacherProfileReport = () => {
                               <div className="ms-auto">
                              
                              {userData && (
-                              <button
-                                className={`btn ${userData.broker_conn_status ? "btn-success" : ""}`}
-                              >
-                                {userData.broker_conn_status && (
-                                  <>
-                                    <i className="ri-shield-check-line me-1"></i>
-                                    Connected
-                                  </>
-                                )}
-                              </button>
+                              <span
+                              className={`badge bg-success ${userData.broker_conn_status ? "bg-success" : ""}`}
+                              style={{ fontSize: '14px' }}
+                            >
+                              {userData.broker_conn_status && (
+                                <>
+                                  <i className="ri-shield-check-line me-1"></i>
+                                  Connected
+                                </>
+                              )}
+                            </span>
                             )}
                               </div>
                             </div>
@@ -272,7 +273,7 @@ const TeacherProfileReport = () => {
 </div>
 
                     
-                    </div>
+                    
                     </div></div>
                     
                     </div>

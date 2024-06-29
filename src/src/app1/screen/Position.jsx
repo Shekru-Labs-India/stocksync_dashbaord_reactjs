@@ -3818,6 +3818,9 @@ const Position = () => {
     } catch (error) {
       console.error("Error occurred while fetching position list:", error);
     }
+    finally {
+      setLoading(false); // Ensure loading state is set to false
+    }
   };
 
   const handleCheckboxChange = (tradingsymbol, symboltoken, lotquantity) => {
@@ -3957,7 +3960,7 @@ const Position = () => {
 
  
   const handleRefresh = async () => {
-    
+    setLoading(true);
     try {
       const userId = localStorage.getItem("userId");
       const response = await fetch(

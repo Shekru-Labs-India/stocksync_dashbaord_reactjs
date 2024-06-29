@@ -77,7 +77,7 @@ const SubHeaderS = () => {
                     onClick={() => handleSetActive("student_home")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon tf-icons ri-home-5-line"></i>
+                    <i className="menu-icon tf-icons ri-home-7-line"></i>
                     <div>Home</div>
                   </Link>
                 </li>
@@ -95,7 +95,7 @@ const SubHeaderS = () => {
                     onClick={() => handleSetActive("order_book")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className="menu-icon tf-icons ri-list-unordered"></i>
+                    <i className="menu-icon tf-icons ri-book-marked-line"></i>
                     <div>Order Book</div>
                   </Link>
                 </li>
@@ -113,7 +113,7 @@ const SubHeaderS = () => {
                     onClick={() => handleSetActive("trade_book")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className=" menu-icon ri-terminal-window-line"></i>
+                    <i className=" menu-icon ri-swap-2-line"></i>
                     <div>Trade Book</div>
                   </Link>
                 </li>
@@ -132,7 +132,7 @@ const SubHeaderS = () => {
                     onClick={() => handleSetActive("holding")}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <i className=" menu-icon ri-terminal-window-line"></i>
+                     <i className="menu-icon ri-refund-2-line"></i>
                     <div>Holding</div>
                   </Link>
                 </li>

@@ -15,7 +15,7 @@ import axios from "axios";
 import config from "../../app3/config";
 import { Tooltip } from 'primereact/tooltip';
 import { Toast } from "primereact/toast";
-
+import { classNames } from 'primereact/utils';
 const ManageStudent = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -24,7 +24,8 @@ const ManageStudent = () => {
   const [students, setStudents] = useState([]);
   const [backClicked, setBackClicked] = useState(false);
 
-
+  const [message, setMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState(null);
@@ -33,6 +34,8 @@ const ManageStudent = () => {
   const [successCount, setSuccessCount] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
   const [errorDetails, setErrorDetails] = useState([]);
+  const [studentIdToUpdate, setStudentIdToUpdate] = useState(null); // State to hold the student ID to update
+
   const [isLoading, setIsLoading] = useState(false); // Track loading status
   const toast = useRef(null);
   // Get teacher ID from localStorage
@@ -132,26 +135,44 @@ const ManageStudent = () => {
       const responseData = await response.json();
 
       if (response.ok && responseData.st === 1) {
-        const updatedStudents = students.map(student => {
-          if (student.student_id === studentId) {
-            return {
-              ...student,
-              active_status: !student.active_status
-            };
-          }
-          return student;
-        });
-
-        setStudents(updatedStudents);
-        alert('Student status updated successfully');
+        setStudentIdToUpdate(studentId); // Set student ID to update after successful toggle
+        setMessage('Student status updated successfully');
+        setShowModal(true);
       } else {
-        alert(responseData.msg || 'Failed to update student status');
+        setMessage(responseData.msg || 'Failed to update student status');
+        setShowModal(true);
       }
     } catch (error) {
       console.error('Network error', error);
-      alert('Network error');
+      setMessage('Network error');
+      setShowModal(true);
     }
   };
+
+  const closeModal = () => {
+    setShowModal(false);
+    // Perform the update after modal is closed and "OK" is clicked
+    if (studentIdToUpdate) {
+      const updatedStudents = students.map(student => {
+        if (student.student_id === studentIdToUpdate) {
+          return {
+            ...student,
+            active_status: !student.active_status
+          };
+        }
+        return student;
+      });
+
+      setStudents(updatedStudents);
+      // Reset studentIdToUpdate state
+      setStudentIdToUpdate(null);
+    }
+    
+    navigate("/teacher/manage_student") // Use React Router's history for better integration in a full React application
+  };
+
+ 
+
 
   const handleDelete = async (rowData) => {
     try {
@@ -173,13 +194,13 @@ const ManageStudent = () => {
         );
 
         setStudents(updatedStudents);
-        alert("Student deleted successfully");
+        
       } else {
-        alert(responseData.msg || "Failed to delete student");
+        
       }
     } catch (error) {
       console.error("Network error", error);
-      alert("Network error");
+      
     }
   };
 
@@ -565,23 +586,28 @@ const getButtonVariant = () => {
             />
 
 <Column
-              align={"center"}
-              style={{ border: "1px solid #ddd" }}
-              header=" Broker Conn. Status"
-              body={(rowData) => (
-                <div
-                  className={` ${
-                    rowData.broker_status
-                      ? "text-success"
-                      : "text-danger"
-                  } `}
-                >
-                  {rowData.broker_status ? "Connected" : "Disconnected"}
-                </div>
-              )}
-            />
+  align={"center"}
+  style={{ border: "1px solid #ddd" }}
+  header="Broker Conn. Status"
+  body={(rowData) => (
+    <div className={classNames({
+      'text-success': rowData.broker_status,
+      'text-danger': !rowData.broker_status
+    })}>
+      {rowData.broker_status ? (
+        <>
+          <i className="ri-shield-check-line"></i> Connected
+        </>
+      ) : (
+        <>
+          <i className="ri-close-large-line"></i> Disconnected
+        </>
+      )}
+    </div>
+  )}
+/>
             
-            <Column
+            {/* <Column
               align="center"
               style={{ border: "1px solid #ddd" }}
               header="Account Status"
@@ -596,13 +622,24 @@ const getButtonVariant = () => {
                   {rowData.active_status ? "Active" : "Inactive"}
                 </button>
               )}
-            />
-                {/* <Column
-              align={"center"}
-              style={{ border: "1px solid #ddd" }}
-              field="amount"
-              header="Account Balance"
             /> */}
+               <Column
+        align="center"
+        style={{ border: "1px solid #ddd" }}
+        header="Account Status"
+        body={(rowData) => (
+          <button
+            className={`btn rounded-pill btn-xs ${rowData.active_status ? "btn-outline-success" : "btn-outline-danger"} waves-effect`}
+            onClick={() => handleToggle(rowData.student_id)}
+          >
+            {rowData.active_status ? "Active" : "Inactive"}
+          </button>
+        )}
+      />
+
+      
+      
+
             <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
@@ -632,15 +669,34 @@ const getButtonVariant = () => {
                   </Link>
 
                   <button
-                    className="btn btn-danger active text-align custom-btn-action1"
-                    onClick={() => handleDelete(rowData)}
-                  >
-                    <i className="ri-close-line ri-lg"></i>
-                  </button>
+        className="btn btn-danger active text-align custom-btn-action1"
+        onClick={() => handleDelete(rowData)}
+      >
+        <i className="ri-close-line ri-lg"></i>
+      </button>
                 </>
               )}
             />
           </DataTable>
+
+          <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
+        <div className="modal-dialog modal-dialog-top modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Message</h5>
+              <button type="button" className="btn-close" onClick={closeModal}></button>
+            </div>
+            <div className="modal-body">
+              <p>{message}</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-primary" onClick={closeModal}>OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
         </div>
       </div>
       <Footer />

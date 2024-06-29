@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate ,Link} from "react-router-dom";
-import img from "../assets/img/illustrations/tree-3.png";
-import background from "../assets/img/illustrations/auth-basic-mask-light.png";
+import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import config from "../src/app3/config";
-import mirrorLogo from "../assets/mirrortrade.jpg"
+import mirrorLogo from "../assets/mirrortrade.jpg";
+import img from "../assets/img/illustrations/tree-3.png";
+import background from "../assets/img/illustrations/auth-basic-mask-light.png";
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("authToken") ? true : false
   );
   const [step, setStep] = useState(1);
-  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [countdown, setCountdown] = useState(30);
   const [isOtpComplete, setIsOtpComplete] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isMobileValid, setIsMobileValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const toast = useRef(null);
@@ -26,7 +26,7 @@ const Login = () => {
   };
 
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
@@ -35,10 +35,10 @@ const Login = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      window.history.pushState(null, "", "/login");
+      window.history.pushState(null, "", "/");
       window.addEventListener("popstate", () => {
         if (!isAuthenticated) {
-          window.history.pushState(null, "", "/login");
+          window.history.pushState(null, "", "/");
         }
       });
     }
@@ -53,19 +53,19 @@ const Login = () => {
     }
   }, [step, countdown]);
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
+  const handleMobileChange = (e) => {
+    const mobileValue = e.target.value;
+    const mobileRegex = /^[0-9]{10}$/;
+    setMobile(mobileValue);
+    setIsMobileValid(mobileRegex.test(mobileValue));
   };
 
-  const handleEmailChange = (e) => {
-    const emailValue = e.target.value;
-    setEmail(emailValue);
-    setIsEmailValid(validateEmail(emailValue));
-  };
-
-  const handleEmailSubmit = async (e) => {
+  const handleMobileSubmit = async (e) => {
     e.preventDefault();
+    if (!isMobileValid) {
+      setError("Please enter a valid mobile number.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -74,7 +74,7 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ mobile }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -102,38 +102,35 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ otp: otp.join(""), email }),
+          body: JSON.stringify({ otp: otp.join(""), mobile }),
         }
       );
       const data = await response.json();
       if (response.ok && data.st === 1) {
-        localStorage.setItem("authToken", data.token); // Set authentication token
-        localStorage.setItem("userId", data.user_data.id); // Set user ID
-        localStorage.setItem("userName", data.user_data.name); // Set user name
-        localStorage.setItem("userRole", data.user_data.role); // Set user role
-      
-        setIsAuthenticated(true); // Set authentication state
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userId", data.user_data.id);
+        localStorage.setItem("userName", data.user_data.name);
+        localStorage.setItem("userRole", data.user_data.role);
+        setIsAuthenticated(true);
         const { role } = data.user_data;
         switch (role) {
           case "teacher":
-            navigate("/teacher/dashboard"); // Example path for teacher dashboard
+            navigate("/teacher/dashboard");
             break;
           case "student":
-            navigate("/student/dashboard"); // Example path for student dashboard
+            navigate("/student/dashboard");
             break;
           case "admin":
-            navigate("/admin/dashboard"); // Example path for admin dashboard
+            navigate("/admin/dashboard");
             break;
           default:
             navigate("/");
             break;
         }
-  
-        const errorMsg = data.msg || "Success";
         toast.current.show({
           severity: "success",
           summary: "Success",
-          detail: toTitleCase(errorMsg),
+          detail: "Logged in successfully",
           life: 3000,
         });
       } else if (response.ok && (data.st === 2 || data.st === 3 || data.st === 4)) {
@@ -142,10 +139,10 @@ const Login = () => {
         toast.current.show({
           severity: "warn",
           summary: "Warning",
-          detail: toTitleCase(errorMsg),
+          detail: errorMsg,
           life: 4000,
         });
-      } 
+      }
     } catch (error) {
       setError("Network error");
       toast.current.show({
@@ -158,8 +155,7 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
- 
+
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -172,6 +168,7 @@ const Login = () => {
       }
     }
   };
+  
 
   const handleResendOtp = () => {
     setCountdown(30);
@@ -180,14 +177,13 @@ const Login = () => {
 
   return (
     <div>
-         <Toast ref={toast} />
+      <Toast ref={toast} />
       <div className="position-relative">
         <div className="authentication-wrapper authentication-basic container-p-y">
           <div className="authentication-inner py-6 mx-4">
             <div className="card p-7">
-         
               <div className="app-brand justify-content-center mt-5">
-                <a href="index.html" className="app-brand-link gap-3">
+                <a href="/" className="app-brand-link gap-3">
                   <span className="app-brand-logo demo">
                     <span style={{ color: "#9055FD" }}>
                       <svg
@@ -204,59 +200,53 @@ const Login = () => {
                 </a>
               </div>
               <div className="text-center mb-4">
-        <div className="d-flex align-items-center justify-content-center">
-          <div className="avatar">
-            <img src={mirrorLogo} alt="" className="w-40 h-auto rounded-circle" />
-          </div>
-          <span className="app-brand-text demo menu-text fw-semibold ms-1">
-            TradeMirror
-          </span>
-        </div>
-      </div>
+                <div className="d-flex align-items-center justify-content-center">
+                  <div className="avatar">
+                    <img src={mirrorLogo} alt="" className="w-40 h-auto rounded-circle" />
+                  </div>
+                  <span className="app-brand-text demo menu-text fw-semibold ms-1">
+                    TradeMirror
+                  </span>
+                </div>
+              </div>
               <div className="card-body mt-1">
-              
-             
-                <h4 className="mb-1">Welcome to Trade Mirror! 👋🏻</h4>
+                <h4 className="mb-1">Welcome to TradeMirror! 👋🏻</h4>
                 <p className="mb-5">
                   Please sign-in to your account and start the adventure
                 </p>
-
                 {step === 1 && (
                   <form
                     id="formAuthentication"
                     className="mb-5"
-                    onSubmit={handleEmailSubmit}
+                    onSubmit={handleMobileSubmit}
                   >
                     <div className="form-floating form-floating-outline mb-5">
                       <input
-                        type="email"
+                        type="tel"
                         className="form-control"
-                        id="email"
-                        name="email-username"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        id="mobile"
+                        name="mobile"
+                        placeholder="Enter Mobile Number"
+                        value={mobile}
+                        onChange={handleMobileChange}
                         required
                         autoFocus
                         autoComplete="off"
-
                       />
-                      <label htmlFor="email">Email</label>
+                      <label htmlFor="mobile">Mobile</label>
                     </div>
                     <div className="mb-5">
                       <button
                         className="active btn btn-primary d-grid w-100"
                         type="submit"
-                        disabled={!isEmailValid || loading}
+                        disabled={!isMobileValid || loading}
                       >
                         {loading ? "Sending OTP..." : "Login"}
                       </button>
                     </div>
-                    {error && <p className="text-danger">{error}</p>}
-             
+                    {error && <p className="text-danger">{error.message}</p>}
                   </form>
                 )}
-
                 {step === 2 && (
                   <form
                     id="formAuthentication"
@@ -265,20 +255,19 @@ const Login = () => {
                   >
                     <div className="form-floating form-floating-outline mb-5">
                       <input
-                        type="email"
+                        type="tel"
                         className="form-control"
-                        id="email"
-                        name="email-username"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        id="mobile"
+                        name="mobile"
+                        placeholder="Enter Mobile Number"
+                        value={mobile}
+                        onChange={handleMobileChange}
                         required
                         autoFocus
                         autoComplete="off"
-                        disabled={!isEmailValid ||  step === 2}
-
+                        disabled
                       />
-                      <label htmlFor="email">Email</label>
+                      <label htmlFor="mobile">Mobile</label>
                     </div>
                     <div className="mb-5">
                       <div className="auth-input-wrapper d-flex align-items-center justify-content-between numeral-mask-wrapper">
@@ -300,47 +289,51 @@ const Login = () => {
                       </div>
                       <input type="hidden" name="otp" value={otp.join("")} />
                     </div>
+                   
                     {countdown > 0 ? (
                       <p className="float-end">
                         Resend OTP in {countdown} seconds
                       </p>
                     ) : (
                       <p className="float-end">
-                        Didn't receive the OTP?{" "}
+                        Didn't receive the OTP?{" "}<a href="">Resend now</a>
                         <div
                           className="btn-link p-0 text-primary"
                           onClick={handleResendOtp}
                           style={{ cursor: 'pointer' }}
                         >
-                          Resend now
+                          
                         </div>
                       </p>
                     )}
-                    <div className="mb-5">
-                 
-                      <Button
-                                     
+                   <div className="mb-5">
+  <Button
+    className={`active btn d-grid w-100 ${
+      isOtpComplete ? "btn-success" : "btn-success"
+    }`}
+    type="submit"
+    disabled={!isOtpComplete || loading}
+  >
+    {loading ? (
+      <>
+      <span> <i className="ri-rotate-lock-fill ri-lg"></i> Verifying...</span> 
+      </>
+    ) : (
+      <>
+      <span>  <i className="ri-rotate-lock-fill ri-lg"></i> Verify OTP</span>
+      </>
+    )}
+  </Button>
+</div>
 
-                        className={`active btn d-grid w-100  ${
-                          isOtpComplete ? "btn-success" : "btn-primary"
-                        }`}
-                        type="submit"
-                        disabled={!isOtpComplete || loading}
-                      >
-                        {loading ? "Verifying..." : "Verify OTP"}
-                      </Button>
-                 
-       
-                    </div>
                     {error && <p className="text-danger">{error}</p>}
 
-             
                   </form>
-
-                  
                 )}
               </div>
             </div>
+
+          
             <p className="text-center mt-5">Powered by <a href="https://www.shekruweb.com" target="_blank">Shekru Labs India Pvt. Ltd.</a></p>
 
             <img

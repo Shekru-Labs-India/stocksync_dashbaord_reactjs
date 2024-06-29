@@ -449,6 +449,7 @@ const ViewTeacher = () => {
 
     fetchData();
   }, [teacherId]);
+ 
 
   return (
     <>
@@ -511,11 +512,17 @@ const ViewTeacher = () => {
                   <div>Email</div>
                 </div>
                 <div className="col-3">
-                <span className={` ${teacherData.broker_status ? 'text-success' : 'text-danger'}`}>
-                      <strong>{teacherData.broker_status ? 'Connected' : 'Disconnected'}</strong>
-                    </span>
-                  <div>Broker Status</div>
-                </div>
+      <span className={` ${teacherData.broker_status ? 'text-success' : 'text-danger'}`}>
+      {teacherData.broker_status ? (
+          <i className="ri-shield-check-line" style={{ marginRight: '5px' }}></i>
+        ) : (
+          <i className="ri-close-large-line" style={{ marginRight: '5px' }}></i>
+        )}
+        <strong>{teacherData.broker_status ? 'Connected' : 'Disconnected'}</strong>
+        
+      </span>
+      <div>Broker Status</div>
+    </div>
               </div>
             </div>
             <div className="col-12 mt-5 mb-5">
@@ -590,7 +597,7 @@ const ViewTeacher = () => {
                 <div className="col-12 text-center">
                   <span className="text-black">
                     <h1>
-                      <strong>10</strong>
+                      <strong>{teacherData.student_count||0}</strong>
                     </h1>
                   </span>
                   <div>Total Student</div>
@@ -601,7 +608,7 @@ const ViewTeacher = () => {
              )}
         </div>
         <hr />
-        <div className="col-xl-12 col-12 mb-6">
+        {/* <div className="col-xl-12 col-12 mb-6">
           <div className="card">
             <div className="card-header header-elements">
               <h5 className="card-title mb-0">Latest Statistics</h5>
@@ -668,10 +675,10 @@ const ViewTeacher = () => {
             <div className="card-body" style={{ height: "400px" }}>
               {" "}
               {/* Adjust the height as needed */}
-              <Bar data={data} options={options} />
+              {/* <Bar data={data} options={options} />
             </div>
           </div>
-        </div>
+        </div> */} 
       </div>
       <hr />
 

@@ -217,10 +217,7 @@ const TradeBook = () => {
 
 
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
+ 
   // Helper function to determine modal button variant
   const getButtonVariant = () => {
     const now = new Date();

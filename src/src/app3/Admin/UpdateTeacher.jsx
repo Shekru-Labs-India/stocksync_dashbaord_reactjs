@@ -419,6 +419,11 @@ const UpdateTeacher = () => {
                       <div className="card-body pt-0">
                         <form id="formAccountSettings" onSubmit={handleSubmit}>
                           <div className="row mt-1 g-3">
+                          <h5 className="text-start">
+              {" "}
+              <i className="ri-user-line ri-ms me-2"></i>
+              Personal Information
+            </h5>
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
                                 <input
@@ -516,6 +521,11 @@ const UpdateTeacher = () => {
                           </div>
                           <hr />
                           <div className="row mt-3 g-3">
+                          <h5 className="text-start">
+                    {" "}
+                    <i className="ri-group-line ri-ms me-2"></i>
+                    Broker Information
+                  </h5>
                             <div className="col-md-3">
                               <div className="form-floating form-floating-outline">
                                 <input
@@ -581,9 +591,22 @@ const UpdateTeacher = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="mt-3 text-end">
-                            <button type="submit" className="btn rounded-pill btn-success btn-sm "><i className="ri-checkbox-circle-line ri-lg me-2"></i>Update Record</button>
-                          </div>
+                          <div className="row">
+  <div className="col text-start mt-5">
+    <button
+      onClick={handleBack}
+      className="btn rounded-pill btn-outline-secondary btn-xs"
+    >
+      <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+    </button>
+  </div>
+  <div className="col text-end mt-5">
+    <button type="submit" className="btn rounded-pill btn-success btn-sm">
+      <i className="ri-checkbox-circle-line ri-lg me-2"></i> Update Record
+    </button>
+  </div>
+</div>
+
                         </form>
                       </div>
                     </div>

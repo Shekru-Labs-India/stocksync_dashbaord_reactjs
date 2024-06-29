@@ -14,7 +14,7 @@ import axios from "axios";
 import config from "../config";
 import { Tooltip } from "primereact/tooltip";
 import { Toast } from "primereact/toast";
-
+import { classNames } from 'primereact/utils';
 const ManageTeacher = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -201,6 +201,14 @@ const ManageTeacher = () => {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   };
+  const lotSizeBodyTemplate = (rowData) => {
+    return `${rowData.lot_size_limit} Lot`;
+  };
+  
+  // Custom render function for commission
+  const commissionBodyTemplate = (rowData) => {
+    return `${rowData.commission}%`;
+  };
   return (
     <>
           <Toast ref={toast} />
@@ -302,7 +310,22 @@ const ManageTeacher = () => {
               field="mobile"
               header="Mobile"
             ></Column>
-            <Column
+             <Column
+              align={"center"}
+              style={{ border: "1px solid #ddd" }}
+              field="lot_size_limit"
+              header="Lot Size Limit"
+              body={lotSizeBodyTemplate}
+            ></Column>
+             <Column
+              align={"center"}
+              style={{ border: "1px solid #ddd" }}
+              field="commission"
+              header="Commission"
+              body={commissionBodyTemplate}
+
+            ></Column>
+            {/* <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
               header=" Broker Conn. Status"
@@ -316,7 +339,28 @@ const ManageTeacher = () => {
                   {rowData.broker_status ? "Connected" : "Disconnected"}
                 </div>
               )}
-            ></Column>
+            ></Column> */}
+            <Column
+  align={"center"}
+  style={{ border: "1px solid #ddd" }}
+  header="Broker Conn. Status"
+  body={(rowData) => (
+    <div className={classNames({
+      'text-success': rowData.broker_status,
+      'text-danger': !rowData.broker_status
+    })}>
+      {rowData.broker_status ? (
+        <>
+          <i className="ri-shield-check-line"></i> Connected
+        </>
+      ) : (
+        <>
+          <i className="ri-close-large-line"></i> Disconnected
+        </>
+      )}
+    </div>
+  )}
+/>
             <Column
               align="center"
               style={{ border: "1px solid #ddd" }}

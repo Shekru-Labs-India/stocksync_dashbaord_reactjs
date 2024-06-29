@@ -1,19 +1,22 @@
 
 
 
-import React, { useEffect,useState } from "react";
+import React, { useEffect,useState ,useRef} from "react";
 import Footer from "../component/Footer";
 import Header from "../component/Header";
 import SubHeader from "../component/SubHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Toast } from 'primereact/toast';
 import { Modal } from "react-bootstrap"; 
 import axios from "axios";
 import config from "../../app3/config";
 const CreateStudent = () => {
   const navigate = useNavigate();
   const [backClicked, setBackClicked] = useState(false);
+  const toast = useRef(null); 
+  
   const [formData, setFormData] = useState({
     teacher_id:   localStorage.getItem("userId"),
     name: "",
@@ -55,6 +58,31 @@ const CreateStudent = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${config.apiDomain}/api/teacher/manage_students/create`,
+  //       formData
+  //     );
+
+  //     if (response.data && response.data.st === 1) {
+  //       // Show success message or redirect
+  //       alert(response.data.msg);
+  //       navigate("/teacher/manage_student");
+  //     } else {
+  //       setError(new Error(response.data.msg || "Failed to create student"));
+  //     }
+  //   } catch (error) {
+  //     setError(new Error(error.message || "Failed to create student"));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -68,13 +96,15 @@ const CreateStudent = () => {
 
       if (response.data && response.data.st === 1) {
         // Show success message or redirect
-        alert(response.data.msg);
-        navigate("/teacher/manage_student");
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
+        // Example: alert(response.data.msg);
+         navigate("/teacher/manage_student");
       } else {
-        setError(new Error(response.data.msg || "Failed to create student"));
+        setError(response.data.msg || "Failed to create student");
+        // Example: setError("Failed to create student");
       }
     } catch (error) {
-      setError(new Error(error.message || "Failed to create student"));
+      setError(error.message || "Failed to create student");
     } finally {
       setLoading(false);
     }
@@ -108,9 +138,7 @@ const CreateStudent = () => {
     setShowPopup(false);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -356,15 +384,37 @@ const CreateStudent = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 text-end">
-                  <Button
-                    type="submit"
-                    label="Save changes"
-                    icon="ri-checkbox-circle-line ri-lg"
-                    className="btn btn-success rounded-pill"
-                    disabled={loading}
-                  />
-                </div>
+                
+                <div className="row ">
+  <div className="col-5 text-start mb-5 mt-4">
+    <button
+      onClick={handleBack}
+      className="btn rounded-pill btn-outline-secondary btn-xs mt-2"
+    >
+      <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+    </button>
+  </div>
+  <div className="col-7 text-end mb-5 mt-4">
+  {loading && <i className="ri-loader-2-line text-secondary me-2"></i>}
+      
+      <Button
+        type="submit"
+        label="Save Data"
+        icon="ri-checkbox-circle-line ri-lg"
+        className="btn btn-success rounded-pill"
+        disabled={loading}
+        onClick={handleSubmit}
+      />
+
+      <Toast ref={toast} position="top-right" />
+
+      {error && (
+        <div className="text-start">
+          <span className="text-danger">{error}</span>
+        </div>
+      )}
+    </div>
+    </div>
               </form>
             </div>
           </div>

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import SubHeaderS from "./SubHeaderS";
 import StudentHeader from "./StudentHeader";
 import { Link } from "react-router-dom";
@@ -7,15 +7,21 @@ import img from "../../app2/assets/img/avatars/1.png";
 import background from "../../app2/assets/img/backgrounds/sharemarket.jpg";
 import Footer from "../component/Footer";
 import config from "../config";
+import { Toast } from 'primereact/toast';
 import axios from "axios";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
+<<<<<<< HEAD
   const userId = localStorage.getItem("userId");
   
 
+=======
+  const toast = useRef(null);
+  const [loading, setLoading] = useState(false);
+>>>>>>> 915f63a1705aa5f634b2c753db7bd2557ae85ca1
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -89,54 +95,52 @@ const Profile = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.put(
-       `${config.apiDomain}/api/common/save_profile_details `,
+        `${config.apiDomain}/api/common/save_profile_details`,
         {
           user_id: localStorage.getItem('userId'),
           email: userData.email,
           mobile: userData.mobile,
           name: userData.name,
-          lot_size_limit:userData.lot_size_limit
+          lot_size_limit: userData.lot_size_limit
         }
       );
 
       if (response.data.st === 1) {
-        console.log('Profile updated successfully:', response.data.msg);
-        setSuccessMessage('Profile updated successfully!');
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
       } else {
-        console.error('Failed to update user profile:', response.data.msg);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg, life: 3000 });
       }
     } catch (error) {
-      console.error('Error updating user profile:', error);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error updating user profile', life: 3000 });
+    } finally {
+      setLoading(false);
     }
   };
-
   const handleBrokerInformation = async (e) => {
     e.preventDefault();
+   
+    setLoading(true);
     try {
-      const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details`, {
-        user_id: localStorage.getItem('userId'),
+      const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details `, {
+        user_id:  localStorage.getItem('userId'),
         broker_client_id: userData.broker_client_id,
         broker_password: userData.broker_password,
         broker_qr_totp_token: userData.broker_qr_totp_token,
         broker_api_key: userData.broker_api_key
       });
   
-      console.log('Response:', response);
-  
       if (response.data.st === 1) {
-        console.log('Broker updated successfully:', response.data.msg);
-        setSuccessMessage('Broker updated successfully!');
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
       } else {
-        console.error('Failed to update Broker profile:', response.data.msg);
-        // Handle error, show error message, etc.
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg, life: 3000 });
       }
     } catch (error) {
-      console.error('Error updating Broker profile:', error);
-      if (error.response) {
-        console.error('Response Data:', error.response.data);
-      }
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error updating user profile', life: 3000 });
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -154,6 +158,7 @@ const Profile = () => {
   return (
     <>
       <StudentHeader />
+      <Toast ref={toast} position="top-right" />
       <SubHeaderS />
       <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
         <div className="layout-container">
@@ -173,7 +178,7 @@ const Profile = () => {
   </ol>
 </nav>
 
-                <div className="container-xxl flex-grow-1 container-p-y">
+          
                   <div className="row">
                     <div className="col-12">
                       <div className="card mb-6">
@@ -201,15 +206,15 @@ const Profile = () => {
                                     <h4 className="mb-2 mt-lg-6"> {capitalizeFirstLetter(userData.name)}</h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
-                                        <i className="ri-user-settings-line me-2 ri-24px"></i>
+                                        <i className="ri-user-settings-line  ri-24px"></i>
                                         <span className="fw-medium"> {capitalizeFirstLetter (userData.role)}</span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-mobile-download-line me-2 ri-24px"></i>
+                                        <i className="ri-mobile-download-line  ri-24px"></i>
                                         <span className="fw-medium"> {userData.mobile}</span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-wallet-line me-2 ri-24px"></i>
+                                        <i className="ri-wallet-line  ri-24px"></i>
                                         <span className="fw-medium"> Commission: {userData.commission}%</span>
                                       </li>
                                     </ul>
@@ -221,8 +226,9 @@ const Profile = () => {
                               <div className="ms-auto">
                              
        {userData && (
-        <button
-          className={`btn ${userData.broker_conn_status ? "btn-success" : ""}`}
+        <span
+          className={`badge bg-success ${userData.broker_conn_status ? "bg-success" : ""}`}
+          style={{ fontSize: '14px' }}
         >
           {userData.broker_conn_status && (
             <>
@@ -230,7 +236,7 @@ const Profile = () => {
               Connected
             </>
           )}
-        </button>
+        </span>
       )}
                               </div>
                             </div>
@@ -286,25 +292,24 @@ const Profile = () => {
                                   
                                   </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
-                                    <strong>Broker Connection:</strong>
-                                    <span className="text-success ml-auto">
-                                    <div className="ms-auto">
-                    
-                        <div
-                          className={`text-success ml-auto${
-                            userData.broker_conn_status ? "text-success" : "text-danger"
-                          }`}
-                          onClick={() =>
-                            handleConnectionStatus(!userData.broker_conn_status)
-                          }
-                        >
-                         {" "}
-                          {userData.broker_conn_status ? "Connected" : "Not Connected"}
-                        </div>
-                      
-                    </div>
-                                    </span>
-                                  </li>
+      <strong>Broker Connection:</strong>
+      <span className="text-success ml-auto">
+        <div className="ms-auto">
+          <div
+            className={`text-success ml-auto ${
+              userData.broker_conn_status ? 'text-success' : 'text-danger'
+            }`}
+            onClick={() => handleConnectionStatus(!userData.broker_conn_status)}
+          >
+            {  userData.broker_conn_status? (
+              <><i className="ri-shield-check-line"></i> Connected</>
+            ) : (
+              <><i className="ri-close-large-line"></i> Disconnected</>
+            )}
+          </div>
+        </div>
+      </span>
+    </li>
                                   <li className="d-flex justify-content-between align-items-center mb-4">
                                     <strong>Commission:</strong>
                                     <span className="ml-auto">{userData.commission}%</span>
@@ -449,13 +454,15 @@ const Profile = () => {
     </div>
                               
                                 <div className="mt-6 text-end">
+                                {loading &&   <i className="ri-loader-line ri-lg me-1" ></i>
+                                }
                                 <button
                                  onClick={handleSubmit}
-                                  className="btn btn-primary active  text-end me-3"
+                                  className="btn btn-success rounded-pill  text-end me-3"
                                 >
-                                  <i className="ri-save-line me-3 ri-lg"></i>Save Changes
+                                  <i className="ri-checkbox-circle-line ri-lg me-1"></i>Save Data
                                 </button>
-                           
+                                
                               </div>
                                   </div>
                                   <hr></hr>
@@ -546,11 +553,13 @@ const Profile = () => {
                               </div>
                               {!userData.broker_conn_status && (
                               <div className="mt-6 text-end">
+                                 {loading &&   <i className="ri-loader-line ri-lg me-1" ></i>
+                                }
                                 <button
                       onClick={ handleBrokerInformation}
-                                   className="btn btn-primary active  text-end me-3"
+                                   className="btn btn-success rounded-pill  text-end me-3"
                                 >
-                                  <i className="ri-save-line me-3 ri-lg"></i> Save Changes
+                                  <i className="ri-checkbox-circle-line ri-lg me-1"></i> Save Data
                                 </button>
                                
                                
@@ -581,7 +590,7 @@ const Profile = () => {
                           </div> */}
                         </div>
             )}
-                      </div>
+                      
                    
                   
                 

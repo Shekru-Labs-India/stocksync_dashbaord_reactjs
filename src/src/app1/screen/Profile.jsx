@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
+import { Toast } from 'primereact/toast';
 import SubHeader from "../component/SubHeader";
 import { Link } from "react-router-dom";
 import img from "../../app2/assets/img/avatars/1.png";
@@ -13,6 +14,8 @@ const TeacherProfile = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
   const [error, setError] = useState("");
+  const toast = useRef(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -88,57 +91,52 @@ const TeacherProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.put(
-        `${config.apiDomain}/api/common/save_profile_details `,
+        `${config.apiDomain}/api/common/save_profile_details`,
         {
-          user_id: localStorage.getItem("userId"),
+          user_id: localStorage.getItem('userId'),
           email: userData.email,
           mobile: userData.mobile,
           name: userData.name,
-          lot_size_limit: userData.lot_size_limit,
+          lot_size_limit: userData.lot_size_limit
         }
       );
 
       if (response.data.st === 1) {
-        console.log("Profile updated successfully:", response.data.msg);
-        setSuccessMessage("Profile updated successfully!");
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
       } else {
-        console.error("Failed to update user profile:", response.data.msg);
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg, life: 3000 });
       }
     } catch (error) {
-      console.error("Error updating user profile:", error);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error updating user profile', life: 3000 });
+    } finally {
+      setLoading(false);
     }
   };
-
   const handleBrokerInformation = async (e) => {
     e.preventDefault();
+   
+    setLoading(true);
     try {
-      const response = await axios.put(
-        `${config.apiDomain}/api/common/save_broker_details`,
-        {
-          user_id: localStorage.getItem("userId"),
-          broker_client_id: userData.broker_client_id,
-          broker_password: userData.broker_password,
-          broker_qr_totp_token: userData.broker_qr_totp_token,
-          broker_api_key: userData.broker_api_key,
-        }
-      );
-
-      console.log("Response:", response);
-
+      const response = await axios.put(`${config.apiDomain}/api/common/save_broker_details `, {
+        user_id:  localStorage.getItem('userId'),
+        broker_client_id: userData.broker_client_id,
+        broker_password: userData.broker_password,
+        broker_qr_totp_token: userData.broker_qr_totp_token,
+        broker_api_key: userData.broker_api_key
+      });
+  
       if (response.data.st === 1) {
-        console.log("Broker updated successfully:", response.data.msg);
-        setSuccessMessage("Broker updated successfully!");
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
       } else {
-        console.error("Failed to update Broker profile:", response.data.msg);
-        // Handle error, show error message, etc.
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg, life: 3000 });
       }
     } catch (error) {
-      console.error("Error updating Broker profile:", error);
-      if (error.response) {
-        console.error("Response Data:", error.response.data);
-      }
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error updating user profile', life: 3000 });
+    } finally {
+      setLoading(false);
     }
   };
   const capitalizeFirstLetter = (string) => {
@@ -195,6 +193,7 @@ const TeacherProfile = () => {
   return (
     <>
       <Header />
+      <Toast ref={toast} position="top-right" />
       <SubHeader />
       <Modal
         show={showPopup}
@@ -213,8 +212,8 @@ const TeacherProfile = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div className="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
-        <div className="layout-container">
+      <div className=" layout-navbar-full layout-horizontal layout-without-menu">
+       
           <div className="layout-page">
             <div className="content-wrapper">
               <div className="container flex-grow-1 container-p-y">
@@ -234,7 +233,7 @@ const TeacherProfile = () => {
                   </ol>
                 </nav>
 
-                <div className="container-xxl flex-grow-1 container-p-y">
+              
                   <div className="row">
                     <div className="col-12">
                       <div className="card mb-6">
@@ -265,21 +264,21 @@ const TeacherProfile = () => {
                                     </h4>
                                     <ul className="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-4">
                                       <li className="list-inline-item">
-                                        <i className="ri-user-settings-line me-2 ri-24px"></i>
+                                        <i className="ri-user-settings-line ri-24px"></i>
                                         <span className="fw-medium">
                                           {" "}
                                           {capitalizeFirstLetter(userData.role)}
                                         </span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-mobile-download-line me-2 ri-24px"></i>
+                                        <i className="ri-mobile-download-line  ri-24px"></i>
                                         <span className="fw-medium">
                                           {" "}
                                           {userData.mobile}
                                         </span>
                                       </li>
                                       <li className="list-inline-item">
-                                        <i className="ri-wallet-line me-2 ri-24px"></i>
+                                        <i className="ri-wallet-line  ri-24px"></i>
                                         <span className="fw-medium">
                                           {" "}
                                           Commission: {userData.commission}%
@@ -293,12 +292,13 @@ const TeacherProfile = () => {
                               </div>
                               <div className="ms-auto">
                                 {userData && (
-                                  <button
-                                    className={`btn ${
+                                  <span 
+                                    className={`badge bg-success  ${
                                       userData.broker_conn_status
-                                        ? "btn-success"
+                                        ? "bg-success"
                                         : ""
                                     }`}
+                                    style={{ fontSize: '14px' }}
                                   >
                                     {userData.broker_conn_status && (
                                       <>
@@ -306,7 +306,7 @@ const TeacherProfile = () => {
                                         Connected
                                       </>
                                     )}
-                                  </button>
+                                  </span>
                                 )}
                               </div>
                             </div>
@@ -314,7 +314,7 @@ const TeacherProfile = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                
                   <div className="row">
                     <div className="col-md-12">
                       <div className="nav-align-top">
@@ -362,29 +362,24 @@ const TeacherProfile = () => {
                                 </span>
                               </li>
                               <li className="d-flex justify-content-between align-items-center mb-4">
-                                <strong>Broker Connection:</strong>
-                                <span className="text-success ml-auto">
-                                  <div className="ms-auto">
-                                    <div
-                                      className={`text-success ml-auto${
-                                        userData.broker_conn_status
-                                          ? "btn-success"
-                                          : "btn-danger"
-                                      }`}
-                                      onClick={() =>
-                                        handleConnectionStatus(
-                                          !userData.broker_conn_status
-                                        )
-                                      }
-                                    >
-                                      {" "}
-                                      {userData.broker_conn_status
-                                        ? "Connected"
-                                        : "Not Connected"}
-                                    </div>
-                                  </div>
-                                </span>
-                              </li>
+      <strong>Broker Connection:</strong>
+      <span className="text-success ml-auto">
+        <div className="ms-auto">
+          <div
+            className={`text-success ml-auto ${
+              userData.broker_conn_status ? 'text-success' : 'text-danger'
+            }`}
+            onClick={() => handleConnectionStatus(!userData.broker_conn_status)}
+          >
+            {  userData.broker_conn_status? (
+              <><i className="ri-shield-check-line"></i> Connected</>
+            ) : (
+              <><i className="ri-close-large-line"></i> Disconnected</>
+            )}
+          </div>
+        </div>
+      </span>
+    </li>
                               <li className="d-flex justify-content-between align-items-center mb-4">
                                 <strong>Commission:</strong>
                                 <span className="ml-auto">
@@ -534,13 +529,16 @@ const TeacherProfile = () => {
                                 </div>
 
                                 <div className="mt-6 text-end">
+                                {loading &&   <i className="ri-loader-line ri-lg me-1" ></i>
+                                }
                                   <button
                                     onClick={handleSubmit}
-                                    className="btn btn-primary active  text-end me-3"
+                                    className="btn btn-success rounded-pill  text-end me-3"
                                   >
-                                    <i className="ri-save-line me-3 ri-lg"></i>
-                                    Save Changes
+                                    <i className="ri-checkbox-circle-line ri-lg me-1"></i>
+                                    Save Data
                                   </button>
+                            
                                 </div>
                               </div>
                               <hr></hr>
@@ -638,13 +636,16 @@ const TeacherProfile = () => {
                               </div>
                               {!userData.broker_conn_status && (
                               <div className="mt-6 text-end">
+                                  {loading &&   <i className="ri-loader-line ri-lg me-1" ></i>
+                                }
                                 <button
                                   onClick={handleBrokerInformation}
-                                  className="btn btn-primary active  text-end me-3"
+                                  className="btn btn-success rounded-pill  text-end me-3"
                                 >
-                                  <i className="ri-save-line me-3 ri-lg"></i>{" "}
-                                  Save Changes
+                                  <i className="ri-checkbox-circle-line ri-lg me-1"></i>{" "}
+                                  Save Data
                                 </button>
+                               
                               </div>
                                 )}
                             </form>
@@ -675,7 +676,7 @@ const TeacherProfile = () => {
                 </div>
 
                 <Footer></Footer>
-              </div>
+              
             </div>
           </div>
         </div>

@@ -75,6 +75,11 @@ const ViewStudent = () => {
       },
     },
   };
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
 
   return (
     <>
@@ -90,14 +95,14 @@ const ViewStudent = () => {
             </li>
             <li className="breadcrumb-item">
               <Link to="/teacher/manage_student" className="text-secondary">
-                Manage Teacher
+                Manage Student
               </Link>
             </li>
             <li
               className="breadcrumb-item active text-secondary"
               aria-current="page"
             >
-              View Teacher
+              View Student
             </li>
           </ol>
         </nav>
@@ -128,7 +133,7 @@ const ViewStudent = () => {
                   </h4>
                   <div className="col-3">
                     <span className="text-black">
-                      <strong>{teacherData.name}</strong>
+                      <strong>{toTitleCase(teacherData.name)}</strong>
                     </span>
                     <div>Name</div>
                   </div>
@@ -145,21 +150,17 @@ const ViewStudent = () => {
                     <div>Email</div>
                   </div>
                   <div className="col-3">
-                    <span
-                      className={` ${
-                        teacherData.broker_status
-                          ? "text-success"
-                          : "text-danger"
-                      }`}
-                    >
-                      <strong>
-                        {teacherData.broker_status
-                          ? "Connected"
-                          : "Disconnected"}
-                      </strong>
-                    </span>
-                    <div>Broker Status</div>
-                  </div>
+      <span className={` ${teacherData.broker_status ? 'text-success' : 'text-danger'}`}>
+      {teacherData.broker_status ? (
+          <i className="ri-shield-check-line" style={{ marginRight: '5px' }}></i>
+        ) : (
+          <i className="ri-close-large-line" style={{ marginRight: '5px' }}></i>
+        )}
+        <strong>{teacherData.broker_status ? 'Connected' : 'Disconnected'}</strong>
+        
+      </span>
+      <div>Broker Status</div>
+    </div>
                 </div>
               </div>
               <div className="col-12 mt-5 mb-5">
@@ -227,23 +228,12 @@ const ViewStudent = () => {
                 </div>
               </div>
               <hr></hr>
-              <div className="col-12 mt-5">
-                <div className="row mt-5">
-                  <div className="col-12 text-center">
-                    <span className="text-black">
-                      <h1>
-                        <strong>10</strong>
-                      </h1>
-                    </span>
-                    <div>Total Student</div>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           )}
         </div>
         <hr />
-        <div className="col-xl-12 col-12 mb-6">
+        {/* <div className="col-xl-12 col-12 mb-6">
           <div className="card">
             <div className="card-header header-elements">
               <h5 className="card-title mb-0">Latest Statistics</h5>
@@ -315,7 +305,7 @@ const ViewStudent = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <Footer />
     </>

@@ -286,15 +286,26 @@ const CreateTeacher = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 text-end">
-                  <Button
+                <div className="row">
+  <div className="col-5 text-start mb-5">
+    <button
+      onClick={handleBack}
+      className="btn rounded-pill btn-outline-secondary btn-xs"
+    >
+      <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
+    </button>
+  </div>
+  <div className="col-7 text-end mb-5">
+  <Button
                     type="submit"
                     label="Save changes"
                     icon="ri-checkbox-circle-line ri-lg"
-                    className="p-button-success rounded-pill "
+                    className="btn btn-success rounded-pill"
                     disabled={loading}
                   />
-                </div>
+  </div>
+</div>
+
               </form>
             </div>
           </div>

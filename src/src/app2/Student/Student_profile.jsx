@@ -14,8 +14,14 @@ const Profile = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [isTradingPowerEditable, setIsTradingPowerEditable] = useState(false);
+<<<<<<< HEAD
+  const userId = localStorage.getItem("userId");
+  
+
+=======
   const toast = useRef(null);
   const [loading, setLoading] = useState(false);
+>>>>>>> 915f63a1705aa5f634b2c753db7bd2557ae85ca1
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {

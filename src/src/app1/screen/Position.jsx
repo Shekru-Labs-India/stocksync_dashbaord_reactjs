@@ -4338,14 +4338,13 @@ const Position = () => {
                   <div className="row">
                     <div className="col-md-4 mb-3">
                     <h4 className={positionData.totalUnrealisedPnl < 0 ? "text-danger" : "text-success"}>
-<<<<<<< HEAD
-  {positionData.totalUnrealisedPnl.toFixed(2)} ₹
+
+  
 </h4>
 
-=======
-  {positionData.totalUnrealisedPnl.toFixed(2)} ₹
-</h4>
->>>>>>> 915f63a1705aa5f634b2c753db7bd2557ae85ca1
+
+ 
+
                       <p className="mb-0">Unrealised Profit & Loss</p>
                     </div>
                     <div className="col-md-4 mb-3">

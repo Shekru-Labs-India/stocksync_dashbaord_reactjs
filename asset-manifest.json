@@ -1,25 +1,30 @@
 {
   "files": {
-    "main.css": "/stocksync_dashbaord_reactjs/static/css/main.18d755c3.css",
-    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.5aa05c7b.js",
+    "main.css": "/stocksync_dashbaord_reactjs/static/css/main.69d8c39d.css",
+    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.2feb689c.js",
     "static/js/453.630971ca.chunk.js": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js",
+    "static/media/Open Postion.jpg": "/stocksync_dashbaord_reactjs/static/media/Open Postion.f34b2b9bf825e2070838.jpg",
+    "static/media/hero-bg-light.png": "/stocksync_dashbaord_reactjs/static/media/hero-bg-light.cd480139f1c4cbce5b21.png",
     "static/media/sharemarket.jpg": "/stocksync_dashbaord_reactjs/static/media/sharemarket.bf0963f814911f31a0ff.jpg",
+    "static/media/hero-elements-light.png": "/stocksync_dashbaord_reactjs/static/media/hero-elements-light.ba0033f005c854966cea.png",
+    "static/media/footer-bg.png": "/stocksync_dashbaord_reactjs/static/media/footer-bg.feaca3084f61d1772c13.png",
     "static/media/primeicons.svg": "/stocksync_dashbaord_reactjs/static/media/primeicons.6ed59f962963a4a73af2.svg",
     "static/media/primeicons.eot": "/stocksync_dashbaord_reactjs/static/media/primeicons.ff0c4cd79b2ffca2de54.eot",
     "static/media/primeicons.woff": "/stocksync_dashbaord_reactjs/static/media/primeicons.8931fda1930c3bd21e96.woff",
     "static/media/primeicons.ttf": "/stocksync_dashbaord_reactjs/static/media/primeicons.a5c2a53d1ff7a9ff5933.ttf",
     "static/media/mirrortrade.jpg": "/stocksync_dashbaord_reactjs/static/media/mirrortrade.143c87902abcbac1a629.jpg",
     "static/media/primeicons.woff2": "/stocksync_dashbaord_reactjs/static/media/primeicons.024b32cc7bf399b1a847.woff2",
+    "static/media/character_7.png": "/stocksync_dashbaord_reactjs/static/media/character_7.c07cdb3915d8114afbd8.png",
     "static/media/2.png": "/stocksync_dashbaord_reactjs/static/media/2.d3c64685c1df07b335a7.png",
     "static/media/1.png": "/stocksync_dashbaord_reactjs/static/media/1.d79cbd6eda5ee96bfdfc.png",
     "static/media/illustration-upgrade-account-2.png": "/stocksync_dashbaord_reactjs/static/media/illustration-upgrade-account-2.8d16a5951ea9c43d8bed.png",
     "index.html": "/stocksync_dashbaord_reactjs/index.html",
-    "main.18d755c3.css.map": "/stocksync_dashbaord_reactjs/static/css/main.18d755c3.css.map",
-    "main.5aa05c7b.js.map": "/stocksync_dashbaord_reactjs/static/js/main.5aa05c7b.js.map",
+    "main.69d8c39d.css.map": "/stocksync_dashbaord_reactjs/static/css/main.69d8c39d.css.map",
+    "main.2feb689c.js.map": "/stocksync_dashbaord_reactjs/static/js/main.2feb689c.js.map",
     "453.630971ca.chunk.js.map": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.18d755c3.css",
-    "static/js/main.5aa05c7b.js"
+    "static/css/main.69d8c39d.css",
+    "static/js/main.2feb689c.js"
   ]
 }

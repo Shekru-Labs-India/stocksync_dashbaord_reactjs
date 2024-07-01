@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/stocksync_dashbaord_reactjs/static/css/main.69d8c39d.css",
-    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.2feb689c.js",
+    "main.css": "/stocksync_dashbaord_reactjs/static/css/main.138b864d.css",
+    "main.js": "/stocksync_dashbaord_reactjs/static/js/main.2849254e.js",
     "static/js/453.630971ca.chunk.js": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js",
     "static/media/Open Postion.jpg": "/stocksync_dashbaord_reactjs/static/media/Open Postion.f34b2b9bf825e2070838.jpg",
     "static/media/hero-bg-light.png": "/stocksync_dashbaord_reactjs/static/media/hero-bg-light.cd480139f1c4cbce5b21.png",
@@ -19,12 +19,12 @@
     "static/media/1.png": "/stocksync_dashbaord_reactjs/static/media/1.d79cbd6eda5ee96bfdfc.png",
     "static/media/illustration-upgrade-account-2.png": "/stocksync_dashbaord_reactjs/static/media/illustration-upgrade-account-2.8d16a5951ea9c43d8bed.png",
     "index.html": "/stocksync_dashbaord_reactjs/index.html",
-    "main.69d8c39d.css.map": "/stocksync_dashbaord_reactjs/static/css/main.69d8c39d.css.map",
-    "main.2feb689c.js.map": "/stocksync_dashbaord_reactjs/static/js/main.2feb689c.js.map",
+    "main.138b864d.css.map": "/stocksync_dashbaord_reactjs/static/css/main.138b864d.css.map",
+    "main.2849254e.js.map": "/stocksync_dashbaord_reactjs/static/js/main.2849254e.js.map",
     "453.630971ca.chunk.js.map": "/stocksync_dashbaord_reactjs/static/js/453.630971ca.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.69d8c39d.css",
-    "static/js/main.2feb689c.js"
+    "static/css/main.138b864d.css",
+    "static/js/main.2849254e.js"
   ]
 }

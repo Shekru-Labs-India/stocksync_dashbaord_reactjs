@@ -100,11 +100,11 @@ const CreateStudent = () => {
         // Example: alert(response.data.msg);
          navigate("/teacher/manage_student");
       } else {
-        setError(response.data.msg || "Failed to create student");
+       
         // Example: setError("Failed to create student");
       }
     } catch (error) {
-      setError(error.message || "Failed to create student");
+     
     } finally {
       setLoading(false);
     }
@@ -183,7 +183,7 @@ const CreateStudent = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/teacher/dashboard" className="text-secondary">
-        <i className="ri-home-5-line ri-lg"></i>
+        <i className="ri-home-7-line ri-lg"></i>
       </Link>
     </li>
     <li className="breadcrumb-item">
@@ -230,6 +230,7 @@ const CreateStudent = () => {
                         onChange={handleChange}
                         placeholder="Name"
                         required
+                       
                       />
                       <label htmlFor="name">
                         {" "}
@@ -402,17 +403,12 @@ const CreateStudent = () => {
         label="Save Data"
         icon="ri-checkbox-circle-line ri-lg"
         className="btn btn-success rounded-pill"
-        disabled={loading}
+      
         onClick={handleSubmit}
       />
 
       <Toast ref={toast} position="top-right" />
 
-      {error && (
-        <div className="text-start">
-          <span className="text-danger">{error}</span>
-        </div>
-      )}
     </div>
     </div>
               </form>

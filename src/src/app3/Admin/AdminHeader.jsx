@@ -44,6 +44,24 @@ const AdminHeader = () => {
     };
     return date.toLocaleString('en-US', options);
   };
+
+  const getTimeIcon = (date) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      // Display this icon for Saturday and Sunday
+      return <i className="ri-checkbox-indeterminate-line text-secondary"></i>;
+    } else if (hours === 9 && minutes === 15) {
+      // Display this icon for 9:15 AM on weekdays
+      return <i className="ri-checkbox-line text-success"></i>;
+    } else if (hours === 15 && minutes === 30) {
+      // Display this icon for 3:30 PM on weekdays
+      return <i className="ri-checkbox-indeterminate-line text-secondary"></i>;
+    }
+    return <i className="ri-checkbox-indeterminate-line text-secondary"></i>;
+  };
   return (
     <div>
     <nav className="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
@@ -58,14 +76,14 @@ const AdminHeader = () => {
           </span>
         </div>
 
-        {/* Center Section: Current Time */}
-        <div className="d-none d-xl-block">
-          <span className="text-secondary">{formatTime(currentTime)}</span>
-     <br></br>
-     <div className="text-center ">
-          <strong className="fs-4">{formatTimee(currentTime)}</strong>
-          </div>
-        </div>
+          {/* Center Section: Current Time */}
+          <div className="d-none d-xl-block">
+            <span className="text-secondary">{formatTime(currentTime)}</span>
+            <br></br>
+           
+           <span className="fs-4 text-secondary">{getTimeIcon(currentTime)}</span>  <strong className="fs-4">{formatTimee(currentTime)}</strong>
+     
+    </div>
         {/* Right Section: User Info and Profile Menu */}
         <div className="d-flex align-items-center">
         <div className="text-end me-3">
@@ -112,7 +130,7 @@ const AdminHeader = () => {
                  
                   <li>
   <div className="d-grid px-4 pt-2 pb-1">
-    <Link to="/" onClick={handleLogout} className="dropdown-item btn btn-danger d-flex align-items-center">
+    <Link to="/login" onClick={handleLogout} className="dropdown-item btn btn-danger d-flex align-items-center">
     <i className="ri-logout-box-r-line ri-lg me-1"></i> <span className="align-middle">Logout</span>
     </Link>
   </div>

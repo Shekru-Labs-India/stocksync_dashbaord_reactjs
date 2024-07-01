@@ -35,7 +35,7 @@ import BasicTable from "../src/src/app1/screen/BasicTable";
 import TradeBook from "../src/src/app1/screen/Tradebook";
 import OrderBook from "../src/src/app1/screen/OrderBook";
 import Holding from "../src/src/app1/screen/Holding";
-import LandingHomeScreen from "../src/src/app1/landing/LandingHomeScreen";
+import LandingHomeScreen from "../src/src/app2/landing/LandingHomeScreen";
 import StudentReport from "../src/src/app1/screen/StudentReport";
 import MyReport from "../src/src/app1/screen/MyReport";
 import MyReportView from "../src/src/app1/screen/MyReportView";
@@ -61,6 +61,7 @@ import AdminOrderBook from "./src/app3/Admin/AdminOrderBook";
 import AdminOrderBookDetails from "./src/app3/Admin/AdminOrderBookDetails";
 import AdminTradeBook from "./src/app3/Admin/AdminTradeBook";
 import Signup from "./src/app1/screen/Signup";
+import LandingHeader from "./src/app2/landing/LandingHeader";
 // import StudentOrderDetails from "./src/app1/Student/StudentOrderDetails";
 
 function App() {
@@ -69,8 +70,8 @@ function App() {
       <Routes>
         {/* <Route path="/app1/*" element={<App1 />} />
         <Route path="/app2/*" element={<App2 />} /> */}
-
-        <Route path="/" element={<Login />} />
+ <Route path="/" element={<LandingHomeScreen/>} />
+        <Route path="/login" element={<Login />} />
         {/* <Route path="/profile" element={<Profile />} /> */}
         <Route path="/student/dashboard" element={<Dashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

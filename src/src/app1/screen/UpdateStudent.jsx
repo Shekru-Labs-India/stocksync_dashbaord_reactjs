@@ -169,7 +169,7 @@ const UpdateStudent = () => {
                 <ol className="breadcrumb breadcrumb-style1">
                   <li className="breadcrumb-item">
                     <Link to="/teacher/dashboard" className="text-secondary">
-                      <i className="ri-home-5-line ri-lg"></i>
+                      <i className="ri-home-7-line ri-lg"></i>
                     </Link>
                   </li>
                   <li className="breadcrumb-item">
@@ -178,8 +178,7 @@ const UpdateStudent = () => {
                   <li className="breadcrumb-item active text-secondary" aria-current="page" >Update Student</li>
                 </ol>
               </nav>
-              {loading && <div>Loading...</div>}
-              {error && <div>{error.message}</div>}
+             
               {teacherData && (
                 <div className="row">
                   <div className="col-md-12">

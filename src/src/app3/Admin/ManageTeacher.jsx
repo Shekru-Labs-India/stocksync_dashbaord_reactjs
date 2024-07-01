@@ -23,43 +23,63 @@ const ManageTeacher = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const toast = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+const [userIdToToggle, setUserIdToToggle] = useState(null);
+
  
 
-  const handleToggle = async (userId) => {
-    try {
-      const response = await fetch(
-        `${config.apiDomain}/api/admin/teacher_active_switch`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ teacher_id: userId }),
-        }
-      );
-      const responseData = await response.json();
+const handleToggle = (userId) => {
+  setUserIdToToggle(userId);
+  setShowModal(true);
+};
 
-      if (response.ok && responseData.st === 1) {
-        const updatedData = data.map((item) => {
-          if (item.user_id === userId) {
-            return {
-              ...item,
-              active_status: !item.active_status,
-            };
-          }
-          return item;
-        });
-
-        setData(updatedData);
-        alert("Teacher status updated successfully");
-      } else {
-        alert(responseData.msg || "Failed to update teacher status");
+const confirmToggle = async () => {
+  try {
+    const response = await fetch(
+      `${config.apiDomain}/api/admin/teacher_active_switch`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ teacher_id: userIdToToggle }),
       }
-    } catch (error) {
-      console.error("Network error", error);
-      alert("Network error");
+    );
+    const responseData = await response.json();
+
+    if (response.ok && responseData.st === 1) {
+      const updatedData = data.map((item) => {
+        if (item.user_id === userIdToToggle) {
+          return {
+            ...item,
+            active_status: !item.active_status,
+          };
+        }
+        return item;
+      });
+
+      setData(updatedData);
+     
+    } else {
+    
     }
-  };
+  } catch (error) {
+    console.error("Network error", error);
+    
+  } finally {
+    setShowModal(false);
+    setUserIdToToggle(null);
+  }
+};
+
+const closeModal = (confirm = false) => {
+  if (confirm) {
+    confirmToggle();
+  } else {
+    setShowModal(false);
+    setUserIdToToggle(null);
+  }
+};
 
   const fetchData = async () => {
     setLoading(true);
@@ -180,13 +200,13 @@ const ManageTeacher = () => {
         );
 
         setData(updatedData);
-        alert("Teacher deleted successfully");
+     
       } else {
-        alert(responseData.msg || "Failed to delete teacher");
+       
       }
     } catch (error) {
       console.error("Network error", error);
-      alert("Network error");
+     
     }
   };
 
@@ -220,7 +240,7 @@ const ManageTeacher = () => {
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard" className="text-secondary">
-                <i class="ri-home-5-line ri-lg"></i>
+                <i class="ri-home-7-line ri-lg"></i>
               </Link>
             </li>
 
@@ -361,22 +381,22 @@ const ManageTeacher = () => {
     </div>
   )}
 />
-            <Column
-              align="center"
-              style={{ border: "1px solid #ddd" }}
-              header="Account Status"
-              body={(rowData) => (
-                <button
-                  className={`btn rounded-pill  btn-xs ${rowData.active_status
-                      ? "btn-outline-success"
-                      : "btn-outline-danger"
-                    } waves-effect`}
-                  onClick={() => handleToggle(rowData.user_id)}
-                >
-                  {rowData.active_status ? "Active" : "Inactive"}
-                </button>
-              )}
-            />
+<Column
+  align="center"
+  style={{ border: "1px solid #ddd" }}
+  header="Account Status"
+  body={(rowData) => (
+    <button
+      className={`btn rounded-pill btn-xs ${rowData.active_status
+        ? "btn-outline-success"
+        : "btn-outline-danger"
+        } waves-effect`}
+      onClick={() => handleToggle(rowData.user_id)}
+    >
+      {rowData.active_status ? "Active" : "Inactive"}
+    </button>
+  )}
+/>
             <Column
               align={"center"}
               style={{ border: "1px solid #ddd" }}
@@ -412,6 +432,26 @@ const ManageTeacher = () => {
               )}
             ></Column>
           </DataTable>
+
+          {showModal && (
+  <div className={`modal fade show`} style={{ display: 'block' }} tabIndex="-1" role="dialog">
+    <div className="modal-dialog modal-dialog-top modal-dialog-centered" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Confirm Action</h5>
+          <button type="button" className="btn-close" onClick={() => closeModal(false)}></button>
+        </div>
+        <div className="modal-body">
+          <p>Are you sure you want to update the status of this teacher?</p>
+        </div>
+        <div className="modal-footer d-flex justify-content-between">
+          <button type="button" className="btn btn-secondary" onClick={() => closeModal(false)}>Cancel</button>
+          <button type="button" className="btn btn-primary ms-auto" onClick={() => closeModal(true)}>OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
         </div>
       </div>
 

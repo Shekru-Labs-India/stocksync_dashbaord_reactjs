@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useRef} from "react";
 import AdminHeader from "./AdminHeader";
 import Footer from "../component/Footer";
 import AdminSubHeader from "./AdminSubHeader";
@@ -7,10 +7,12 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import axios from "axios";
 import config from "../config";
-
+import { Toast } from 'primereact/toast';
 const CreateTeacher = () => {
   const navigate = useNavigate();
   const [backClicked, setBackClicked] = useState(false);
+  const toast = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -63,7 +65,8 @@ const CreateTeacher = () => {
       );
 
       if (response.data && response.data.st === 1) {
-        // Show success message or redirect
+          toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
+
         navigate("/admin/manage_teacher");
       } else {
         setError(new Error(response.data.msg || "Failed to create teacher"));
@@ -85,7 +88,7 @@ const CreateTeacher = () => {
           <ol className="breadcrumb breadcrumb-style1 text-secondary">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard" className="text-secondary">
-                <i className="ri-home-5-line ri-lg"></i>
+                <i className="ri-home-7-line ri-lg"></i>
               </Link>
             </li>
             <li className="breadcrumb-item">
@@ -287,7 +290,7 @@ const CreateTeacher = () => {
                   </div>
                 </div>
                 <div className="row">
-  <div className="col-5 text-start mb-5">
+                <div className="col-5 text-start mb-5 mt-4">
     <button
       onClick={handleBack}
       className="btn rounded-pill btn-outline-secondary btn-xs"
@@ -295,14 +298,17 @@ const CreateTeacher = () => {
       <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
     </button>
   </div>
-  <div className="col-7 text-end mb-5">
+  <div className="col-7 text-end mb-5 mt-4">
+  {loading && <i className="ri-loader-2-line text-secondary me-2"></i>}
   <Button
                     type="submit"
-                    label="Save changes"
-                    icon="ri-checkbox-circle-line ri-lg"
-                    className="btn btn-success rounded-pill"
+                    label="Save Data"
+        icon="ri-checkbox-circle-line ri-lg"
+        className="btn btn-success rounded-pill"
                     disabled={loading}
+                    onClick={handleSubmit}
                   />
+                   <Toast ref={toast} position="top-right" />
   </div>
 </div>
 

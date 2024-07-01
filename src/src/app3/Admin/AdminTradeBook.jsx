@@ -191,7 +191,7 @@ const AdminTradeBook = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/admin/dashboard" className="text-secondary">
-        <i className="ri-home-5-line ri-lg"></i>
+        <i className="ri-home-7-line ri-lg"></i>
       </Link>
     </li>
     <li className="breadcrumb-item active text-secondary" aria-current="page">

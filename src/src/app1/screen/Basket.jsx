@@ -1685,7 +1685,7 @@ const Basket = () => {
               <ol className="breadcrumb breadcrumb-style1 text-secondary">
                 <li className="breadcrumb-item">
                   <Link to="/teacher/dashboard" className="text-secondary">
-                    <i className="ri-home-5-line ri-lg"></i>
+                    <i className="ri-home-7-line ri-lg"></i>
                   </Link>
                 </li>
                 <li
@@ -1973,10 +1973,10 @@ const Basket = () => {
         </Modal.Body>
         <Modal.Footer>
         <div className="d-flex justify-content-between w-100">
-            <Button variant="outline-secondary" onClick={closeModal} size="sm">
-              <i className="ri-close-large-line me-2"></i> <span className="text-secondary">Cancel</span>
+            <Button variant="outline-secondary btn-secondary" onClick={closeModal} size="sm">
+              <i className="ri-close-large-line me-2"></i> <span >Cancel</span>
             </Button>
-            <Button variant="danger" onClick={confirmDeleteAll} disabled={deleteLoading} size="sm">
+            <Button variant="text-danger" onClick={confirmDeleteAll} disabled={deleteLoading} size="sm">
               <i className="ri-close-large-line me-2"></i> {deleteLoading ? 'Deleting...' : 'Delete All'}
             </Button>
           </div>

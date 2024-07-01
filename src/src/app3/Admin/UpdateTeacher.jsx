@@ -293,14 +293,14 @@
 
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import AdminHeader from "./AdminHeader";
 import Footer from "../component/Footer";
 import AdminSubHeader from "./AdminSubHeader";
 import axios from "axios";
 import config from "../../app3/config";
-
+import { Toast } from 'primereact/toast';
 const UpdateTeacher = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -310,7 +310,7 @@ const UpdateTeacher = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [backClicked, setBackClicked] = useState(false);
-
+  const toast = useRef(null); 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -369,14 +369,17 @@ const UpdateTeacher = () => {
         }
       });
       if (response.data.st === 1) {
-        alert("Student updated successfully");
+        toast.current.show({ severity: 'success', summary: 'Success', detail: response.data.msg, life: 3000 });
+
         navigate("/admin/manage_teacher");
       } else {
-        alert(response.data.msg || "Failed to update student");
+        toast.current.show({ severity: 'error', summary: 'Error', detail: response.data.msg || 'Failed to update student', life: 3000 });
+
       }
     } catch (error) {
       console.error("Network error", error);
-      alert("Network error");
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Network error', life: 3000 });
+
     }
   };
 
@@ -392,7 +395,7 @@ const UpdateTeacher = () => {
                 <ol className="breadcrumb breadcrumb-style1">
                   <li className="breadcrumb-item">
                   <Link to="/admin/dashboard" className="text-secondary">
-                <i className="ri-home-5-line ri-lg"></i>
+                <i className="ri-home-7-line ri-lg"></i>
               </Link>
                   </li>
                   <li className="breadcrumb-item">
@@ -591,8 +594,9 @@ const UpdateTeacher = () => {
                               </div>
                             </div>
                           </div>
+                          <Toast ref={toast} />
                           <div className="row">
-  <div className="col text-start mt-5">
+  <div className="col-5 text-start mb-5 mt-4">
     <button
       onClick={handleBack}
       className="btn rounded-pill btn-outline-secondary btn-xs"
@@ -600,9 +604,10 @@ const UpdateTeacher = () => {
       <i className="ri-arrow-left-circle-fill me-1 ri-md"></i> Back
     </button>
   </div>
-  <div className="col text-end mt-5">
-    <button type="submit" className="btn rounded-pill btn-success btn-sm">
-      <i className="ri-checkbox-circle-line ri-lg me-2"></i> Update Record
+  <div className="col-7 text-end mb-5 mt-4">
+  {loading && <i className="ri-loader-2-line text-secondary me-2"></i>}
+<button type="submit" className="btn rounded-pill btn-info btn-sm">
+      <i className="ri-checkbox-circle-line ri-lg me-2"></i> Save Data
     </button>
   </div>
 </div>

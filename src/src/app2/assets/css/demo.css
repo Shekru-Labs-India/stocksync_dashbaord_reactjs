@@ -170,3 +170,14 @@ color:   #8c57ff;;
   height: 32px;
  
 }
+
+.swiper-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Adjust as needed */
+}

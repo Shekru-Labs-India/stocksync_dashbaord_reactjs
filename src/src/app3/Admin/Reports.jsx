@@ -106,7 +106,7 @@ const Reports = () => {
                 <nav aria-label="breadcrumb">
                   <ol className="breadcrumb breadcrumb-style1">
                     <li className="breadcrumb-item">
-                      <Link to="/admin/dashboard">  <i className="ri-home-5-line ri-lg"></i></Link>
+                      <Link to="/admin/dashboard">  <i className="ri-home-7-line ri-lg"></i></Link>
                     </li>
                     <li
                       className="breadcrumb-item active"

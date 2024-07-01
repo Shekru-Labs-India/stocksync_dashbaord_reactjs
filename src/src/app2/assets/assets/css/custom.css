@@ -1,0 +1,51 @@
+.dropdown-menu {
+    display: none;
+  }
+  
+  .nav-item.dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+
+
+  /* Hide border and shadow for dropdown menu */
+.dropdown-menu {
+    display: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  /* Show dropdown menu on hover */
+  .nav-item.dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+  /* Additional padding and styling for dropdown items */
+  .nav-item.dropdown .dropdown-menu .nav-link.dropdown-item {
+    padding: 10px 20px;
+  }
+  
+  /* Styling for the avatar and text */
+  .h6.d-flex.align-items-center.mb-2.mb-lg-4 {
+    padding: 10px 20px;
+  }
+  
+  /* Style adjustments to ensure consistency */
+  .nav-item.dropdown .dropdown-menu ul.nav {
+    margin: 0;
+    padding: 0;
+  }
+  
+
+
+  .nav-link:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+
+.navbar.landing-navbar .navbar-nav .nav-item.mega-dropdown>.dropdown-menu .mega-dropdown-link {
+  padding-left: 0;
+  padding-right: 0;
+}

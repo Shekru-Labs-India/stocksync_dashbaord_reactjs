@@ -66,9 +66,9 @@ const Header = () => {
     const minutes = date.getMinutes();
     const dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
 
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
+    if (dayOfWeek === 1 || dayOfWeek === 6) {
       // Display this icon for Saturday and Sunday
-      return <i className="ri-checkbox-indeterminate-line text-secondary"></i>;
+      return  <i className="ri-checkbox-line text-success"></i>;
     } else if (hours === 9 && minutes === 15) {
       // Display this icon for 9:15 AM on weekdays
       return <i className="ri-checkbox-line text-success"></i>;
@@ -76,7 +76,7 @@ const Header = () => {
       // Display this icon for 3:30 PM on weekdays
       return <i className="ri-checkbox-indeterminate-line text-secondary"></i>;
     }
-    return null; // Return null if none of the conditions match
+    return null;
   };
   return (
     <div>
@@ -169,7 +169,7 @@ const Header = () => {
                   <li>
                     <div className="d-grid px-4 pt-2 pb-1">
                       <Link
-                        to="/"
+                        to="/login"
                         onClick={handleLogout}
                         className="dropdown-item btn btn-danger d-flex align-items-center"
                       >

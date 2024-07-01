@@ -329,7 +329,7 @@ const Signup = () => {
       }
 
       alert("OTP Verified!"); // Example action on OTP verification
-      navigate("/"); // Navigate to the Login screen
+      navigate("/login"); // Navigate to the Login screen
     } catch (error) {
       setError(error.message);
     } finally {

@@ -461,7 +461,7 @@ const ViewTeacher = () => {
   <ol className="breadcrumb breadcrumb-style1 text-secondary">
     <li className="breadcrumb-item">
       <Link to="/admin/dashboard" className="text-secondary">
-      <i class="ri-home-5-line ri-lg"></i>      </Link>
+      <i class="ri-home-7-line ri-lg"></i>      </Link>
     </li>
     <li className="breadcrumb-item">
       <Link to="/admin/manage_teacher" className="text-secondary">

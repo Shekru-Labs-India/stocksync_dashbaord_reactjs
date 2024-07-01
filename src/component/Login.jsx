@@ -29,16 +29,16 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate("/login");
     }
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      window.history.pushState(null, "", "/");
+      window.history.pushState(null, "", "/login");
       window.addEventListener("popstate", () => {
         if (!isAuthenticated) {
-          window.history.pushState(null, "", "/");
+          window.history.pushState(null, "", "/login");
         }
       });
     }
@@ -124,7 +124,7 @@ const Login = () => {
             navigate("/admin/dashboard");
             break;
           default:
-            navigate("/");
+            navigate("/login");
             break;
         }
         toast.current.show({
